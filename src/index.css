@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-rose: #D49AA5;
+  --color-brand-rose-light: #E8BEC6;
+  --color-brand-pink: #F2C4C7;
+  --color-brand-gold: #CFA45C;
+  --color-brand-gold-light: #E9D097;
+  --color-brand-gold-dark: #B3873E;
+  --color-brand-cream: #FFF6EE;
+  --color-brand-sand: #F3E7DA;
+  --color-brand-charcoal: #333333;
+  --color-brand-card: #FDF8F5;
+
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: #FFF6EE;
+    color: #333333;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6, .font-serif {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF6EE;
+}
+::-webkit-scrollbar-thumb {
+  background: #D49AA5;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #CFA45C;
+}
+
+/* Glassmorphism & Gold Glow Effects */
+.glass-card {
+  background: rgba(255, 246, 238, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(207, 164, 92, 0.25);
+}
+
+.gold-border {
+  border: 1px solid rgba(207, 164, 92, 0.35);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #B3873E 0%, #CFA45C 50%, #E9D097 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rose-gradient-text {
+  background: linear-gradient(135deg, #D49AA5 0%, #B86B7B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 1.5rem 0;
+  color: #CFA45C;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, #CFA45C, transparent);
+}
+
+/* Shimmer and Micro-animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
