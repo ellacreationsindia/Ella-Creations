@@ -115,7 +115,7 @@ export default function ProductDetailView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10 sm:space-y-16 pb-24 lg:pb-16">
       
       {/* Back Button */}
       <button
@@ -126,7 +126,7 @@ export default function ProductDetailView() {
       </button>
 
       {/* Main Product Layout: Left Gallery & Video Player, Right Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         
         {/* Left Column: Media Gallery & Interactive Video Player */}
         <div className="lg:col-span-6 space-y-4">
@@ -161,12 +161,12 @@ export default function ProductDetailView() {
           </div>
 
           {/* Media Thumbnails (Photos & Product Videos) */}
-          <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
             {mediaList.map((item, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveMedia(item)}
-                className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 relative ${
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 relative ${
                   currentMedia.url === item.url 
                     ? 'border-brand-rose ring-2 ring-brand-rose/30 scale-105 shadow-md' 
                     : 'border-transparent opacity-70 hover:opacity-100'
@@ -174,8 +174,8 @@ export default function ProductDetailView() {
               >
                 {item.type === 'video' ? (
                   <div className="w-full h-full bg-stone-900 flex flex-col items-center justify-center text-white">
-                    <Video className="w-6 h-6 text-brand-rose animate-pulse" />
-                    <span className="text-[9px] font-bold mt-1">VIDEO</span>
+                    <Video className="w-5 h-5 sm:w-6 sm:h-6 text-brand-rose animate-pulse" />
+                    <span className="text-[8px] sm:text-[9px] font-bold mt-1">VIDEO</span>
                   </div>
                 ) : (
                   <img src={item.url} alt={`Media ${idx + 1}`} className="w-full h-full object-cover" />
@@ -198,7 +198,7 @@ export default function ProductDetailView() {
               )}
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 leading-tight">
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 leading-tight">
               {product.title}
             </h1>
 
@@ -229,23 +229,23 @@ export default function ProductDetailView() {
               <p className="text-xs text-rose-600">This jewelry piece is currently not available for immediate checkout.</p>
             </div>
           ) : (
-            <div className="bg-brand-cream p-5 rounded-2xl border border-brand-gold/20 space-y-2">
-              <div className="flex items-baseline gap-4">
-                <span className="text-3xl font-bold text-brand-rose">{formatPrice(product.price)}</span>
+            <div className="bg-brand-cream p-4 sm:p-5 rounded-2xl border border-brand-gold/20 space-y-2">
+              <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">
+                <span className="text-2xl sm:text-3xl font-bold text-brand-rose">{formatPrice(product.price)}</span>
                 {product.comparePrice && (
-                  <span className="text-base line-through text-stone-400 font-normal">
+                  <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
                     {formatPrice(product.comparePrice)}
                   </span>
                 )}
                 {product.comparePrice && (
-                  <span className="text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
+                  <span className="text-[10px] sm:text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
                     SAVE {formatPrice(product.comparePrice - product.price)}
                   </span>
                 )}
               </div>
-              <div className="text-xs text-stone-500 flex items-center gap-3 pt-1 border-t border-brand-gold/20">
+              <div className="text-[11px] sm:text-xs text-stone-500 flex flex-wrap items-center gap-2 sm:gap-3 pt-1 border-t border-brand-gold/20">
                 <span>Inclusive of <strong>{taxRate}% GST Tax</strong> ({formatPrice(gstAmount)})</span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
                 <span>Base Price: {formatPrice(basePrice)}</span>
               </div>
             </div>
@@ -257,12 +257,12 @@ export default function ProductDetailView() {
           </p>
 
           {/* Master Jewelry Specifications Grid (Including Dynamic Custom Attributes) */}
-          <div className="bg-white p-5 rounded-2xl border border-brand-gold/30 shadow-sm space-y-3">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-gold/30 shadow-sm space-y-3">
             <h4 className="font-serif text-sm font-bold text-stone-900 border-b border-stone-100 pb-2 flex items-center gap-2">
               <Award className="w-4 h-4 text-brand-gold" /> Master Jewelry Specifications
             </h4>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
               <div className="bg-brand-cream/50 p-2.5 rounded-xl">
                 <span className="text-stone-400 text-[10px] uppercase font-semibold block">Net Weight</span>
                 <span className="font-bold text-stone-800">{product.weightGrams || '28.5g'}</span>
@@ -291,12 +291,12 @@ export default function ProductDetailView() {
                 </div>
               ))}
 
-              <div className="bg-brand-cream/50 p-2.5 rounded-xl col-span-2">
+              <div className="bg-brand-cream/50 p-2.5 rounded-xl sm:col-span-2">
                 <span className="text-stone-400 text-[10px] uppercase font-semibold block">Dimensions & Fit</span>
                 <span className="font-bold text-stone-800">{product.dimensions || '16 inch choker + 4 inch adjustable cord'}</span>
               </div>
 
-              <div className="bg-brand-cream/50 p-2.5 rounded-xl col-span-2">
+              <div className="bg-brand-cream/50 p-2.5 rounded-xl sm:col-span-2">
                 <span className="text-stone-400 text-[10px] uppercase font-semibold block">Warranty & Guarantee</span>
                 <span className="font-bold text-emerald-700">{product.warrantyInfo || '1-Year Ella Creations Anti-Tarnish Guarantee'}</span>
               </div>
@@ -309,7 +309,7 @@ export default function ProductDetailView() {
               <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">
                 Select Finish: <span className="text-brand-rose">{selectedFinish}</span>
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {product.finishOptions.map((finish) => (
                   <button
                     key={finish}
@@ -329,20 +329,20 @@ export default function ProductDetailView() {
 
           {/* Quantity & CTA Buttons */}
           <div className="space-y-3 pt-2">
-            <div className="flex gap-4">
+            <div className="flex gap-3 sm:gap-4">
               <div className="flex items-center border border-stone-300 rounded-xl bg-white">
                 <button
                   disabled={isOutOfStock}
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
+                  className="px-3 py-2 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
                 >
                   -
                 </button>
-                <span className="px-4 py-2.5 font-semibold text-sm">{qty}</span>
+                <span className="px-3 py-2 font-semibold text-sm">{qty}</span>
                 <button
                   disabled={isOutOfStock}
                   onClick={() => setQty(qty + 1)}
-                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
+                  className="px-3 py-2 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
                 >
                   +
                 </button>
@@ -351,13 +351,13 @@ export default function ProductDetailView() {
               <button
                 disabled={isOutOfStock}
                 onClick={() => addToCart(product, qty, selectedFinish)}
-                className={`flex-1 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition-colors ${
+                className={`flex-1 font-semibold py-3.5 px-4 sm:px-6 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition-colors ${
                   isOutOfStock 
                     ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
                     : 'bg-brand-rose hover:bg-brand-rose/90 text-white shadow-soft-rose'
                 }`}
               >
-                <ShoppingBag className="w-4 h-4" /> {isOutOfStock ? 'OUT OF STOCK' : 'Add to Shopping Bag'}
+                <ShoppingBag className="w-4 h-4" /> {isOutOfStock ? 'OUT OF STOCK' : 'Add to Bag'}
               </button>
 
               <button
@@ -388,18 +388,18 @@ export default function ProductDetailView() {
           </div>
 
           {/* Guarantee Badges */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-stone-200 text-center">
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <ShieldCheck className="w-5 h-5 text-brand-gold mx-auto mb-1" />
-              <p className="text-[11px] font-semibold text-stone-800">100% Anti-Tarnish</p>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 border-t border-stone-200 text-center">
+            <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold mx-auto mb-1" />
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">100% Anti-Tarnish</p>
             </div>
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <Truck className="w-5 h-5 text-brand-rose mx-auto mb-1" />
-              <p className="text-[11px] font-semibold text-stone-800">Free Velvet Box</p>
+            <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-rose mx-auto mb-1" />
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Free Velvet Box</p>
             </div>
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <RotateCcw className="w-5 h-5 text-brand-gold mx-auto mb-1" />
-              <p className="text-[11px] font-semibold text-stone-800">Easy Returns</p>
+            <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
+              <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold mx-auto mb-1" />
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Easy Returns</p>
             </div>
           </div>
 
@@ -408,21 +408,21 @@ export default function ProductDetailView() {
       </div>
 
       {/* Customer Reviews Section */}
-      <section className="bg-white rounded-3xl p-8 sm:p-12 border border-brand-gold/30 shadow-sm space-y-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-stone-200 pb-6 gap-6">
+      <section className="bg-white rounded-3xl p-6 sm:p-12 border border-brand-gold/30 shadow-sm space-y-8 sm:space-y-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-stone-200 pb-6 gap-4 sm:gap-6">
           <div>
             <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Verified Feedback</span>
-            <h2 className="font-serif text-3xl font-bold text-stone-900 mt-1">Customer Reviews & Photos</h2>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mt-1">Customer Reviews & Photos</h2>
           </div>
-          <div className="flex items-center gap-4 bg-brand-cream p-4 rounded-2xl border border-brand-gold/20">
+          <div className="flex items-center gap-4 bg-brand-cream p-4 rounded-2xl border border-brand-gold/20 self-start md:self-auto">
             <div className="text-center">
-              <span className="font-serif text-3xl font-bold text-stone-900">{product.rating}</span>
-              <span className="text-xs text-stone-500 block">out of 5 stars</span>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">{product.rating}</span>
+              <span className="text-[10px] sm:text-xs text-stone-500 block">out of 5 stars</span>
             </div>
             <div className="border-l border-stone-300 pl-4 space-y-1">
               <div className="flex text-amber-400">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
                 ))}
               </div>
               <span className="text-xs font-semibold text-stone-600 block">{productReviews.length} Total Reviews</span>
@@ -430,27 +430,27 @@ export default function ProductDetailView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           
           {/* Reviews List */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             {productReviews.length === 0 ? (
               <div className="text-center py-8 text-stone-400">
-                <p>No reviews yet for this piece. Be the first to leave a review!</p>
+                <p className="text-xs sm:text-sm">No reviews yet for this piece. Be the first to leave a review!</p>
               </div>
             ) : (
               productReviews.map((rev) => (
-                <div key={rev.id} className="p-5 bg-brand-card rounded-2xl border border-stone-200/70 space-y-3">
+                <div key={rev.id} className="p-4 sm:p-5 bg-brand-card rounded-2xl border border-stone-200/70 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-serif font-bold text-stone-900 text-sm">{rev.author}</span>
+                      <span className="font-serif font-bold text-stone-900 text-xs sm:text-sm">{rev.author}</span>
                       {rev.verified && (
-                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="bg-emerald-100 text-emerald-800 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Verified Buyer
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-stone-400">{rev.date}</span>
+                    <span className="text-[10px] sm:text-[11px] text-stone-400">{rev.date}</span>
                   </div>
 
                   <div className="flex text-amber-400">
@@ -459,13 +459,13 @@ export default function ProductDetailView() {
                     ))}
                   </div>
 
-                  <h4 className="font-bold text-sm text-stone-800">{rev.title}</h4>
+                  <h4 className="font-bold text-xs sm:text-sm text-stone-800">{rev.title}</h4>
                   <p className="text-xs text-stone-600 leading-relaxed">{rev.comment}</p>
 
                   {/* Customer Photo preview */}
                   {rev.photo && (
                     <div className="pt-2">
-                      <img src={rev.photo} alt="Customer Photo" className="w-24 h-24 object-cover rounded-xl border border-brand-gold/30 shadow-sm" />
+                      <img src={rev.photo} alt="Customer Photo" className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl border border-brand-gold/30 shadow-sm" />
                     </div>
                   )}
                 </div>
@@ -474,8 +474,8 @@ export default function ProductDetailView() {
           </div>
 
           {/* Write a Review Form */}
-          <div className="lg:col-span-5 bg-brand-cream p-6 rounded-2xl border border-brand-gold/30 h-fit space-y-4">
-            <h3 className="font-serif text-lg font-bold text-stone-900">Write a Customer Review</h3>
+          <div className="lg:col-span-5 bg-brand-cream p-5 sm:p-6 rounded-2xl border border-brand-gold/30 h-fit space-y-4">
+            <h3 className="font-serif text-base sm:text-lg font-bold text-stone-900">Write a Customer Review</h3>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               
               <div>
@@ -561,16 +561,51 @@ export default function ProductDetailView() {
           <div className="flex justify-between items-end border-b border-stone-200 pb-4">
             <div>
               <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">You May Also Love</span>
-              <h3 className="font-serif text-2xl font-bold text-stone-900 mt-0.5">Matching & Related Jewelry</h3>
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-0.5">Matching & Related Jewelry</h3>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>
       )}
+
+      {/* STICKY BOTTOM ACTION BAR FOR MOBILE DEVICES (< 1024px) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md p-3.5 border-t border-brand-gold/30 shadow-2xl flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <span className="block text-[10px] text-stone-500 font-semibold uppercase truncate">{product.title}</span>
+          <span className="block text-base font-bold text-brand-rose">{formatPrice(product.price)}</span>
+        </div>
+
+        <button
+          disabled={isOutOfStock}
+          onClick={() => addToCart(product, qty, selectedFinish)}
+          className={`font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider transition-colors ${
+            isOutOfStock 
+              ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
+              : 'bg-stone-900 text-white shadow-sm'
+          }`}
+        >
+          <ShoppingBag className="w-4 h-4" /> Add
+        </button>
+
+        <button
+          disabled={isOutOfStock}
+          onClick={() => {
+            addToCart(product, qty, selectedFinish);
+            setIsCheckoutOpen(true);
+          }}
+          className={`font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition-all ${
+            isOutOfStock 
+              ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
+              : 'bg-brand-rose text-white shadow-soft-rose'
+          }`}
+        >
+          Buy Now
+        </button>
+      </div>
 
     </div>
   );

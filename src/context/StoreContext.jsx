@@ -12,6 +12,8 @@ export const formatPrice = (amount) => {
   return `₹${amount.toLocaleString('en-IN')}`;
 };
 
+const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
+
 // Helper: Video file upload to Supabase Storage bucket 'product-videos'
 export async function uploadProductVideoToSupabase(fileOrDataUrl) {
   try {
@@ -85,16 +87,45 @@ export const StoreProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState(null);
 
-  // 1. Supabase Auth Listener
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const navigateTo = (view, productId = null) => {
+    setCurrentView(view);
+    if (productId) {
+      setSelectedProductId(productId);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 1. Supabase Auth Listener with Role-Based Redirection Logic
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      // Role-Based Post-Login Auto Redirect
+      if (event === 'SIGNED_IN' && currentUser) {
+        setIsAuthModalOpen(false);
+        const userEmail = currentUser.email;
+
+        if (userEmail === ADMIN_EMAIL) {
+          showToast('👑 Welcome Admin! Opening Admin Dashboard...', 'success');
+          setCurrentView('admin');
+        } else {
+          showToast(`Welcome back, ${currentUser.user_metadata?.full_name || currentUser.email}!`, 'success');
+          setCurrentView('shop');
+        }
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -195,45 +226,45 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('ella_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
-  };
-
-  const navigateTo = (view, productId = null) => {
-    setCurrentView(view);
-    if (productId) {
-      setSelectedProductId(productId);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   // Check Admin Privilege: Restricted exclusively to ellacreationsindia@gmail.com
-  const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
   const isAdmin = (user && user.email === ADMIN_EMAIL) || demoAdminOverride;
 
   // Supabase Auth Actions
   const signInWithGoogle = async () => {
     try {
+      // Dynamic origin redirect URL (handles localhost, Vercel, and custom domains automatically)
+      const redirectUrl = window.location.origin;
+
       const res = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: redirectUrl
         }
       });
+
       if (res.error) {
-        showToast('Google Auth setup required in Supabase Dashboard (Auth -> Providers -> Google)', 'error');
+        showToast('Google Auth error: ' + res.error.message, 'error');
       }
       return res;
     } catch (err) {
-      showToast('To enable Google Auth: Open Supabase Dashboard -> Authentication -> Providers -> Google -> Enable & paste credentials.', 'info');
+      showToast('Google Auth error: ' + err.message, 'error');
       return { error: err };
     }
   };
 
   const signInWithEmail = async (email, password) => {
     const res = await supabase.auth.signInWithPassword({ email, password });
-    if (!res.error) showToast('Welcome back to Ella Creations!');
+    if (!res.error) {
+      if (email === ADMIN_EMAIL) {
+        showToast('👑 Welcome Admin! Opening Admin Panel...', 'success');
+        setCurrentView('admin');
+      } else {
+        showToast('Welcome back to Ella Creations!');
+        setCurrentView('shop');
+      }
+    } else {
+      showToast(res.error.message, 'error');
+    }
     return res;
   };
 
@@ -243,7 +274,12 @@ export const StoreProvider = ({ children }) => {
       password,
       options: { data: { full_name: fullName } }
     });
-    if (!res.error) showToast('Account created successfully!');
+    if (!res.error) {
+      showToast('Account created successfully!');
+      setCurrentView('shop');
+    } else {
+      showToast(res.error.message, 'error');
+    }
     return res;
   };
 
@@ -252,6 +288,7 @@ export const StoreProvider = ({ children }) => {
     setUser(null);
     setSession(null);
     setDemoAdminOverride(false);
+    setCurrentView('home');
     showToast('Signed out of Ella Creations', 'info');
   };
 
@@ -259,7 +296,7 @@ export const StoreProvider = ({ children }) => {
   const addToCart = (product, quantity = 1, finish = null) => {
     // Check if price zero or out of stock
     if (product.price <= 0 || product.stock <= 0) {
-      showToast(`" ${product.title}" is currently out of stock`, 'error');
+      showToast(`"${product.title}" is currently out of stock`, 'error');
       return;
     }
 
