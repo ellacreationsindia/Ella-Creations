@@ -100,7 +100,20 @@ export const StoreProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 1. Supabase Auth Listener with Role-Based Redirection Logic
+  // 1. Automatic OAuth Catch & Forwarding
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const hasAuthHash = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+      
+      // If landed on localhost with OAuth token while coming from Vercel
+      if (isLocalhost && hasAuthHash && document.referrer.includes('vercel.app')) {
+        window.location.href = 'https://ella-creations.vercel.app/' + window.location.hash + window.location.search;
+      }
+    }
+  }, []);
+
+  // 2. Supabase Auth Listener with Role-Based Redirection Logic
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -114,7 +127,7 @@ export const StoreProvider = ({ children }) => {
       setUser(currentUser);
 
       // Role-Based Post-Login Auto Redirect
-      if (event === 'SIGNED_IN' && currentUser) {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') && currentUser) {
         setIsAuthModalOpen(false);
         const userEmail = currentUser.email;
 
@@ -131,7 +144,7 @@ export const StoreProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. Fetch data from Supabase DB on mount
+  // 3. Fetch data from Supabase DB on mount
   useEffect(() => {
     fetchProductsFromSupabase();
     fetchOrdersFromSupabase();
@@ -232,7 +245,7 @@ export const StoreProvider = ({ children }) => {
   // Supabase Auth Actions
   const signInWithGoogle = async () => {
     try {
-      // Dynamic origin redirect URL (handles localhost, Vercel, and custom domains automatically)
+      // Pass target origin dynamically
       const redirectUrl = window.location.origin;
 
       const res = await supabase.auth.signInWithOAuth({
