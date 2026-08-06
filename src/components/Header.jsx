@@ -10,7 +10,6 @@ import {
   ChevronRight,
   User,
   LogOut,
-  ShieldCheck,
   Crown
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -82,78 +81,79 @@ export default function Header() {
         <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
       </div>
 
-      {/* Main Navigation Bar */}
+      {/* Main Navigation Bar (3-Column Layout with Centered Logo) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 sm:h-24">
+        <div className="grid grid-cols-12 items-center h-24 sm:h-28 py-2">
           
-          {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden">
+          {/* LEFT COLUMN: Desktop Navigation Links & Mobile Menu Trigger */}
+          <div className="col-span-3 lg:col-span-4 flex items-center justify-start">
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-md text-stone-800 hover:text-brand-rose focus:outline-none"
+              className="lg:hidden p-2 rounded-md text-stone-800 hover:text-brand-rose focus:outline-none"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center space-x-6 font-medium text-xs uppercase tracking-wider text-stone-700">
+              <button 
+                onClick={() => navigateTo('home')} 
+                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => navigateTo('shop')} 
+                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+              >
+                Shop Collections
+              </button>
+              <button 
+                onClick={() => navigateTo('shop')} 
+                className="hover:text-brand-rose transition-colors py-1"
+              >
+                Necklaces
+              </button>
+              <button 
+                onClick={() => navigateTo('shop')} 
+                className="hover:text-brand-rose transition-colors py-1"
+              >
+                Earrings
+              </button>
+              <button 
+                onClick={() => navigateTo('shop')} 
+                className="hover:text-brand-rose transition-colors py-1"
+              >
+                Bridal Sets
+              </button>
+            </nav>
           </div>
 
-          {/* Enlarged Brand Logo & Title with 4-Click Hidden Admin Trigger */}
-          <div 
-            onClick={handleLogoClick} 
-            className="cursor-pointer flex items-center gap-3.5 group py-1"
-            title="Ella Creations Monogram (Click 4 times continuously to open Admin Portal)"
-          >
-            <img 
-              src="/logo.png" 
-              alt="Ella Creations Monogram Logo" 
-              className="h-12 sm:h-16 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
-            />
-            <div className="flex flex-col">
-              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors">
+          {/* CENTER COLUMN: ENLARGED LOGO SHIFTED TO THE MIDDLE */}
+          <div className="col-span-6 lg:col-span-4 flex flex-col items-center justify-center text-center">
+            <div 
+              onClick={handleLogoClick} 
+              className="cursor-pointer flex flex-col items-center group"
+              title="Ella Creations Monogram (Click 4 times continuously to open Admin Portal)"
+            >
+              <img 
+                src="/logo.png" 
+                alt="Ella Creations Monogram Logo" 
+                className="h-14 sm:h-20 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
+              />
+              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors -mt-1">
                 Ella Creations
               </span>
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-brand-gold font-semibold -mt-1">
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.3em] text-brand-gold font-bold -mt-0.5">
                 Artificial Jewelry India
               </span>
             </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-8 font-medium text-sm text-stone-700">
-            <button 
-              onClick={() => navigateTo('home')} 
-              className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-semibold border-b-2 border-brand-rose' : ''}`}
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => navigateTo('shop')} 
-              className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' ? 'text-brand-rose font-semibold border-b-2 border-brand-rose' : ''}`}
-            >
-              Shop Collections
-            </button>
-            <button 
-              onClick={() => navigateTo('shop')} 
-              className="hover:text-brand-rose transition-colors py-1"
-            >
-              Necklaces
-            </button>
-            <button 
-              onClick={() => navigateTo('shop')} 
-              className="hover:text-brand-rose transition-colors py-1"
-            >
-              Earrings
-            </button>
-            <button 
-              onClick={() => navigateTo('shop')} 
-              className="hover:text-brand-rose transition-colors py-1"
-            >
-              Bridal Sets
-            </button>
-          </nav>
-
-          {/* Header Action Buttons */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* RIGHT COLUMN: User Actions (Search, Wishlist, Cart, Profile, Admin) */}
+          <div className="col-span-3 lg:col-span-4 flex items-center justify-end space-x-1 sm:space-x-3">
             
             {/* Live Search Trigger */}
             <button
@@ -218,7 +218,7 @@ export default function Header() {
                   title="Sign In / Register"
                 >
                   <User className="w-5 h-5" />
-                  <span className="hidden lg:inline">Sign In</span>
+                  <span className="hidden xl:inline">Sign In</span>
                 </button>
               )}
 
@@ -258,25 +258,26 @@ export default function Header() {
             {isAdmin && (
               <button
                 onClick={() => navigateTo('admin')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wider transition-all duration-300 ${
                   currentView === 'admin'
                     ? 'bg-brand-rose text-white shadow-soft-rose'
                     : 'bg-brand-gold text-stone-900 shadow-gold-glow hover:bg-stone-900 hover:text-white'
                 }`}
                 title="Admin Panel (Authorized)"
               >
-                <Crown className="w-4 h-4 text-amber-900" />
-                <span className="hidden sm:inline">ADMIN PANEL</span>
+                <Crown className="w-3.5 h-3.5 text-amber-900" />
+                <span className="hidden xl:inline">ADMIN</span>
               </button>
             )}
 
           </div>
+
         </div>
       </div>
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 space-y-3">
+        <div className="lg:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 space-y-3">
           <button
             onClick={() => { navigateTo('home'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
@@ -288,6 +289,24 @@ export default function Header() {
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Shop All Jewelry Catalog
+          </button>
+          <button
+            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
+          >
+            Necklaces
+          </button>
+          <button
+            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
+          >
+            Earrings
+          </button>
+          <button
+            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
+          >
+            Bridal Sets
           </button>
 
           {!user && (
