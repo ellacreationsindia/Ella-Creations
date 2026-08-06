@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw } from 'lucide-react';
+import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 
@@ -15,6 +15,7 @@ export default function ShopView() {
   const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc' | 'rating'
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [shopSearch, setShopSearch] = useState('');
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Filter products
   let filtered = products.filter((p) => {
@@ -51,26 +52,38 @@ export default function ShopView() {
   const finishes = ['All', 'Rose Gold', 'Gold', 'Silver', 'Antique Gold'];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8">
       
       {/* Shop Header Banner */}
-      <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-8 rounded-3xl border border-brand-gold/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+      <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-6 sm:p-8 rounded-3xl border border-brand-gold/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 shadow-sm">
         <div>
-          <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Ella Creations Catalog</span>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">Artificial Jewelry Collection</h1>
+          <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-brand-gold">Ella Creations Catalog</span>
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 mt-1">Artificial Jewelry Collection</h1>
           <p className="text-xs sm:text-sm text-stone-600 mt-1">Handcrafted Kundan, Cubic Zirconia drops, Rose Gold & Sterling Silver creations.</p>
         </div>
-        <div className="flex items-center gap-3 bg-white/80 px-4 py-2 rounded-2xl border border-brand-gold/40 shadow-sm">
-          <Sparkles className="w-5 h-5 text-brand-gold" />
-          <span className="text-xs font-semibold text-stone-800">{filtered.length} Jewelry Items Available</span>
+        <div className="flex items-center gap-2.5 bg-white/80 px-3.5 py-2 rounded-2xl border border-brand-gold/40 shadow-sm self-start md:self-auto">
+          <Sparkles className="w-4 h-4 text-brand-gold" />
+          <span className="text-xs font-semibold text-stone-800">{filtered.length} Items Available</span>
         </div>
+      </div>
+
+      {/* Mobile Filter Toggle Button */}
+      <div className="lg:hidden flex items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-brand-gold/30 shadow-sm">
+        <button
+          onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+          className="flex items-center gap-2 text-xs font-bold text-stone-900 bg-brand-cream px-4 py-2.5 rounded-xl border border-brand-gold/40 flex-1 justify-center"
+        >
+          <Filter className="w-4 h-4 text-brand-rose" />
+          {isMobileFilterOpen ? 'Hide Filters' : 'Filter & Refine Jewelry'}
+        </button>
+        <span className="text-xs font-semibold text-stone-500">{filtered.length} Results</span>
       </div>
 
       {/* Filter & Toolbar Row */}
       <div className="flex flex-col lg:flex-row gap-8">
         
-        {/* Sidebar Filters */}
-        <div className="lg:w-64 space-y-6 flex-shrink-0 bg-white p-6 rounded-2xl border border-brand-gold/20 shadow-sm h-fit">
+        {/* Sidebar Filters (Desktop + Mobile Drawer) */}
+        <div className={`lg:w-64 space-y-6 flex-shrink-0 bg-white p-6 rounded-2xl border border-brand-gold/20 shadow-sm h-fit ${isMobileFilterOpen ? 'block' : 'hidden lg:block'}`}>
           <div className="flex items-center justify-between border-b border-stone-100 pb-4">
             <h3 className="font-serif text-base font-bold text-stone-900 flex items-center gap-2">
               <Filter className="w-4 h-4 text-brand-rose" /> Filter Jewelry
@@ -105,7 +118,7 @@ export default function ShopView() {
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => { setSelectedCategory(cat); setIsMobileFilterOpen(false); }}
                   className={`w-full text-left text-xs px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-between ${
                     selectedCategory === cat ? 'bg-brand-rose text-white shadow-sm' : 'text-stone-700 hover:bg-brand-cream'
                   }`}
@@ -195,7 +208,7 @@ export default function ShopView() {
               Showing <strong>{filtered.length}</strong> of <strong>{products.length}</strong> items
             </span>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
               {/* Sort By Dropdown */}
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-stone-600 uppercase">Sort By:</span>
@@ -249,7 +262,7 @@ export default function ShopView() {
               </button>
             </div>
           ) : (
-            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
+            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" : "space-y-4"}>
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

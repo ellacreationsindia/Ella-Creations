@@ -81,12 +81,12 @@ export default function Header() {
         <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
       </div>
 
-      {/* Main Navigation Bar (3-Column Layout with Centered Logo) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-12 items-center h-24 sm:h-28 py-2">
+      {/* Main Navigation Bar (3-Column Layout with Perfectly Contained Centered Logo) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-2">
           
-          {/* LEFT COLUMN: Desktop Navigation Links & Mobile Menu Trigger */}
-          <div className="col-span-3 lg:col-span-4 flex items-center justify-start">
+          {/* LEFT COLUMN: Mobile Menu & Desktop Navigation Links */}
+          <div className="flex items-center justify-start flex-1">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -96,7 +96,7 @@ export default function Header() {
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            {/* Desktop Nav */}
+            {/* Desktop Nav Links */}
             <nav className="hidden lg:flex items-center space-x-6 font-medium text-xs uppercase tracking-wider text-stone-700">
               <button 
                 onClick={() => navigateTo('home')} 
@@ -131,8 +131,8 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* CENTER COLUMN: ENLARGED LOGO SHIFTED TO THE MIDDLE */}
-          <div className="col-span-6 lg:col-span-4 flex flex-col items-center justify-center text-center">
+          {/* CENTER COLUMN: PERFECTLY STRUCTURED CENTERED BRAND LOGO */}
+          <div className="flex flex-col items-center justify-center text-center px-2">
             <div 
               onClick={handleLogoClick} 
               className="cursor-pointer flex flex-col items-center group"
@@ -141,19 +141,19 @@ export default function Header() {
               <img 
                 src="/logo.png" 
                 alt="Ella Creations Monogram Logo" 
-                className="h-14 sm:h-20 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
+                className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
               />
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors -mt-1">
+              <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors leading-tight mt-0.5">
                 Ella Creations
               </span>
-              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.3em] text-brand-gold font-bold -mt-0.5">
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-brand-gold font-bold leading-none">
                 Artificial Jewelry India
               </span>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: User Actions (Search, Wishlist, Cart, Profile, Admin) */}
-          <div className="col-span-3 lg:col-span-4 flex items-center justify-end space-x-1 sm:space-x-3">
+          {/* RIGHT COLUMN: User Action Icons (Search, Wishlist, Cart Drawer, User Profile, Admin) */}
+          <div className="flex items-center justify-end space-x-1 sm:space-x-3 flex-1">
             
             {/* Live Search Trigger */}
             <button
