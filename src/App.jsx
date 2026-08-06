@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -6,6 +6,7 @@ import ProductQuickView from './components/ProductQuickView';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import AuthModal from './components/AuthModal';
+import SEOHead from './components/SEOHead';
 import HomeView from './views/HomeView';
 import ShopView from './views/ShopView';
 import ProductDetailView from './views/ProductDetailView';
@@ -13,36 +14,14 @@ import AdminView from './views/AdminView';
 import { Sparkles, AlertCircle, Info } from 'lucide-react';
 
 function AppContent() {
-  const { 
-    currentView, 
-    selectedProductId, 
-    products, 
-    toast, 
-    isAuthModalOpen, 
-    setIsAuthModalOpen 
-  } = useStore();
-
-  // Dynamic SEO Title Update per view
-  useEffect(() => {
-    if (currentView === 'home') {
-      document.title = 'Ella Creations | Contemporary Artificial Jewelry India';
-    } else if (currentView === 'shop') {
-      document.title = 'Shop Artificial Jewelry Catalog | Kundan & Rose Gold | Ella Creations';
-    } else if (currentView === 'product') {
-      const selectedProd = products.find(p => p.id === selectedProductId);
-      if (selectedProd) {
-        document.title = `${selectedProd.title} - Buy Online | Ella Creations`;
-      } else {
-        document.title = 'Jewelry Product Details | Ella Creations';
-      }
-    } else if (currentView === 'admin') {
-      document.title = 'Shopify Dashboard & Inventory | Ella Creations Admin';
-    }
-  }, [currentView, selectedProductId, products]);
+  const { currentView, toast, isAuthModalOpen, setIsAuthModalOpen } = useStore();
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-brand-cream text-brand-charcoal">
       
+      {/* Dynamic SEO Engine */}
+      <SEOHead />
+
       {/* Show Storefront Header on non-admin views */}
       {currentView !== 'admin' && <Header />}
 
