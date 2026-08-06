@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { supabase, uploadProductPhotoToSupabase } from '../lib/supabase';
+import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase } from '../lib/supabase';
 import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS } from '../data/initialData';
 
 const StoreContext = createContext();
@@ -13,46 +13,6 @@ export const formatPrice = (amount) => {
 };
 
 const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
-
-// Helper: Video file upload to Supabase Storage bucket 'product-videos'
-export async function uploadProductVideoToSupabase(fileOrDataUrl) {
-  try {
-    let fileToUpload;
-    let fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.mp4`;
-
-    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
-      const response = await fetch(fileOrDataUrl);
-      const blob = await response.blob();
-      fileToUpload = new File([blob], fileName, { type: blob.type || 'video/mp4' });
-    } else if (fileOrDataUrl instanceof File) {
-      fileToUpload = fileOrDataUrl;
-      fileName = `${Date.now()}_${fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    } else {
-      return fileOrDataUrl;
-    }
-
-    const { data, error } = await supabase.storage
-      .from('product-videos')
-      .upload(`catalog/${fileName}`, fileToUpload, {
-        cacheControl: '3600',
-        upsert: true
-      });
-
-    if (error) {
-      console.warn('Supabase video storage bucket notice (using data URL):', error.message);
-      return fileOrDataUrl;
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from('product-videos')
-      .getPublicUrl(`catalog/${fileName}`);
-
-    return publicUrlData.publicUrl || fileOrDataUrl;
-  } catch (err) {
-    console.error('Error uploading video to Supabase:', err);
-    return fileOrDataUrl;
-  }
-}
 
 export const StoreProvider = ({ children }) => {
   // Auth state
@@ -457,9 +417,9 @@ export const StoreProvider = ({ children }) => {
     return newOrder;
   };
 
-  // Admin Add Product (Uploads local images & videos to Supabase Storage & inserts to Supabase DB)
+  // Admin Add Product (Uploads local images & videos directly to Supabase Storage bucket 'products' & inserts to Supabase DB)
   const addProduct = async (newProduct) => {
-    showToast('Uploading media files to Supabase Storage...', 'info');
+    showToast('Uploading images & videos to Supabase bucket "products"...', 'info');
     
     const uploadedImages = await Promise.all(
       (newProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
@@ -520,11 +480,13 @@ export const StoreProvider = ({ children }) => {
     }
 
     setProducts((prev) => [created, ...prev]);
-    showToast(`Product "${created.title}" published & saved to Supabase!`);
+    showToast(`Product "${created.title}" published & images saved to Supabase bucket!`);
   };
 
   // Admin Update Product
   const updateProduct = async (updatedProduct) => {
+    showToast('Uploading updated images & videos to Supabase bucket "products"...', 'info');
+
     const uploadedImages = await Promise.all(
       (updatedProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
     );
