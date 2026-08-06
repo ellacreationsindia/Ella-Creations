@@ -44,13 +44,13 @@ export default function Header() {
     : [];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-brand-gold/20 shadow-sm transition-all">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-gold/20 shadow-sm transition-all">
       
       {/* Top Announcement Bar */}
-      <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-xs py-2 px-4 text-center tracking-widest font-medium flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin" style={{ animationDuration: '6s' }} />
-        <span>COMPLIMENTARY LUXURY GIFT BOX & EXPRESS SHIPPING ON ORDERS OVER ₹2,500 | CODE: <strong className="text-brand-gold">ELLA10</strong></span>
-        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin" style={{ animationDuration: '6s' }} />
+      <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-[11px] sm:text-xs py-2 px-3 text-center tracking-wider font-medium flex items-center justify-center gap-2">
+        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
+        <span>COMPLIMENTARY LUXURY GIFT BOX & EXPRESS SHIPPING OVER {formatPrice(2500)} | CODE: <strong className="text-brand-gold font-bold">ELLA10</strong></span>
+        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
       </div>
 
       {/* Main Navigation Bar */}
@@ -58,10 +58,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           
           {/* Mobile Menu Button */}
-          <div className="flex items-center sm:hidden">
+          <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-md text-brand-charcoal hover:text-brand-rose focus:outline-none"
+              className="p-2 rounded-md text-stone-800 hover:text-brand-rose focus:outline-none"
+              aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -75,19 +76,19 @@ export default function Header() {
             <img 
               src="/logo.png" 
               alt="Ella Creations Monogram Logo" 
-              className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
             />
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors">
+              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors">
                 Ella Creations
               </span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-brand-gold font-semibold -mt-1">
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-brand-gold font-semibold -mt-1">
                 Artificial Jewelry India
               </span>
             </div>
           </div>
 
-          {/* Desktop Links */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8 font-medium text-sm text-stone-700">
             <button 
               onClick={() => navigateTo('home')} 
@@ -122,13 +123,14 @@ export default function Header() {
           </nav>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             
             {/* Live Search Trigger */}
             <button
               onClick={() => setIsSearchOpen(true)}
               className="p-2 text-stone-700 hover:text-brand-rose transition-colors relative"
               title="Search Jewelry"
+              aria-label="Search Jewelry"
             >
               <Search className="w-5 h-5" />
             </button>
@@ -138,6 +140,7 @@ export default function Header() {
               onClick={() => navigateTo('shop')}
               className="p-2 text-stone-700 hover:text-brand-rose transition-colors relative"
               title="Wishlist"
+              aria-label="View Wishlist"
             >
               <Heart className="w-5 h-5" />
               {wishlist.length > 0 && (
@@ -152,6 +155,7 @@ export default function Header() {
               onClick={() => setIsCartOpen(true)}
               className="p-2 text-stone-700 hover:text-brand-rose transition-colors relative"
               title="View Cart"
+              aria-label="View Shopping Cart"
             >
               <ShoppingBag className="w-5 h-5" />
               {cartItemsCount > 0 && (
@@ -190,21 +194,22 @@ export default function Header() {
 
               {/* User Dropdown */}
               {isUserDropdownOpen && user && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 py-3 z-50">
+                <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-stone-200 py-3 z-50">
                   <div className="px-4 py-2 border-b border-stone-100">
                     <p className="text-xs font-bold text-stone-900 truncate">{user.user_metadata?.full_name || 'Customer'}</p>
                     <p className="text-[11px] text-stone-500 truncate">{user.email}</p>
-                    {user.email === 'ellacreationsindia@gmail.com' && (
+                    {isAdmin && (
                       <span className="mt-1 bg-brand-gold/20 text-brand-gold-dark border border-brand-gold/40 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                         <Crown className="w-3 h-3" /> VERIFIED ADMIN
                       </span>
                     )}
                   </div>
 
-                  {user.email === 'ellacreationsindia@gmail.com' && (
+                  {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
+                  {isAdmin && (
                     <button
                       onClick={() => { navigateTo('admin'); setIsUserDropdownOpen(false); }}
-                      className="w-full text-left px-4 py-2 text-xs font-bold text-brand-rose hover:bg-brand-cream flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-xs font-bold text-brand-rose hover:bg-brand-cream flex items-center gap-2"
                     >
                       <LayoutDashboard className="w-4 h-4" /> Open Admin Panel
                     </button>
@@ -220,19 +225,21 @@ export default function Header() {
               )}
             </div>
 
-            {/* Shopify-Inspired Admin Dashboard Switcher */}
-            <button
-              onClick={() => navigateTo('admin')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ${
-                currentView === 'admin'
-                  ? 'bg-brand-rose text-white shadow-soft-rose'
-                  : 'bg-brand-sand/80 text-brand-charcoal border border-brand-gold/40 hover:bg-brand-gold hover:text-white'
-              }`}
-              title="Switch to Admin Dashboard"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span className="hidden lg:inline">ADMIN PANEL</span>
-            </button>
+            {/* ADMIN PANEL HEADER BUTTON: STRICTLY RESTRICTED TO LOGGED IN ADMIN ONLY */}
+            {isAdmin && (
+              <button
+                onClick={() => navigateTo('admin')}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ${
+                  currentView === 'admin'
+                    ? 'bg-brand-rose text-white shadow-soft-rose'
+                    : 'bg-brand-gold text-stone-900 shadow-gold-glow hover:bg-stone-900 hover:text-white'
+                }`}
+                title="Admin Panel (Authorized)"
+              >
+                <Crown className="w-4 h-4 text-amber-900" />
+                <span className="hidden sm:inline">ADMIN PANEL</span>
+              </button>
+            )}
 
           </div>
         </div>
@@ -243,25 +250,38 @@ export default function Header() {
         <div className="md:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 space-y-3">
           <button
             onClick={() => { navigateTo('home'); setIsMobileMenuOpen(false); }}
-            className="block w-full text-left font-medium text-stone-800 py-2 border-b border-stone-100"
+            className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Home Page
           </button>
           <button
             onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
-            className="block w-full text-left font-medium text-stone-800 py-2 border-b border-stone-100"
+            className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
-            Shop All Jewelry
+            Shop All Jewelry Catalog
           </button>
-          <button
-            onClick={() => { navigateTo('admin'); setIsMobileMenuOpen(false); }}
-            className="block w-full text-left font-medium text-brand-rose py-2 flex items-center justify-between"
-          >
-            <span className="flex items-center gap-2">
-              <LayoutDashboard className="w-4 h-4" /> Admin Dashboard
-            </span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+
+          {!user && (
+            <button
+              onClick={() => { setIsAuthModalOpen(true); setIsMobileMenuOpen(false); }}
+              className="block w-full text-left font-semibold text-brand-rose py-2.5 border-b border-stone-100"
+            >
+              Sign In / Register
+            </button>
+          )}
+
+          {/* ADMIN LINK IN MOBILE MENU: ONLY VISIBLE IF ADMIN LOGGED IN */}
+          {isAdmin && (
+            <button
+              onClick={() => { navigateTo('admin'); setIsMobileMenuOpen(false); }}
+              className="block w-full text-left font-bold text-brand-gold py-2.5 flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Crown className="w-4 h-4" /> Admin Dashboard Access
+              </span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
       )}
 

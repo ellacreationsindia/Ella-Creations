@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -13,7 +13,32 @@ import AdminView from './views/AdminView';
 import { Sparkles, AlertCircle, Info } from 'lucide-react';
 
 function AppContent() {
-  const { currentView, toast, isAuthModalOpen, setIsAuthModalOpen } = useStore();
+  const { 
+    currentView, 
+    selectedProductId, 
+    products, 
+    toast, 
+    isAuthModalOpen, 
+    setIsAuthModalOpen 
+  } = useStore();
+
+  // Dynamic SEO Title Update per view
+  useEffect(() => {
+    if (currentView === 'home') {
+      document.title = 'Ella Creations | Contemporary Artificial Jewelry India';
+    } else if (currentView === 'shop') {
+      document.title = 'Shop Artificial Jewelry Catalog | Kundan & Rose Gold | Ella Creations';
+    } else if (currentView === 'product') {
+      const selectedProd = products.find(p => p.id === selectedProductId);
+      if (selectedProd) {
+        document.title = `${selectedProd.title} - Buy Online | Ella Creations`;
+      } else {
+        document.title = 'Jewelry Product Details | Ella Creations';
+      }
+    } else if (currentView === 'admin') {
+      document.title = 'Shopify Dashboard & Inventory | Ella Creations Admin';
+    }
+  }, [currentView, selectedProductId, products]);
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-brand-cream text-brand-charcoal">

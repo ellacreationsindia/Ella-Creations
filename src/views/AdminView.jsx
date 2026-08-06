@@ -27,7 +27,9 @@ import {
   KeyRound,
   Award,
   Scale,
-  Ruler
+  Ruler,
+  Menu,
+  LogIn
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -52,8 +54,7 @@ export default function AdminView() {
     isAdmin,
     ADMIN_EMAIL,
     signInWithGoogle,
-    setIsAuthModalOpen,
-    demoAdminOverride,
+    signInWithEmail,
     setDemoAdminOverride,
     addProduct, 
     updateProduct, 
@@ -65,6 +66,13 @@ export default function AdminView() {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews'
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Admin Barrier Inline Auth State
+  const [adminEmailInput, setAdminEmailInput] = useState(ADMIN_EMAIL);
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [adminAuthError, setAdminAuthError] = useState('');
+  const [adminLoading, setAdminLoading] = useState(false);
 
   // Filter states in admin
   const [productSearch, setProductSearch] = useState('');
@@ -91,11 +99,26 @@ export default function AdminView() {
     images: [] // Base64 data URIs or Supabase Storage image URLs
   });
 
+  const handleInlineAdminLogin = async (e) => {
+    e.preventDefault();
+    setAdminAuthError('');
+    setAdminLoading(true);
+    try {
+      const { error } = await signInWithEmail(adminEmailInput, adminPasswordInput);
+      if (error) throw error;
+      setDemoAdminOverride(true);
+    } catch (err) {
+      setAdminAuthError(err.message || 'Invalid admin credentials.');
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   // 🔒 STRICT SECURITY ACCESS LOCK: ONLY ellacreationsindia@gmail.com
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-stone-950 text-white flex items-center justify-center p-6 font-sans">
-        <div className="max-w-md w-full bg-stone-900 border border-brand-gold/30 rounded-3xl p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
+      <div className="min-h-screen bg-stone-950 text-white flex items-center justify-center p-4 sm:p-6 font-sans">
+        <div className="max-w-md w-full bg-stone-900 border border-brand-gold/30 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
           
           <div className="w-16 h-16 rounded-full bg-rose-950/80 border border-rose-600/50 text-rose-500 mx-auto flex items-center justify-center animate-pulse">
             <Lock className="w-8 h-8" />
@@ -107,7 +130,7 @@ export default function AdminView() {
             </span>
             <h2 className="font-serif text-2xl font-bold text-white">Admin Access Restricted</h2>
             <p className="text-xs text-stone-400 leading-relaxed">
-              The Ella Creations Shopify Admin Panel is strictly locked to authorized administrator accounts.
+              The Ella Creations Admin Panel is strictly locked to authorized administrator accounts.
             </p>
           </div>
 
@@ -125,15 +148,53 @@ export default function AdminView() {
               </p>
             ) : (
               <p className="text-[11px] text-stone-500 pt-1 border-t border-stone-800">
-                Status: Not signed in.
+                Status: Unauthenticated.
               </p>
             )}
           </div>
 
+          {adminAuthError && (
+            <div className="p-3 bg-rose-950/80 border border-rose-800 text-rose-300 text-xs rounded-xl">
+              {adminAuthError}
+            </div>
+          )}
+
+          {/* Inline Admin Login Form */}
+          <form onSubmit={handleInlineAdminLogin} className="space-y-3 text-left">
+            <div>
+              <label className="block text-[11px] font-semibold text-stone-400 mb-1">Admin Email</label>
+              <input
+                type="email"
+                required
+                value={adminEmailInput}
+                onChange={(e) => setAdminEmailInput(e.target.value)}
+                className="w-full text-xs px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-stone-400 mb-1">Admin Password</label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={adminPasswordInput}
+                onChange={(e) => setAdminPasswordInput(e.target.value)}
+                className="w-full text-xs px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={adminLoading}
+              className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              <LogIn className="w-4 h-4" /> Authenticate Admin Account
+            </button>
+          </form>
+
           <div className="space-y-3 pt-2">
             <button
               onClick={() => signInWithGoogle()}
-              className="w-full bg-white hover:bg-stone-100 text-stone-900 font-semibold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-3 shadow-md transition-colors"
+              className="w-full bg-white hover:bg-stone-100 text-stone-900 font-semibold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-3 shadow-md transition-colors"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -149,12 +210,12 @@ export default function AdminView() {
               onClick={() => setDemoAdminOverride(true)}
               className="w-full bg-stone-800 hover:bg-stone-700 text-brand-gold text-xs font-semibold py-2.5 rounded-xl border border-brand-gold/30 transition-colors flex items-center justify-center gap-2"
             >
-              <Crown className="w-4 h-4" /> Demo Override Access (For Review & Testing)
+              <Crown className="w-4 h-4" /> Demo Override Access (Review & Testing)
             </button>
 
             <button
               onClick={() => navigateTo('home')}
-              className="block w-full text-center text-xs text-stone-500 hover:text-white pt-2"
+              className="block w-full text-center text-xs text-stone-500 hover:text-white pt-1"
             >
               Return to Public Storefront
             </button>
@@ -300,36 +361,41 @@ export default function AdminView() {
     <div className="min-h-screen bg-stone-900 text-stone-100 flex flex-col font-sans">
       
       {/* Top Shopify Admin Header Bar */}
-      <header className="bg-stone-950 border-b border-stone-800 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="h-8 w-auto filter drop-shadow" />
-            <span className="font-serif text-xl font-bold text-white tracking-wider">Ella Creations Admin</span>
-          </div>
-          <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full flex items-center gap-1">
-            <Crown className="w-3 h-3 text-brand-gold" /> Locked: {ADMIN_EMAIL}
+      <header className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            className="md:hidden text-stone-400 hover:text-white p-1"
+          >
+            {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+          <img src="/logo.png" alt="Logo" className="h-8 w-auto filter drop-shadow" />
+          <span className="font-serif text-lg sm:text-xl font-bold text-white tracking-wider">Ella Admin</span>
+          <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
+            <Crown className="w-3 h-3" /> {ADMIN_EMAIL}
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => navigateTo('home')}
-            className="flex items-center gap-2 text-xs font-semibold text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 px-4 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 px-3 py-2 rounded-xl transition-colors"
           >
-            <Store className="w-4 h-4 text-brand-gold" /> Return to Storefront
+            <Store className="w-4 h-4 text-brand-gold" />
+            <span className="hidden sm:inline">Storefront</span>
           </button>
         </div>
       </header>
 
       {/* Main Admin Body Grid */}
-      <div className="flex-1 flex flex-col md:flex-row">
+      <div className="flex-1 flex flex-col md:flex-row relative">
         
-        {/* Shopify Sidebar Navigation */}
-        <aside className="w-full md:w-64 bg-stone-950 border-r border-stone-800 p-4 space-y-2">
+        {/* Shopify Sidebar Navigation (Mobile Responsive Drawer) */}
+        <aside className={`w-full md:w-64 bg-stone-950 border-r border-stone-800 p-4 space-y-2 ${isMobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
           <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-widest px-3 mb-2">Main Navigation</div>
           
           <button
-            onClick={() => setActiveTab('overview')}
+            onClick={() => { setActiveTab('overview'); setIsMobileSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
               activeTab === 'overview' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
             }`}
@@ -338,7 +404,7 @@ export default function AdminView() {
           </button>
 
           <button
-            onClick={() => setActiveTab('products')}
+            onClick={() => { setActiveTab('products'); setIsMobileSidebarOpen(false); }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
               activeTab === 'products' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
             }`}
@@ -350,7 +416,7 @@ export default function AdminView() {
           </button>
 
           <button
-            onClick={() => setActiveTab('orders')}
+            onClick={() => { setActiveTab('orders'); setIsMobileSidebarOpen(false); }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
               activeTab === 'orders' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
             }`}
@@ -362,7 +428,7 @@ export default function AdminView() {
           </button>
 
           <button
-            onClick={() => setActiveTab('reviews')}
+            onClick={() => { setActiveTab('reviews'); setIsMobileSidebarOpen(false); }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
               activeTab === 'reviews' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
             }`}
@@ -375,7 +441,7 @@ export default function AdminView() {
         </aside>
 
         {/* Dashboard Content Region */}
-        <main className="flex-1 p-6 md:p-8 space-y-8 overflow-y-auto max-h-[calc(100vh-64px)]">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-8 overflow-y-auto max-h-[calc(100vh-64px)]">
           
           {/* TAB 1: OVERVIEW ANALYTICS */}
           {activeTab === 'overview' && (
@@ -388,7 +454,7 @@ export default function AdminView() {
               </div>
 
               {/* Top KPI Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-2">
                   <div className="flex justify-between items-center text-stone-400 text-xs font-medium">
                     <span>Total Revenue</span>
@@ -433,10 +499,10 @@ export default function AdminView() {
               </div>
 
               {/* Sales Chart Section */}
-              <div className="bg-stone-950 p-6 rounded-2xl border border-stone-800 space-y-4">
+              <div className="bg-stone-950 p-4 sm:p-6 rounded-2xl border border-stone-800 space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="font-serif text-lg font-bold text-white">Weekly Revenue Performance (₹)</h3>
-                  <span className="text-xs text-stone-400">Revenue in Indian Rupee over time</span>
+                  <span className="text-xs text-stone-400">Revenue in Indian Rupee</span>
                 </div>
                 <div className="h-72 w-full pt-4">
                   <ResponsiveContainer width="100%" height="100%">
@@ -461,7 +527,7 @@ export default function AdminView() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* Low Stock Alerts */}
-                <div className="bg-stone-950 p-6 rounded-2xl border border-stone-800 space-y-4">
+                <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-amber-500" /> Low Stock Alerts
@@ -475,11 +541,11 @@ export default function AdminView() {
                         <div className="flex items-center gap-3">
                           <img src={p.images[0]} alt={p.title} className="w-10 h-10 object-cover rounded-lg" />
                           <div>
-                            <h4 className="text-xs font-semibold text-white">{p.title}</h4>
+                            <h4 className="text-xs font-semibold text-white line-clamp-1">{p.title}</h4>
                             <span className="text-[11px] text-stone-400">SKU: {p.sku}</span>
                           </div>
                         </div>
-                        <span className="text-xs font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2.5 py-1 rounded-full flex-shrink-0">
                           Only {p.stock} left
                         </span>
                       </div>
@@ -488,7 +554,7 @@ export default function AdminView() {
                 </div>
 
                 {/* Recent Orders Overview */}
-                <div className="bg-stone-950 p-6 rounded-2xl border border-stone-800 space-y-4">
+                <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
                       <Clock className="w-4 h-4 text-brand-gold" /> Recent Orders Activity
@@ -555,9 +621,9 @@ export default function AdminView() {
                 <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
               </div>
 
-              {/* Products Table */}
-              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-stone-300">
+              {/* Products Table (Wrapped in overflow-x-auto for Mobile) */}
+              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
                   <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="p-4">Product</th>
@@ -573,7 +639,7 @@ export default function AdminView() {
                     {filteredProducts.map((p) => (
                       <tr key={p.id} className="hover:bg-stone-900/50 transition-colors">
                         <td className="p-4 flex items-center gap-3">
-                          <img src={p.images[0]} alt={p.title} className="w-12 h-12 object-cover rounded-lg border border-stone-700" />
+                          <img src={p.images[0]} alt={p.title} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
                           <div>
                             <span className="font-semibold text-white block">{p.title}</span>
                             <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType}</span>
@@ -628,7 +694,7 @@ export default function AdminView() {
                   <p className="text-xs text-stone-400">Track status, customer addresses, and order dispatch workflow.</p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {['All', 'Processing', 'Shipped', 'Delivered'].map((st) => (
                     <button
                       key={st}
@@ -643,9 +709,9 @@ export default function AdminView() {
                 </div>
               </div>
 
-              {/* Orders Table */}
-              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-stone-300">
+              {/* Orders Table (Wrapped in overflow-x-auto) */}
+              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                <table className="w-full text-left text-xs text-stone-300 min-w-[700px]">
                   <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="p-4">Order ID</th>
