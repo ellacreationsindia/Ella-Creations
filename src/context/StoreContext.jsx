@@ -8,15 +8,56 @@ const StoreContext = createContext();
 export const useStore = () => useContext(StoreContext);
 
 export const formatPrice = (amount) => {
-  if (typeof amount !== 'number') return '₹0';
+  if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) return '₹0';
   return `₹${amount.toLocaleString('en-IN')}`;
 };
+
+// Helper: Video file upload to Supabase Storage bucket 'product-videos'
+export async function uploadProductVideoToSupabase(fileOrDataUrl) {
+  try {
+    let fileToUpload;
+    let fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.mp4`;
+
+    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
+      const response = await fetch(fileOrDataUrl);
+      const blob = await response.blob();
+      fileToUpload = new File([blob], fileName, { type: blob.type || 'video/mp4' });
+    } else if (fileOrDataUrl instanceof File) {
+      fileToUpload = fileOrDataUrl;
+      fileName = `${Date.now()}_${fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    } else {
+      return fileOrDataUrl;
+    }
+
+    const { data, error } = await supabase.storage
+      .from('product-videos')
+      .upload(`catalog/${fileName}`, fileToUpload, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    if (error) {
+      console.warn('Supabase video storage bucket notice (using data URL):', error.message);
+      return fileOrDataUrl;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('product-videos')
+      .getPublicUrl(`catalog/${fileName}`);
+
+    return publicUrlData.publicUrl || fileOrDataUrl;
+  } catch (err) {
+    console.error('Error uploading video to Supabase:', err);
+    return fileOrDataUrl;
+  }
+}
 
 export const StoreProvider = ({ children }) => {
   // Auth state
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isSecretAdminModalOpen, setIsSecretAdminModalOpen] = useState(false);
   const [demoAdminOverride, setDemoAdminOverride] = useState(false);
 
   // Products, Orders, Reviews
@@ -36,7 +77,7 @@ export const StoreProvider = ({ children }) => {
 
   // UI state
   const [currentView, setCurrentView] = useState('home');
-  const [selectedProductId, setSelectedProductId] = useState('ec-101');
+  const [selectedProductId, setSelectedProductId] = useState('');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -70,23 +111,24 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('products').select('*');
       if (error) throw error;
-      if (data && data.length > 0) {
-        // Map database columns to app structure
+      if (data) {
         const mapped = data.map((p) => ({
           id: p.id,
           title: p.title,
           category: p.category,
-          price: Number(p.price),
+          price: Number(p.price || 0),
           comparePrice: p.compare_price ? Number(p.compare_price) : null,
+          taxPercent: Number(p.tax_percent || 18),
           rating: Number(p.rating || 5.0),
           reviewsCount: p.reviews_count || 0,
-          stock: p.stock ?? 10,
+          stock: p.price <= 0 ? 0 : (p.stock ?? 0),
           sku: p.sku,
           isFeatured: p.is_featured,
           isNew: p.is_new,
           finishOptions: p.finish_options || ['Rose Gold', 'Gold'],
           stoneType: p.stone_type || 'Cubic Zirconia (CZ)',
           images: p.images || [],
+          videos: p.videos || [],
           description: p.description,
           details: p.details || [],
           care: p.care,
@@ -96,12 +138,16 @@ export const StoreProvider = ({ children }) => {
           gemstoneClarity: p.gemstone_clarity,
           platingThickness: p.plating_thickness,
           occasionTags: p.occasion_tags || [],
-          warrantyInfo: p.warranty_info
+          warrantyInfo: p.warranty_info,
+          customSpecs: p.custom_specs || []
         }));
         setProducts(mapped);
+        if (mapped.length > 0 && !selectedProductId) {
+          setSelectedProductId(mapped[0].id);
+        }
       }
     } catch (err) {
-      console.warn('Supabase DB products fetch notice (using initial data):', err.message);
+      console.warn('Supabase DB products fetch notice:', err.message);
     }
   };
 
@@ -109,7 +155,7 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
       if (error) throw error;
-      if (data && data.length > 0) {
+      if (data) {
         setOrders(data);
       }
     } catch (err) {
@@ -121,7 +167,7 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
       if (error) throw error;
-      if (data && data.length > 0) {
+      if (data) {
         const mapped = data.map((r) => ({
           id: r.id,
           productId: r.product_id,
@@ -151,7 +197,7 @@ export const StoreProvider = ({ children }) => {
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
+    setTimeout(() => setToast(null), 4000);
   };
 
   const navigateTo = (view, productId = null) => {
@@ -162,18 +208,27 @@ export const StoreProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Check Admin Privilege: Strictly restricted to ellacreationsindia@gmail.com
+  // Check Admin Privilege: Restricted exclusively to ellacreationsindia@gmail.com
   const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
   const isAdmin = (user && user.email === ADMIN_EMAIL) || demoAdminOverride;
 
   // Supabase Auth Actions
   const signInWithGoogle = async () => {
-    return await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin
+    try {
+      const res = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (res.error) {
+        showToast('Google Auth setup required in Supabase Dashboard (Auth -> Providers -> Google)', 'error');
       }
-    });
+      return res;
+    } catch (err) {
+      showToast('To enable Google Auth: Open Supabase Dashboard -> Authentication -> Providers -> Google -> Enable & paste credentials.', 'info');
+      return { error: err };
+    }
   };
 
   const signInWithEmail = async (email, password) => {
@@ -202,6 +257,12 @@ export const StoreProvider = ({ children }) => {
 
   // Cart operations
   const addToCart = (product, quantity = 1, finish = null) => {
+    // Check if price zero or out of stock
+    if (product.price <= 0 || product.stock <= 0) {
+      showToast(`" ${product.title}" is currently out of stock`, 'error');
+      return;
+    }
+
     const selectedFinish = finish || (product.finishOptions ? product.finishOptions[0] : 'Standard');
     
     setCart((prevCart) => {
@@ -220,6 +281,7 @@ export const StoreProvider = ({ children }) => {
             id: product.id,
             title: product.title,
             price: product.price,
+            taxPercent: product.taxPercent || 18,
             image: product.images[0],
             finish: selectedFinish,
             qty: quantity,
@@ -293,6 +355,7 @@ export const StoreProvider = ({ children }) => {
   // Submit Order (Inserts into Supabase DB `orders` table)
   const submitOrder = async (customerDetails, paymentMethod) => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const taxAmount = (subtotal * 18) / 100; // 18% GST calculation
     const discountAmount = activeCoupon ? (subtotal * activeCoupon.discountPercent) / 100 : 0;
     const shipping = subtotal >= 2500 ? 0 : 199;
     const total = subtotal - discountAmount + shipping;
@@ -303,6 +366,7 @@ export const StoreProvider = ({ children }) => {
       customer: customerDetails,
       items: [...cart],
       subtotal: parseFloat(subtotal.toFixed(2)),
+      tax_amount: parseFloat(taxAmount.toFixed(2)),
       discount: parseFloat(discountAmount.toFixed(2)),
       shipping: parseFloat(shipping.toFixed(2)),
       total: parseFloat(total.toFixed(2)),
@@ -316,7 +380,8 @@ export const StoreProvider = ({ children }) => {
       prevProducts.map((p) => {
         const itemInCart = cart.find((c) => c.id === p.id);
         if (itemInCart) {
-          return { ...p, stock: Math.max(0, p.stock - itemInCart.qty) };
+          const rem = Math.max(0, p.stock - itemInCart.qty);
+          return { ...p, stock: rem };
         }
         return p;
       })
@@ -342,27 +407,34 @@ export const StoreProvider = ({ children }) => {
     return newOrder;
   };
 
-  // Admin Add Product (Uploads local images to Supabase Storage & inserts to Supabase DB)
+  // Admin Add Product (Uploads local images & videos to Supabase Storage & inserts to Supabase DB)
   const addProduct = async (newProduct) => {
-    showToast('Uploading product photos to Supabase...', 'info');
+    showToast('Uploading media files to Supabase Storage...', 'info');
     
-    // Upload photos to Supabase storage
     const uploadedImages = await Promise.all(
       (newProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
+    );
+
+    const uploadedVideos = await Promise.all(
+      (newProduct.videos || []).map((vid) => uploadProductVideoToSupabase(vid))
     );
 
     const created = {
       ...newProduct,
       id: `ec-${Date.now()}`,
-      sku: newProduct.sku || `EC-CUSTOM-${Math.floor(100 + Math.random() * 900)}`,
+      sku: newProduct.sku || `EC-NK-${Math.floor(100 + Math.random() * 900)}`,
       rating: 5.0,
       reviewsCount: 0,
+      price: Number(newProduct.price || 0),
+      stock: newProduct.price <= 0 ? 0 : Number(newProduct.stock || 10),
+      taxPercent: Number(newProduct.taxPercent || 18),
       isFeatured: newProduct.isFeatured || false,
       isNew: true,
-      images: uploadedImages
+      images: uploadedImages,
+      videos: uploadedVideos,
+      customSpecs: newProduct.customSpecs || []
     };
 
-    // Insert into Supabase DB table
     try {
       await supabase.from('products').insert([{
         id: created.id,
@@ -370,6 +442,7 @@ export const StoreProvider = ({ children }) => {
         category: created.category,
         price: created.price,
         compare_price: created.comparePrice,
+        tax_percent: created.taxPercent,
         rating: created.rating,
         reviews_count: created.reviewsCount,
         stock: created.stock,
@@ -379,6 +452,7 @@ export const StoreProvider = ({ children }) => {
         finish_options: created.finishOptions,
         stone_type: created.stoneType,
         images: created.images,
+        videos: created.videos,
         description: created.description,
         details: created.details,
         care: created.care,
@@ -388,7 +462,8 @@ export const StoreProvider = ({ children }) => {
         gemstone_clarity: created.gemstoneClarity,
         plating_thickness: created.platingThickness,
         occasion_tags: created.occasionTags,
-        warranty_info: created.warrantyInfo
+        warranty_info: created.warrantyInfo,
+        custom_specs: created.customSpecs
       }]);
     } catch (err) {
       console.warn('Supabase DB product insert notice:', err.message);
@@ -404,7 +479,18 @@ export const StoreProvider = ({ children }) => {
       (updatedProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
     );
 
-    const payload = { ...updatedProduct, images: uploadedImages };
+    const uploadedVideos = await Promise.all(
+      (updatedProduct.videos || []).map((vid) => uploadProductVideoToSupabase(vid))
+    );
+
+    const payload = { 
+      ...updatedProduct, 
+      price: Number(updatedProduct.price || 0),
+      stock: updatedProduct.price <= 0 ? 0 : Number(updatedProduct.stock || 0),
+      images: uploadedImages, 
+      videos: uploadedVideos,
+      customSpecs: updatedProduct.customSpecs || []
+    };
 
     try {
       await supabase.from('products').update({
@@ -412,10 +498,12 @@ export const StoreProvider = ({ children }) => {
         category: payload.category,
         price: payload.price,
         compare_price: payload.comparePrice,
+        tax_percent: payload.taxPercent || 18,
         stock: payload.stock,
         stone_type: payload.stoneType,
         finish_options: payload.finishOptions,
         images: payload.images,
+        videos: payload.videos,
         description: payload.description,
         weight_grams: payload.weightGrams,
         dimensions: payload.dimensions,
@@ -423,7 +511,8 @@ export const StoreProvider = ({ children }) => {
         gemstone_clarity: payload.gemstoneClarity,
         plating_thickness: payload.platingThickness,
         occasion_tags: payload.occasionTags,
-        warranty_info: payload.warrantyInfo
+        warranty_info: payload.warrantyInfo,
+        custom_specs: payload.customSpecs
       }).eq('id', payload.id);
     } catch (err) {
       console.warn('Supabase DB product update notice:', err.message);
@@ -521,6 +610,7 @@ export const StoreProvider = ({ children }) => {
         isAdmin,
         ADMIN_EMAIL,
         isAuthModalOpen,
+        isSecretAdminModalOpen,
         demoAdminOverride,
         products,
         cart,
@@ -538,6 +628,7 @@ export const StoreProvider = ({ children }) => {
         cartItemsCount,
         cartSubtotal,
         setIsAuthModalOpen,
+        setIsSecretAdminModalOpen,
         setDemoAdminOverride,
         setSearchQuery,
         setQuickViewProduct,

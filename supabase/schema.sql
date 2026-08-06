@@ -1,6 +1,5 @@
--- Ella Creations Database Schema for Supabase PostgreSQL
+-- Ella Creations Database Schema for Supabase PostgreSQL (Launch Ready)
 
--- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. PRODUCTS TABLE
@@ -8,8 +7,9 @@ CREATE TABLE IF NOT EXISTS public.products (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   category TEXT NOT NULL,
-  price NUMERIC NOT NULL,
+  price NUMERIC NOT NULL DEFAULT 0,
   compare_price NUMERIC,
+  tax_percent NUMERIC DEFAULT 18,
   rating NUMERIC DEFAULT 5.0,
   reviews_count INTEGER DEFAULT 0,
   stock INTEGER DEFAULT 10,
@@ -19,10 +19,10 @@ CREATE TABLE IF NOT EXISTS public.products (
   finish_options JSONB DEFAULT '["Rose Gold", "Gold"]',
   stone_type TEXT DEFAULT 'Cubic Zirconia (CZ)',
   images JSONB NOT NULL,
+  videos JSONB DEFAULT '[]',
   description TEXT,
   details JSONB,
   care TEXT,
-  -- Enhanced Specifications
   weight_grams TEXT,
   dimensions TEXT,
   metal_purity TEXT,
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   plating_thickness TEXT,
   occasion_tags JSONB,
   warranty_info TEXT,
+  custom_specs JSONB DEFAULT '[]',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   customer JSONB NOT NULL,
   items JSONB NOT NULL,
   subtotal NUMERIC NOT NULL,
+  tax_amount NUMERIC DEFAULT 0,
   discount NUMERIC DEFAULT 0,
   shipping NUMERIC DEFAULT 0,
   total NUMERIC NOT NULL,
@@ -73,7 +75,7 @@ CREATE TABLE IF NOT EXISTS public.coupons (
   active BOOLEAN DEFAULT true
 );
 
--- RLS POLICIES (ENABLE PUBLIC READ, ADMIN ALL)
+-- RLS POLICIES
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
@@ -89,5 +91,4 @@ CREATE POLICY "Allow public insert orders" ON public.orders FOR INSERT WITH CHEC
 CREATE POLICY "Allow public read orders" ON public.orders FOR SELECT USING (true);
 CREATE POLICY "Allow admin update orders" ON public.orders FOR UPDATE USING (true);
 
--- STORAGE BUCKET CONFIGURATION FOR ADMIN PHOTO UPLOADS
--- Note: Create a public bucket named 'product-images' in Supabase Dashboard -> Storage
+-- STORAGE BUCKETS: Create public buckets 'product-images' and 'product-videos' in Supabase Dashboard

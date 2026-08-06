@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   ShoppingBag, 
   Heart, 
@@ -28,12 +28,41 @@ export default function Header() {
     user,
     isAdmin,
     setIsAuthModalOpen,
-    signOutUser
+    setIsSecretAdminModalOpen,
+    signOutUser,
+    showToast
   } = useStore();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
+  // Hidden 4-Click Logo Listener State
+  const logoClickCountRef = useRef(0);
+  const logoClickTimerRef = useRef(null);
+
+  const handleLogoClick = () => {
+    logoClickCountRef.current += 1;
+
+    if (logoClickTimerRef.current) {
+      clearTimeout(logoClickTimerRef.current);
+    }
+
+    if (logoClickCountRef.current >= 4) {
+      logoClickCountRef.current = 0;
+      showToast('🔒 Hidden Admin Security Trigger Activated!', 'info');
+      setIsSecretAdminModalOpen(true);
+      navigateTo('admin');
+      return;
+    }
+
+    logoClickTimerRef.current = setTimeout(() => {
+      logoClickCountRef.current = 0;
+    }, 2000);
+
+    // Standard logo action: Go to Home
+    navigateTo('home');
+  };
 
   const searchResults = searchQuery.trim() 
     ? products.filter(p => 
@@ -55,7 +84,7 @@ export default function Header() {
 
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 sm:h-24">
           
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
@@ -68,18 +97,19 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Brand Logo & Title */}
+          {/* Enlarged Brand Logo & Title with 4-Click Hidden Admin Trigger */}
           <div 
-            onClick={() => navigateTo('home')} 
-            className="cursor-pointer flex items-center gap-3 group"
+            onClick={handleLogoClick} 
+            className="cursor-pointer flex items-center gap-3.5 group py-1"
+            title="Ella Creations Monogram (Click 4 times continuously to open Admin Portal)"
           >
             <img 
               src="/logo.png" 
               alt="Ella Creations Monogram Logo" 
-              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
+              className="h-12 sm:h-16 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
             />
             <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors">
+              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors">
                 Ella Creations
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-brand-gold font-semibold -mt-1">
@@ -205,7 +235,6 @@ export default function Header() {
                     )}
                   </div>
 
-                  {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
                   {isAdmin && (
                     <button
                       onClick={() => { navigateTo('admin'); setIsUserDropdownOpen(false); }}
@@ -225,7 +254,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* ADMIN PANEL HEADER BUTTON: STRICTLY RESTRICTED TO LOGGED IN ADMIN ONLY */}
+            {/* ADMIN PANEL HEADER BUTTON: VISIBLE ONLY FOR LOGGED IN ADMIN */}
             {isAdmin && (
               <button
                 onClick={() => navigateTo('admin')}
@@ -270,7 +299,6 @@ export default function Header() {
             </button>
           )}
 
-          {/* ADMIN LINK IN MOBILE MENU: ONLY VISIBLE IF ADMIN LOGGED IN */}
           {isAdmin && (
             <button
               onClick={() => { navigateTo('admin'); setIsMobileMenuOpen(false); }}

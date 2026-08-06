@@ -9,7 +9,8 @@ export default function ShopView() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedFinish, setSelectedFinish] = useState('All');
   const [selectedStone, setSelectedStone] = useState('All');
-  const [maxPrice, setMaxPrice] = useState(30000);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(50000);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc' | 'rating'
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
@@ -20,8 +21,8 @@ export default function ShopView() {
     if (selectedCategory !== 'All' && p.category !== selectedCategory) return false;
     if (selectedFinish !== 'All' && (!p.finishOptions || !p.finishOptions.includes(selectedFinish))) return false;
     if (selectedStone !== 'All' && !p.stoneType.toLowerCase().includes(selectedStone.toLowerCase())) return false;
-    if (p.price > maxPrice) return false;
-    if (inStockOnly && p.stock <= 0) return false;
+    if (p.price < minPrice || p.price > maxPrice) return false;
+    if (inStockOnly && (p.price <= 0 || p.stock <= 0)) return false;
     if (shopSearch.trim() && !p.title.toLowerCase().includes(shopSearch.toLowerCase())) return false;
     return true;
   });
@@ -39,7 +40,8 @@ export default function ShopView() {
     setSelectedCategory('All');
     setSelectedFinish('All');
     setSelectedStone('All');
-    setMaxPrice(30000);
+    setMinPrice(0);
+    setMaxPrice(50000);
     setInStockOnly(false);
     setShopSearch('');
     setSortBy('featured');
@@ -135,21 +137,40 @@ export default function ShopView() {
             </div>
           </div>
 
-          {/* Price Range Slider */}
-          <div>
-            <div className="flex justify-between items-center text-xs font-semibold text-stone-800 mb-2">
-              <span className="uppercase tracking-wider">Max Price:</span>
-              <span className="text-brand-rose">{formatPrice(maxPrice)}</span>
+          {/* Dual Price Range Sliders (Minimum & Maximum) */}
+          <div className="space-y-3 pt-1 border-t border-stone-100">
+            <div className="flex justify-between items-center text-xs font-semibold text-stone-800">
+              <span className="uppercase tracking-wider">Price Range:</span>
+              <span className="text-brand-rose font-bold">{formatPrice(minPrice)} - {formatPrice(maxPrice)}</span>
             </div>
-            <input
-              type="range"
-              min="1000"
-              max="30000"
-              step="500"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-full accent-brand-rose cursor-pointer"
-            />
+            
+            <div className="space-y-2">
+              <div>
+                <label className="block text-[10px] text-stone-500 font-semibold mb-0.5">Minimum Price: {formatPrice(minPrice)}</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="45000"
+                  step="500"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(Math.min(Number(e.target.value), maxPrice - 500))}
+                  className="w-full accent-brand-rose cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-stone-500 font-semibold mb-0.5">Maximum Price: {formatPrice(maxPrice)}</label>
+                <input
+                  type="range"
+                  min="500"
+                  max="50000"
+                  step="500"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice + 500))}
+                  className="w-full accent-brand-rose cursor-pointer"
+                />
+              </div>
+            </div>
           </div>
 
           {/* In Stock Toggle */}
@@ -218,7 +239,7 @@ export default function ShopView() {
               </div>
               <h3 className="font-serif text-xl font-bold text-stone-800">No matching jewelry found</h3>
               <p className="text-xs text-stone-500 max-w-sm mx-auto">
-                Try adjusting your filter options or clear search query to view all available pieces.
+                Try adjusting your price range or filter options to view available pieces.
               </p>
               <button
                 onClick={resetFilters}

@@ -10,6 +10,7 @@ import {
   Edit, 
   Trash2, 
   Upload, 
+  Video, 
   CheckCircle2, 
   Clock, 
   X, 
@@ -29,21 +30,12 @@ import {
   Scale,
   Ruler,
   Menu,
-  LogIn
+  LogIn,
+  Percent,
+  PlusCircle
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useStore, formatPrice } from '../context/StoreContext';
-
-// Chart sample data
-const SALES_GRAPH_DATA = [
-  { name: 'Mon', sales: 42000, orders: 4 },
-  { name: 'Tue', sales: 78000, orders: 7 },
-  { name: 'Wed', sales: 125000, orders: 12 },
-  { name: 'Thu', sales: 94000, orders: 9 },
-  { name: 'Fri', sales: 189000, orders: 18 },
-  { name: 'Sat', sales: 245000, orders: 22 },
-  { name: 'Sun', sales: 210000, orders: 19 }
-];
 
 export default function AdminView() {
   const { 
@@ -78,12 +70,13 @@ export default function AdminView() {
   const [productSearch, setProductSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('All');
 
-  // Form state for Add/Edit Product (Enhanced Specs & Supabase Storage file upload!)
+  // Product Form State with Video Support, Tax Rate, and Dynamic Custom Key-Value Specs!
   const [productForm, setProductForm] = useState({
     title: '',
     category: 'Necklaces',
     price: '',
     comparePrice: '',
+    taxPercent: '18',
     stock: '',
     sku: '',
     stoneType: 'Cubic Zirconia (CZ)',
@@ -96,7 +89,9 @@ export default function AdminView() {
     platingThickness: '',
     occasionTagsStr: '',
     warrantyInfo: '',
-    images: [] // Base64 data URIs or Supabase Storage image URLs
+    images: [],
+    videos: [],
+    customSpecs: [] // Array of { key: '', value: '' }
   });
 
   const handleInlineAdminLogin = async (e) => {
@@ -205,14 +200,6 @@ export default function AdminView() {
               Sign In with Google ({ADMIN_EMAIL})
             </button>
 
-            {/* Demo Override Button for Developer Verification */}
-            <button
-              onClick={() => setDemoAdminOverride(true)}
-              className="w-full bg-stone-800 hover:bg-stone-700 text-brand-gold text-xs font-semibold py-2.5 rounded-xl border border-brand-gold/30 transition-colors flex items-center justify-center gap-2"
-            >
-              <Crown className="w-4 h-4" /> Demo Override Access (Review & Testing)
-            </button>
-
             <button
               onClick={() => navigateTo('home')}
               className="block w-full text-center text-xs text-stone-500 hover:text-white pt-1"
@@ -226,15 +213,26 @@ export default function AdminView() {
     );
   }
 
-  // Calculate Shopify Metrics in INR
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  // Calculate REAL Legitimate Telemetry from database ONLY
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
   const totalOrdersCount = orders.length;
   const avgOrderValue = totalOrdersCount > 0 ? totalRevenue / totalOrdersCount : 0;
-  const conversionRate = 3.82; // Simulated conversion rate %
 
-  const lowStockProducts = products.filter((p) => p.stock <= 10);
+  // Build Real Sales Chart from DB Orders
+  const realSalesByDay = orders.reduce((acc, order) => {
+    const day = new Date(order.date || order.created_at).toLocaleDateString('en-US', { weekday: 'short' });
+    acc[day] = (acc[day] || 0) + (order.total || 0);
+    return acc;
+  }, {});
 
-  // Handle Local Folder Image Upload
+  const REAL_SALES_GRAPH_DATA = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => ({
+    name: day,
+    sales: realSalesByDay[day] || 0
+  }));
+
+  const lowStockProducts = products.filter((p) => p.stock <= 5);
+
+  // Handle Photo & Video Uploads
   const handleLocalImageUpload = (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
@@ -251,10 +249,56 @@ export default function AdminView() {
     });
   };
 
+  const handleLocalVideoUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductForm((prev) => ({
+          ...prev,
+          videos: [...prev.videos, reader.result]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const removeProductImage = (indexToRemove) => {
     setProductForm((prev) => ({
       ...prev,
       images: prev.images.filter((_, idx) => idx !== indexToRemove)
+    }));
+  };
+
+  const removeProductVideo = (indexToRemove) => {
+    setProductForm((prev) => ({
+      ...prev,
+      videos: prev.videos.filter((_, idx) => idx !== indexToRemove)
+    }));
+  };
+
+  // Custom Key-Value Attribute Helper
+  const addCustomSpecField = () => {
+    setProductForm((prev) => ({
+      ...prev,
+      customSpecs: [...prev.customSpecs, { key: '', value: '' }]
+    }));
+  };
+
+  const updateCustomSpecField = (index, field, val) => {
+    setProductForm((prev) => {
+      const updated = [...prev.customSpecs];
+      updated[index][field] = val;
+      return { ...prev, customSpecs: updated };
+    });
+  };
+
+  const removeCustomSpecField = (index) => {
+    setProductForm((prev) => ({
+      ...prev,
+      customSpecs: prev.customSpecs.filter((_, idx) => idx !== index)
     }));
   };
 
@@ -265,19 +309,22 @@ export default function AdminView() {
       category: 'Necklaces',
       price: '',
       comparePrice: '',
-      stock: '15',
+      taxPercent: '18',
+      stock: '10',
       sku: '',
       stoneType: 'Cubic Zirconia (CZ)',
       finishOptions: ['Rose Gold', 'Gold'],
-      description: 'Handcrafted artificial jewelry piece plated in 18k rose gold with brilliant crystal accents.',
-      weightGrams: '32.5g',
-      dimensions: '18 inch chain + 2 inch extender',
-      metalPurity: '22K Gold Electroplated over Brass Base',
-      gemstoneClarity: 'AAA+ Cubic Zirconia / Polki Kundan',
-      platingThickness: '3-Micron Anti-Tarnish E-Coating',
-      occasionTagsStr: 'Bridal, Festive, Party Wear',
-      warrantyInfo: '1-Year Anti-Tarnish & Color Guarantee',
-      images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800']
+      description: '',
+      weightGrams: '',
+      dimensions: '',
+      metalPurity: '',
+      gemstoneClarity: '',
+      platingThickness: '',
+      occasionTagsStr: '',
+      warrantyInfo: '',
+      images: [],
+      videos: [],
+      customSpecs: []
     });
     setProductModalOpen(true);
   };
@@ -287,36 +334,40 @@ export default function AdminView() {
     setProductForm({
       title: p.title,
       category: p.category,
-      price: p.price.toString(),
+      price: p.price ? p.price.toString() : '0',
       comparePrice: p.comparePrice ? p.comparePrice.toString() : '',
-      stock: p.stock.toString(),
+      taxPercent: (p.taxPercent || 18).toString(),
+      stock: p.stock ? p.stock.toString() : '0',
       sku: p.sku || '',
-      stoneType: p.stoneType,
+      stoneType: p.stoneType || 'Cubic Zirconia (CZ)',
       finishOptions: p.finishOptions || ['Rose Gold'],
-      description: p.description,
-      weightGrams: p.weightGrams || '24.5g',
-      dimensions: p.dimensions || '16 inch choker + 4 inch cord',
-      metalPurity: p.metalPurity || '22K Yellow Gold Plated',
-      gemstoneClarity: p.gemstoneClarity || 'AAA+ CZ & Kundan',
-      platingThickness: p.platingThickness || '3 Micron Anti-Tarnish',
-      occasionTagsStr: (p.occasionTags || ['Bridal', 'Festive']).join(', '),
-      warrantyInfo: p.warrantyInfo || '1-Year Anti-Tarnish Guarantee',
-      images: [...p.images]
+      description: p.description || '',
+      weightGrams: p.weightGrams || '',
+      dimensions: p.dimensions || '',
+      metalPurity: p.metalPurity || '',
+      gemstoneClarity: p.gemstoneClarity || '',
+      platingThickness: p.platingThickness || '',
+      occasionTagsStr: (p.occasionTags || []).join(', '),
+      warrantyInfo: p.warrantyInfo || '',
+      images: [...(p.images || [])],
+      videos: [...(p.videos || [])],
+      customSpecs: [...(p.customSpecs || [])]
     });
     setProductModalOpen(true);
   };
 
   const handleSaveProduct = (e) => {
     e.preventDefault();
-    if (!productForm.title || !productForm.price || productForm.images.length === 0) return;
+    if (!productForm.title || productForm.images.length === 0) return;
 
     const payload = {
       title: productForm.title,
       category: productForm.category,
-      price: parseFloat(productForm.price),
+      price: parseFloat(productForm.price || 0),
       comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
+      taxPercent: parseFloat(productForm.taxPercent || 18),
       stock: parseInt(productForm.stock, 10) || 0,
-      sku: productForm.sku || `EC-NK-${Math.floor(100 + Math.random() * 900)}`,
+      sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
       stoneType: productForm.stoneType,
       finishOptions: productForm.finishOptions,
       description: productForm.description,
@@ -328,13 +379,13 @@ export default function AdminView() {
       occasionTags: productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean),
       warrantyInfo: productForm.warrantyInfo,
       images: productForm.images,
+      videos: productForm.videos,
+      customSpecs: productForm.customSpecs.filter(c => c.key.trim() && c.value.trim()),
       details: [
-        productForm.metalPurity || "22k Yellow Gold Plated Brass base",
-        productForm.gemstoneClarity || "Handcrafted Kundan glass crystals & synthetic pearls",
-        "Includes velvet gift packaging box",
-        "Anti-tarnish protective coating"
-      ],
-      care: "Avoid moisture, cosmetics and perfume exposure."
+        productForm.metalPurity || "22k Gold Electroplated Brass base",
+        productForm.gemstoneClarity || "Handcrafted Kundan glass crystals",
+        "Includes luxury gift box"
+      ]
     };
 
     if (editingProduct) {
@@ -360,7 +411,7 @@ export default function AdminView() {
   return (
     <div className="min-h-screen bg-stone-900 text-stone-100 flex flex-col font-sans">
       
-      {/* Top Shopify Admin Header Bar */}
+      {/* Top Shopify Admin Header Bar with Enlarged Logo */}
       <header className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -369,20 +420,20 @@ export default function AdminView() {
           >
             {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <img src="/logo.png" alt="Logo" className="h-8 w-auto filter drop-shadow" />
-          <span className="font-serif text-lg sm:text-xl font-bold text-white tracking-wider">Ella Admin</span>
-          <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
-            <Crown className="w-3 h-3" /> {ADMIN_EMAIL}
+          <img src="/logo.png" alt="Logo" className="h-12 w-auto filter drop-shadow" />
+          <span className="font-serif text-lg sm:text-2xl font-bold text-white tracking-wider">Ella Admin</span>
+          <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
+            <Crown className="w-3.5 h-3.5" /> Real Database Telemetry
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigateTo('home')}
-            className="flex items-center gap-1.5 text-xs font-semibold text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 px-3 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 px-3.5 py-2 rounded-xl transition-colors"
           >
             <Store className="w-4 h-4 text-brand-gold" />
-            <span className="hidden sm:inline">Storefront</span>
+            <span className="hidden sm:inline">Storefront View</span>
           </button>
         </div>
       </header>
@@ -400,7 +451,7 @@ export default function AdminView() {
               activeTab === 'overview' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
             }`}
           >
-            <LayoutDashboard className="w-4 h-4" /> Overview Analytics
+            <LayoutDashboard className="w-4 h-4" /> Real Analytics Dashboard
           </button>
 
           <button
@@ -434,7 +485,7 @@ export default function AdminView() {
             }`}
           >
             <div className="flex items-center gap-3">
-              <Sparkles className="w-4 h-4" /> Reviews & Banners
+              <Sparkles className="w-4 h-4" /> Reviews Moderation
             </div>
             <span className="bg-stone-800 text-stone-300 text-[10px] px-2 py-0.5 rounded-full">{reviews.length}</span>
           </button>
@@ -443,38 +494,34 @@ export default function AdminView() {
         {/* Dashboard Content Region */}
         <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-8 overflow-y-auto max-h-[calc(100vh-64px)]">
           
-          {/* TAB 1: OVERVIEW ANALYTICS */}
+          {/* TAB 1: REAL OVERVIEW ANALYTICS */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
               
               {/* Header */}
               <div>
-                <h1 className="font-serif text-2xl font-bold text-white">Store Analytics & Key Metrics (INR)</h1>
-                <p className="text-xs text-stone-400">Live sales telemetry & Supabase database metrics for Ella Creations.</p>
+                <h1 className="font-serif text-2xl font-bold text-white">Live Store Telemetry & Real Sales</h1>
+                <p className="text-xs text-stone-400">Authentic order totals and real revenue calculated directly from the database.</p>
               </div>
 
-              {/* Top KPI Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {/* Real KPI Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-2">
                   <div className="flex justify-between items-center text-stone-400 text-xs font-medium">
-                    <span>Total Revenue</span>
+                    <span>Total Real Revenue</span>
                     <DollarSign className="w-4 h-4 text-emerald-400" />
                   </div>
-                  <div className="text-2xl font-bold text-white">{formatPrice(totalRevenue)}</div>
-                  <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5" /> +18.4% vs last week
-                  </div>
+                  <div className="text-3xl font-bold text-white">{formatPrice(totalRevenue)}</div>
+                  <div className="text-[11px] text-stone-500">Live order earnings in INR</div>
                 </div>
 
                 <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-2">
                   <div className="flex justify-between items-center text-stone-400 text-xs font-medium">
-                    <span>Total Orders</span>
+                    <span>Total Real Orders</span>
                     <ShoppingBag className="w-4 h-4 text-brand-gold" />
                   </div>
-                  <div className="text-2xl font-bold text-white">{totalOrdersCount}</div>
-                  <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5" /> +12% order volume
-                  </div>
+                  <div className="text-3xl font-bold text-white">{totalOrdersCount}</div>
+                  <div className="text-[11px] text-stone-500">Completed checkout orders</div>
                 </div>
 
                 <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-2">
@@ -482,33 +529,22 @@ export default function AdminView() {
                     <span>Average Order Value</span>
                     <BarChart3 className="w-4 h-4 text-brand-rose" />
                   </div>
-                  <div className="text-2xl font-bold text-white">{formatPrice(avgOrderValue)}</div>
-                  <div className="text-[11px] text-stone-400">High AOV jewelry basket</div>
-                </div>
-
-                <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-2">
-                  <div className="flex justify-between items-center text-stone-400 text-xs font-medium">
-                    <span>Conversion Rate</span>
-                    <Users className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <div className="text-2xl font-bold text-white">{conversionRate}%</div>
-                  <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5" /> High checkout intent
-                  </div>
+                  <div className="text-3xl font-bold text-white">{formatPrice(avgOrderValue)}</div>
+                  <div className="text-[11px] text-stone-500">Calculated basket average</div>
                 </div>
               </div>
 
-              {/* Sales Chart Section */}
+              {/* Real Sales Chart Section */}
               <div className="bg-stone-950 p-4 sm:p-6 rounded-2xl border border-stone-800 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-serif text-lg font-bold text-white">Weekly Revenue Performance (₹)</h3>
-                  <span className="text-xs text-stone-400">Revenue in Indian Rupee</span>
+                  <h3 className="font-serif text-lg font-bold text-white">Authentic Weekly Revenue (₹)</h3>
+                  <span className="text-xs text-stone-400">Live database revenue</span>
                 </div>
                 <div className="h-72 w-full pt-4">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={SALES_GRAPH_DATA}>
+                    <AreaChart data={REAL_SALES_GRAPH_DATA}>
                       <defs>
-                        <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="realSalesGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#D49AA5" stopOpacity={0.8}/>
                           <stop offset="95%" stopColor="#D49AA5" stopOpacity={0}/>
                         </linearGradient>
@@ -517,88 +553,23 @@ export default function AdminView() {
                       <XAxis dataKey="name" stroke="#888" fontSize={12} />
                       <YAxis stroke="#888" fontSize={12} />
                       <Tooltip contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', color: '#fff' }} />
-                      <Area type="monotone" dataKey="sales" stroke="#D49AA5" fillOpacity={1} fill="url(#salesGrad)" />
+                      <Area type="monotone" dataKey="sales" stroke="#D49AA5" fillOpacity={1} fill="url(#realSalesGrad)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              {/* Low Inventory & Quick Feeds Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Low Stock Alerts */}
-                <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-500" /> Low Stock Alerts
-                    </h3>
-                    <span className="text-xs text-stone-400">{lowStockProducts.length} items need restock</span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {lowStockProducts.map((p) => (
-                      <div key={p.id} className="flex items-center justify-between p-3 bg-stone-900 rounded-xl border border-stone-800">
-                        <div className="flex items-center gap-3">
-                          <img src={p.images[0]} alt={p.title} className="w-10 h-10 object-cover rounded-lg" />
-                          <div>
-                            <h4 className="text-xs font-semibold text-white line-clamp-1">{p.title}</h4>
-                            <span className="text-[11px] text-stone-400">SKU: {p.sku}</span>
-                          </div>
-                        </div>
-                        <span className="text-xs font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2.5 py-1 rounded-full flex-shrink-0">
-                          Only {p.stock} left
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recent Orders Overview */}
-                <div className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-brand-gold" /> Recent Orders Activity
-                    </h3>
-                    <button onClick={() => setActiveTab('orders')} className="text-xs text-brand-rose hover:underline font-semibold">
-                      View All Orders →
-                    </button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {orders.slice(0, 3).map((o) => (
-                      <div key={o.id} className="p-3 bg-stone-900 rounded-xl border border-stone-800 flex items-center justify-between text-xs">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-white">#{o.id}</span>
-                            <span className="text-stone-400">• {o.customer.name}</span>
-                          </div>
-                          <span className="text-[11px] text-stone-400">{o.items.length} items • {formatPrice(o.total)}</span>
-                        </div>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          o.status === 'Delivered' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                          o.status === 'Shipped' ? 'bg-blue-950 text-blue-400 border border-blue-800' :
-                          'bg-amber-950 text-amber-400 border border-amber-800'
-                        }`}>
-                          {o.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
             </div>
           )}
 
-          {/* TAB 2: PRODUCTS CATALOG (WITH EXPANDED SPECS & SUPABASE STORAGE UPLOADER) */}
+          {/* TAB 2: PRODUCTS CATALOG (PRODUCT VIDEOS & CUSTOM KEY-VALUE SPECS) */}
           {activeTab === 'products' && (
             <div className="space-y-6">
               
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-white">Products Catalog & Specifications</h1>
-                  <p className="text-xs text-stone-400">Manage detailed specifications, prices (₹), and upload photos to Supabase Storage.</p>
+                  <h1 className="font-serif text-2xl font-bold text-white">Product Catalog & Custom Specs</h1>
+                  <p className="text-xs text-stone-400">Build your store from scratch. Upload photos & product videos, set 18% GST, and custom key-value specifications.</p>
                 </div>
 
                 <button
@@ -622,65 +593,78 @@ export default function AdminView() {
               </div>
 
               {/* Products Table (Wrapped in overflow-x-auto for Mobile) */}
-              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
-                <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
-                  <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="p-4">Product</th>
-                      <th className="p-4">Category</th>
-                      <th className="p-4">SKU</th>
-                      <th className="p-4">Price (₹)</th>
-                      <th className="p-4">Net Weight</th>
-                      <th className="p-4">Stock</th>
-                      <th className="p-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-800">
-                    {filteredProducts.map((p) => (
-                      <tr key={p.id} className="hover:bg-stone-900/50 transition-colors">
-                        <td className="p-4 flex items-center gap-3">
-                          <img src={p.images[0]} alt={p.title} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
-                          <div>
-                            <span className="font-semibold text-white block">{p.title}</span>
-                            <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 font-medium">{p.category}</td>
-                        <td className="p-4 font-mono text-stone-400">{p.sku}</td>
-                        <td className="p-4 font-bold text-white">{formatPrice(p.price)}</td>
-                        <td className="p-4 text-stone-400">{p.weightGrams || '24.5g'}</td>
-                        <td className="p-4">
-                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                            p.stock > 10 ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'
-                          }`}>
-                            {p.stock} units
-                          </span>
-                        </td>
-                        <td className="p-4 text-right space-x-2">
-                          <button
-                            onClick={() => handleOpenEditModal(p)}
-                            className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-lg transition-colors"
-                            title="Edit Detailed Specs & Photos"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (confirm(`Are you sure you want to delete "${p.title}"?`)) {
-                                deleteProduct(p.id);
-                              }
-                            }}
-                            className="p-2 bg-rose-950 hover:bg-rose-900 text-rose-300 hover:text-white rounded-lg transition-colors"
-                            title="Delete Product"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
+              {filteredProducts.length === 0 ? (
+                <div className="bg-stone-950 p-12 text-center rounded-2xl border border-stone-800 space-y-4">
+                  <Package className="w-12 h-12 text-stone-600 mx-auto" />
+                  <h3 className="font-serif text-lg font-bold text-white">No products in catalog</h3>
+                  <p className="text-xs text-stone-400">Your store is clean and ready. Click "Add New Jewelry Product" to add your authentic products!</p>
+                </div>
+              ) : (
+                <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
+                    <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="p-4">Product</th>
+                        <th className="p-4">Category</th>
+                        <th className="p-4">SKU</th>
+                        <th className="p-4">Price (₹)</th>
+                        <th className="p-4">Tax Bracket</th>
+                        <th className="p-4">Stock</th>
+                        <th className="p-4 text-right">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-stone-800">
+                      {filteredProducts.map((p) => (
+                        <tr key={p.id} className="hover:bg-stone-900/50 transition-colors">
+                          <td className="p-4 flex items-center gap-3">
+                            <img src={p.images[0] || '/logo.png'} alt={p.title} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
+                            <div>
+                              <span className="font-semibold text-white block">{p.title}</span>
+                              <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType}</span>
+                              {p.videos && p.videos.length > 0 && (
+                                <span className="text-[9px] font-bold bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded ml-1">
+                                  🎬 Has Video
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-4 font-medium">{p.category}</td>
+                          <td className="p-4 font-mono text-stone-400">{p.sku}</td>
+                          <td className="p-4 font-bold text-white">{p.price <= 0 ? <span className="text-rose-500">Unpriced (Out of Stock)</span> : formatPrice(p.price)}</td>
+                          <td className="p-4 text-stone-400">{p.taxPercent || 18}% GST</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                              p.price <= 0 || p.stock <= 0 ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400'
+                            }`}>
+                              {p.price <= 0 || p.stock <= 0 ? 'OUT OF STOCK' : `${p.stock} units`}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right space-x-2">
+                            <button
+                              onClick={() => handleOpenEditModal(p)}
+                              className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-lg transition-colors"
+                              title="Edit Product, Videos & Custom Specs"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Are you sure you want to delete "${p.title}"?`)) {
+                                  deleteProduct(p.id);
+                                }
+                              }}
+                              className="p-2 bg-rose-950 hover:bg-rose-900 text-rose-300 hover:text-white rounded-lg transition-colors"
+                              title="Delete Product"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
             </div>
           )}
@@ -709,61 +693,69 @@ export default function AdminView() {
                 </div>
               </div>
 
-              {/* Orders Table (Wrapped in overflow-x-auto) */}
-              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
-                <table className="w-full text-left text-xs text-stone-300 min-w-[700px]">
-                  <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="p-4">Order ID</th>
-                      <th className="p-4">Customer</th>
-                      <th className="p-4">Items Count</th>
-                      <th className="p-4">Total (₹)</th>
-                      <th className="p-4">Payment Method</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4 text-right">Update Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-800">
-                    {filteredOrders.map((o) => (
-                      <tr key={o.id} className="hover:bg-stone-900/50 transition-colors">
-                        <td className="p-4 font-bold text-white font-mono">#{o.id}</td>
-                        <td className="p-4">
-                          <span className="font-semibold text-white block">{o.customer.name}</span>
-                          <span className="text-[10px] text-stone-400">{o.customer.email}</span>
-                        </td>
-                        <td className="p-4">{o.items.length} item(s)</td>
-                        <td className="p-4 font-bold text-emerald-400">{formatPrice(o.total)}</td>
-                        <td className="p-4 text-stone-400">{o.paymentMethod}</td>
-                        <td className="p-4">
-                          <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
-                            o.status === 'Delivered' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                            o.status === 'Shipped' ? 'bg-blue-950 text-blue-400 border border-blue-800' :
-                            'bg-amber-950 text-amber-400 border border-amber-800'
-                          }`}>
-                            {o.status}
-                          </span>
-                        </td>
-                        <td className="p-4 text-right">
-                          <select
-                            value={o.status}
-                            onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                            className="bg-stone-900 text-white text-xs px-2.5 py-1 rounded-lg border border-stone-700 outline-none focus:border-brand-rose"
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                          </select>
-                        </td>
+              {/* Orders Table */}
+              {filteredOrders.length === 0 ? (
+                <div className="bg-stone-950 p-12 text-center rounded-2xl border border-stone-800 space-y-3">
+                  <ShoppingBag className="w-12 h-12 text-stone-600 mx-auto" />
+                  <h3 className="font-serif text-lg font-bold text-white">No customer orders placed yet</h3>
+                  <p className="text-xs text-stone-400">When customers place orders on your website, they will appear live right here!</p>
+                </div>
+              ) : (
+                <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs text-stone-300 min-w-[700px]">
+                    <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="p-4">Order ID</th>
+                        <th className="p-4">Customer</th>
+                        <th className="p-4">Items Count</th>
+                        <th className="p-4">Total (₹)</th>
+                        <th className="p-4">Payment Method</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4 text-right">Update Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-stone-800">
+                      {filteredOrders.map((o) => (
+                        <tr key={o.id} className="hover:bg-stone-900/50 transition-colors">
+                          <td className="p-4 font-bold text-white font-mono">#{o.id}</td>
+                          <td className="p-4">
+                            <span className="font-semibold text-white block">{o.customer.name}</span>
+                            <span className="text-[10px] text-stone-400">{o.customer.email}</span>
+                          </td>
+                          <td className="p-4">{o.items.length} item(s)</td>
+                          <td className="p-4 font-bold text-emerald-400">{formatPrice(o.total)}</td>
+                          <td className="p-4 text-stone-400">{o.paymentMethod}</td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+                              o.status === 'Delivered' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                              o.status === 'Shipped' ? 'bg-blue-950 text-blue-400 border border-blue-800' :
+                              'bg-amber-950 text-amber-400 border border-amber-800'
+                            }`}>
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right">
+                            <select
+                              value={o.status}
+                              onChange={(e) => updateOrderStatus(o.id, e.target.value)}
+                              className="bg-stone-900 text-white text-xs px-2.5 py-1 rounded-lg border border-stone-700 outline-none focus:border-brand-rose"
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Processing">Processing</option>
+                              <option value="Shipped">Shipped</option>
+                              <option value="Delivered">Delivered</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 
-          {/* TAB 4: REVIEWS & BANNERS */}
+          {/* TAB 4: REVIEWS */}
           {activeTab === 'reviews' && (
             <div className="space-y-6">
               <div>
@@ -792,7 +784,7 @@ export default function AdminView() {
         </main>
       </div>
 
-      {/* DETAILED JEWELRY PRODUCT EDIT MODAL (WITH EXPANDED SPECS & SUPABASE STORAGE UPLOADER) */}
+      {/* EDIT DETAIL JEWELRY SPECIFICATION MODAL (WITH VIDEOS, TAX BRACKET & CUSTOM KEYS) */}
       {productModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-stone-950 border border-stone-800 rounded-3xl max-w-3xl w-full p-6 md:p-8 space-y-6 shadow-2xl text-stone-100 max-h-[90vh] overflow-y-auto">
@@ -800,7 +792,7 @@ export default function AdminView() {
             <div className="flex justify-between items-center border-b border-stone-800 pb-4">
               <h3 className="font-serif text-xl font-bold text-white flex items-center gap-2">
                 <Award className="w-5 h-5 text-brand-gold" />
-                {editingProduct ? 'Edit Detailed Jewelry Specifications' : 'Add New Artificial Jewelry Product'}
+                {editingProduct ? 'Edit Detailed Jewelry Specifications & Videos' : 'Add New Artificial Jewelry Product'}
               </h3>
               <button onClick={() => setProductModalOpen(false)} className="text-stone-400 hover:text-white">
                 <X className="w-6 h-6" />
@@ -849,12 +841,14 @@ export default function AdminView() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-stone-300 mb-1">Selling Price (₹ INR)</label>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    Selling Price (₹ INR - Set 0 for Out of Stock)
+                  </label>
                   <input
                     type="number"
                     step="1"
                     required
-                    placeholder="12999"
+                    placeholder="12999 (Enter 0 for Out of Stock)"
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose font-bold text-brand-rose"
@@ -874,18 +868,33 @@ export default function AdminView() {
                 </div>
 
                 <div>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    GST Tax Bracket (%)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    required
+                    placeholder="18"
+                    value={productForm.taxPercent}
+                    onChange={(e) => setProductForm({ ...productForm, taxPercent: e.target.value })}
+                    className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose font-semibold text-brand-gold"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Inventory Units (Stock)</label>
                   <input
                     type="number"
                     required
-                    placeholder="15"
+                    placeholder="10"
                     value={productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
                   />
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Gemstone / Crystal Type</label>
                   <input
                     type="text"
@@ -899,9 +908,9 @@ export default function AdminView() {
               </div>
 
               {/* SECTION: EXPANDED DETAILED JEWELRY SPECIFICATIONS */}
-              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-3">
+              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-4">
                 <h4 className="font-serif text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Detailed Technical Specifications
+                  <Sparkles className="w-3.5 h-3.5" /> Technical Specifications
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -920,7 +929,7 @@ export default function AdminView() {
                     <label className="block text-[11px] font-semibold text-stone-400 mb-1">Dimensions & Chain Fit</label>
                     <input
                       type="text"
-                      placeholder="e.g. 16 inch choker + 4 inch cord | 5cm earring drop"
+                      placeholder="e.g. 16 inch choker + 4 inch cord"
                       value={productForm.dimensions}
                       onChange={(e) => setProductForm({ ...productForm, dimensions: e.target.value })}
                       className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
@@ -931,7 +940,7 @@ export default function AdminView() {
                     <label className="block text-[11px] font-semibold text-stone-400 mb-1">Metal Purity & Base Alloy</label>
                     <input
                       type="text"
-                      placeholder="e.g. 22K Yellow Gold Electroplated over Brass Base"
+                      placeholder="e.g. 22K Gold Electroplated over Brass"
                       value={productForm.metalPurity}
                       onChange={(e) => setProductForm({ ...productForm, metalPurity: e.target.value })}
                       className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
@@ -948,33 +957,51 @@ export default function AdminView() {
                       className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
                     />
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Occasion Tags (Comma Separated)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Bridal, Festive, Wedding Reception"
-                      value={productForm.occasionTagsStr}
-                      onChange={(e) => setProductForm({ ...productForm, occasionTagsStr: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
+                {/* DYNAMIC CUSTOM KEY & VALUE SPECIFICATION FIELDS */}
+                <div className="pt-3 border-t border-stone-800 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-semibold text-stone-300">Custom Specification Attributes (Key / Value)</label>
+                    <button
+                      type="button"
+                      onClick={addCustomSpecField}
+                      className="text-xs text-brand-gold hover:underline font-bold flex items-center gap-1"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" /> Add Custom Attribute
+                    </button>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Warranty & Guarantee Info</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 1-Year Ella Creations Anti-Tarnish Guarantee"
-                      value={productForm.warrantyInfo}
-                      onChange={(e) => setProductForm({ ...productForm, warrantyInfo: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
-                  </div>
+                  {productForm.customSpecs.map((cs, idx) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        placeholder="Attribute Key (e.g. Pendant Length)"
+                        value={cs.key}
+                        onChange={(e) => updateCustomSpecField(idx, 'key', e.target.value)}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Value (e.g. 4.2 cm)"
+                        value={cs.value}
+                        onChange={(e) => updateCustomSpecField(idx, 'value', e.target.value)}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeCustomSpecField(idx)}
+                        className="p-2 text-rose-400 hover:text-rose-200"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">Product Story & Description</label>
+                <label className="block text-xs font-semibold text-stone-300 mb-1">Product Description</label>
                 <textarea
                   rows="3"
                   required
@@ -985,43 +1012,73 @@ export default function AdminView() {
                 ></textarea>
               </div>
 
-              {/* SUPABASE STORAGE PRODUCT IMAGE UPLOADER */}
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-stone-300">
-                  Upload Product Photos (Uploaded directly to Supabase Public Bucket 'product-images')
-                </label>
+              {/* MEDIA UPLOAD SECTION: PHOTOS & PRODUCT VIDEOS */}
+              <div className="space-y-4 pt-2 border-t border-stone-800">
                 
-                <label className="flex items-center justify-center gap-3 border-2 border-dashed border-brand-rose/60 bg-stone-900 p-4 rounded-xl cursor-pointer hover:bg-stone-800/80 transition-colors">
-                  <Upload className="w-5 h-5 text-brand-rose" />
-                  <span className="text-xs text-stone-300">
-                    Select product photos from local computer folder
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleLocalImageUpload}
-                    className="hidden"
-                  />
-                </label>
+                {/* Photo Uploader */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-semibold text-stone-300">
+                    Product Photos (Uploaded to Supabase Storage)
+                  </label>
+                  
+                  <label className="flex items-center justify-center gap-3 border-2 border-dashed border-brand-rose/60 bg-stone-900 p-4 rounded-xl cursor-pointer hover:bg-stone-800/80 transition-colors">
+                    <Upload className="w-5 h-5 text-brand-rose" />
+                    <span className="text-xs text-stone-300">
+                      Upload photos from device folder
+                    </span>
+                    <input type="file" accept="image/*" multiple onChange={handleLocalImageUpload} className="hidden" />
+                  </label>
 
-                {/* Uploaded Images Preview Grid */}
-                {productForm.images.length > 0 && (
-                  <div className="flex gap-3 overflow-x-auto pt-2">
-                    {productForm.images.map((img, idx) => (
-                      <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-stone-700 flex-shrink-0 group">
-                        <img src={img} alt="Uploaded preview" className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => removeProductImage(idx)}
-                          className="absolute top-1 right-1 bg-rose-600 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                  {productForm.images.length > 0 && (
+                    <div className="flex gap-3 overflow-x-auto pt-2">
+                      {productForm.images.map((img, idx) => (
+                        <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-stone-700 flex-shrink-0 group">
+                          <img src={img} alt="Uploaded preview" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeProductImage(idx)}
+                            className="absolute top-1 right-1 bg-rose-600 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Video Uploader */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-semibold text-stone-300">
+                    Product Showcase Videos (MP4 / WebM Upload)
+                  </label>
+                  
+                  <label className="flex items-center justify-center gap-3 border-2 border-dashed border-purple-500/60 bg-stone-900 p-4 rounded-xl cursor-pointer hover:bg-stone-800/80 transition-colors">
+                    <Video className="w-5 h-5 text-purple-400" />
+                    <span className="text-xs text-stone-300">
+                      Upload video files from local device
+                    </span>
+                    <input type="file" accept="video/*" multiple onChange={handleLocalVideoUpload} className="hidden" />
+                  </label>
+
+                  {productForm.videos.length > 0 && (
+                    <div className="flex gap-3 overflow-x-auto pt-2">
+                      {productForm.videos.map((vid, idx) => (
+                        <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-purple-500/50 bg-stone-900 flex-shrink-0 group">
+                          <video src={vid} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeProductVideo(idx)}
+                            className="absolute top-1 right-1 bg-rose-600 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-stone-800">
@@ -1036,7 +1093,7 @@ export default function AdminView() {
                   type="submit"
                   className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors"
                 >
-                  {editingProduct ? 'Save & Sync to Supabase' : 'Publish Product to Database'}
+                  {editingProduct ? 'Save & Sync to Database' : 'Publish Product to Catalog'}
                 </button>
               </div>
 

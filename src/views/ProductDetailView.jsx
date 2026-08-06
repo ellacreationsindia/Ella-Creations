@@ -11,9 +11,8 @@ import {
   Upload, 
   CheckCircle2, 
   Award,
-  Scale,
-  Ruler,
-  Gem,
+  Video,
+  Ban,
   Tag
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -34,12 +33,11 @@ export default function ProductDetailView() {
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
 
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [activeMedia, setActiveMedia] = useState({ type: 'image', url: product?.images?.[0] || '' });
   const [selectedFinish, setSelectedFinish] = useState(
-    product.finishOptions ? product.finishOptions[0] : 'Standard'
+    product?.finishOptions ? product.finishOptions[0] : 'Standard'
   );
   const [qty, setQty] = useState(1);
-  const [activeTab, setActiveTab] = useState('specs'); // 'specs' | 'details' | 'care'
 
   // Review Form state
   const [reviewForm, setReviewForm] = useState({
@@ -51,9 +49,34 @@ export default function ProductDetailView() {
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
+  if (!product) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
+        <h2 className="font-serif text-2xl font-bold text-stone-800">No Product Selected</h2>
+        <button onClick={() => navigateTo('shop')} className="bg-brand-rose text-white text-xs font-semibold px-6 py-2.5 rounded-full">
+          Browse Shop Catalog
+        </button>
+      </div>
+    );
+  }
+
   const isWishlisted = wishlist.includes(product.id);
+  const isOutOfStock = product.price <= 0 || product.stock <= 0;
   const productReviews = reviews.filter((r) => r.productId === product.id);
   const relatedProducts = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+  // Tax calculations
+  const taxRate = product.taxPercent || 18;
+  const basePrice = product.price > 0 ? product.price / (1 + taxRate / 100) : 0;
+  const gstAmount = product.price - basePrice;
+
+  // Media items combined
+  const mediaList = [
+    ...(product.images || []).map(url => ({ type: 'image', url })),
+    ...(product.videos || []).map(url => ({ type: 'video', url }))
+  ];
+
+  const currentMedia = activeMedia.url ? activeMedia : (mediaList[0] || { type: 'image', url: product.images[0] });
 
   // Handle Photo Upload in Review Form
   const handlePhotoUpload = (e) => {
@@ -102,38 +125,61 @@ export default function ProductDetailView() {
         <ArrowLeft className="w-4 h-4" /> Back to Shop Catalog
       </button>
 
-      {/* Main Product Layout: Left Gallery, Right Details */}
+      {/* Main Product Layout: Left Gallery & Video Player, Right Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        {/* Left Column: Image Gallery */}
+        {/* Left Column: Media Gallery & Interactive Video Player */}
         <div className="lg:col-span-6 space-y-4">
-          {/* Main Zoom Display */}
+          {/* Main Media Display */}
           <div className="aspect-square rounded-3xl overflow-hidden bg-brand-cream border border-brand-gold/30 shadow-md relative group">
-            <img
-              src={selectedImage || product.images[0]}
-              alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-zoom-in"
-            />
-            {product.isNew && (
+            {currentMedia.type === 'video' ? (
+              <video
+                src={currentMedia.url}
+                controls
+                autoPlay
+                loop
+                muted
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src={currentMedia.url || product.images[0]}
+                alt={product.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+              />
+            )}
+
+            {isOutOfStock ? (
+              <span className="absolute top-4 left-4 bg-rose-900 text-white text-xs uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                <Ban className="w-3.5 h-3.5" /> OUT OF STOCK
+              </span>
+            ) : product.isNew && (
               <span className="absolute top-4 left-4 bg-stone-900 text-white text-xs uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow-md">
                 NEW ARRIVAL
               </span>
             )}
           </div>
 
-          {/* Gallery Thumbnails */}
+          {/* Media Thumbnails (Photos & Product Videos) */}
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {product.images.map((img, idx) => (
+            {mediaList.map((item, idx) => (
               <button
                 key={idx}
-                onClick={() => setSelectedImage(img)}
-                className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
-                  (selectedImage || product.images[0]) === img 
+                onClick={() => setActiveMedia(item)}
+                className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 relative ${
+                  currentMedia.url === item.url 
                     ? 'border-brand-rose ring-2 ring-brand-rose/30 scale-105 shadow-md' 
                     : 'border-transparent opacity-70 hover:opacity-100'
                 }`}
               >
-                <img src={img} alt={`Angle ${idx + 1}`} className="w-full h-full object-cover" />
+                {item.type === 'video' ? (
+                  <div className="w-full h-full bg-stone-900 flex flex-col items-center justify-center text-white">
+                    <Video className="w-6 h-6 text-brand-rose animate-pulse" />
+                    <span className="text-[9px] font-bold mt-1">VIDEO</span>
+                  </div>
+                ) : (
+                  <img src={item.url} alt={`Media ${idx + 1}`} className="w-full h-full object-cover" />
+                )}
               </button>
             ))}
           </div>
@@ -145,10 +191,10 @@ export default function ProductDetailView() {
           <div>
             <div className="flex items-center justify-between text-xs text-brand-gold font-semibold uppercase tracking-widest mb-1">
               <span>{product.category} • SKU: {product.sku}</span>
-              {product.stock > 0 ? (
+              {!isOutOfStock ? (
                 <span className="text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full font-bold">In Stock ({product.stock} available)</span>
               ) : (
-                <span className="text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full font-bold">Sold Out</span>
+                <span className="text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full font-bold">OUT OF STOCK</span>
               )}
             </div>
 
@@ -174,27 +220,43 @@ export default function ProductDetailView() {
             </div>
           </div>
 
-          {/* Pricing in INR */}
-          <div className="bg-brand-cream p-5 rounded-2xl border border-brand-gold/20 flex items-baseline gap-4">
-            <span className="text-3xl font-bold text-brand-rose">{formatPrice(product.price)}</span>
-            {product.comparePrice && (
-              <span className="text-base line-through text-stone-400 font-normal">
-                {formatPrice(product.comparePrice)}
+          {/* Pricing & 18% GST Tax Breakdown in INR */}
+          {isOutOfStock ? (
+            <div className="bg-rose-50 p-5 rounded-2xl border border-rose-200 text-rose-800 space-y-1">
+              <span className="font-serif text-lg font-bold flex items-center gap-2">
+                <Ban className="w-5 h-5 text-rose-600" /> Out of Stock / Unpriced Item
               </span>
-            )}
-            {product.comparePrice && (
-              <span className="text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
-                SAVE {formatPrice(product.comparePrice - product.price)}
-              </span>
-            )}
-          </div>
+              <p className="text-xs text-rose-600">This jewelry piece is currently not available for immediate checkout.</p>
+            </div>
+          ) : (
+            <div className="bg-brand-cream p-5 rounded-2xl border border-brand-gold/20 space-y-2">
+              <div className="flex items-baseline gap-4">
+                <span className="text-3xl font-bold text-brand-rose">{formatPrice(product.price)}</span>
+                {product.comparePrice && (
+                  <span className="text-base line-through text-stone-400 font-normal">
+                    {formatPrice(product.comparePrice)}
+                  </span>
+                )}
+                {product.comparePrice && (
+                  <span className="text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
+                    SAVE {formatPrice(product.comparePrice - product.price)}
+                  </span>
+                )}
+              </div>
+              <div className="text-xs text-stone-500 flex items-center gap-3 pt-1 border-t border-brand-gold/20">
+                <span>Inclusive of <strong>{taxRate}% GST Tax</strong> ({formatPrice(gstAmount)})</span>
+                <span>•</span>
+                <span>Base Price: {formatPrice(basePrice)}</span>
+              </div>
+            </div>
+          )}
 
           {/* Short Description */}
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-normal">
             {product.description}
           </p>
 
-          {/* Detailed Jewelry Specifications Grid */}
+          {/* Master Jewelry Specifications Grid (Including Dynamic Custom Attributes) */}
           <div className="bg-white p-5 rounded-2xl border border-brand-gold/30 shadow-sm space-y-3">
             <h4 className="font-serif text-sm font-bold text-stone-900 border-b border-stone-100 pb-2 flex items-center gap-2">
               <Award className="w-4 h-4 text-brand-gold" /> Master Jewelry Specifications
@@ -221,9 +283,17 @@ export default function ProductDetailView() {
                 <span className="font-bold text-stone-800">{product.platingThickness || '3 Micron Anti-Tarnish'}</span>
               </div>
 
+              {/* Render Dynamic Custom Key-Value Specs */}
+              {product.customSpecs && product.customSpecs.map((cs, idx) => (
+                <div key={idx} className="bg-brand-gold/10 p-2.5 rounded-xl border border-brand-gold/30">
+                  <span className="text-stone-500 text-[10px] uppercase font-bold block">{cs.key}</span>
+                  <span className="font-bold text-stone-900">{cs.value}</span>
+                </div>
+              ))}
+
               <div className="bg-brand-cream/50 p-2.5 rounded-xl col-span-2">
                 <span className="text-stone-400 text-[10px] uppercase font-semibold block">Dimensions & Fit</span>
-                <span className="font-bold text-stone-800">{product.dimensions || '16 inch choker + 4 inch adjustable drawstring'}</span>
+                <span className="font-bold text-stone-800">{product.dimensions || '16 inch choker + 4 inch adjustable cord'}</span>
               </div>
 
               <div className="bg-brand-cream/50 p-2.5 rounded-xl col-span-2">
@@ -262,25 +332,32 @@ export default function ProductDetailView() {
             <div className="flex gap-4">
               <div className="flex items-center border border-stone-300 rounded-xl bg-white">
                 <button
+                  disabled={isOutOfStock}
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold"
+                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
                 >
                   -
                 </button>
                 <span className="px-4 py-2.5 font-semibold text-sm">{qty}</span>
                 <button
+                  disabled={isOutOfStock}
                   onClick={() => setQty(qty + 1)}
-                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold"
+                  className="px-3.5 py-2.5 text-stone-600 hover:bg-stone-100 font-bold disabled:opacity-40"
                 >
                   +
                 </button>
               </div>
 
               <button
+                disabled={isOutOfStock}
                 onClick={() => addToCart(product, qty, selectedFinish)}
-                className="flex-1 bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider"
+                className={`flex-1 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition-colors ${
+                  isOutOfStock 
+                    ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
+                    : 'bg-brand-rose hover:bg-brand-rose/90 text-white shadow-soft-rose'
+                }`}
               >
-                <ShoppingBag className="w-4 h-4" /> Add to Shopping Bag
+                <ShoppingBag className="w-4 h-4" /> {isOutOfStock ? 'OUT OF STOCK' : 'Add to Shopping Bag'}
               </button>
 
               <button
@@ -295,11 +372,16 @@ export default function ProductDetailView() {
             </div>
 
             <button
+              disabled={isOutOfStock}
               onClick={() => {
                 addToCart(product, qty, selectedFinish);
                 setIsCheckoutOpen(true);
               }}
-              className="w-full bg-brand-gold hover:bg-brand-gold/90 text-stone-900 font-bold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-gold-glow transition-all"
+              className={`w-full font-bold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider transition-all ${
+                isOutOfStock 
+                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
+                  : 'bg-brand-gold hover:bg-brand-gold/90 text-stone-900 shadow-gold-glow'
+              }`}
             >
               Buy It Now (Express Checkout)
             </button>

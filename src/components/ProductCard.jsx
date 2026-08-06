@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Heart, Eye, ShoppingBag, Sparkles } from 'lucide-react';
+import { Star, Heart, Eye, ShoppingBag, Sparkles, Ban } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 
 export default function ProductCard({ product }) {
@@ -12,7 +12,9 @@ export default function ProductCard({ product }) {
   } = useStore();
 
   const isWishlisted = wishlist.includes(product.id);
-  const discountPercent = product.comparePrice 
+  const isOutOfStock = product.price <= 0 || product.stock <= 0;
+  
+  const discountPercent = product.comparePrice && product.comparePrice > product.price 
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) 
     : 0;
 
@@ -21,15 +23,23 @@ export default function ProductCard({ product }) {
       
       {/* Badges */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 pointer-events-none">
-        {product.isNew && (
-          <span className="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
-            NEW
+        {isOutOfStock ? (
+          <span className="bg-rose-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+            <Ban className="w-3 h-3" /> OUT OF STOCK
           </span>
-        )}
-        {discountPercent > 0 && (
-          <span className="bg-brand-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-            -{discountPercent}% OFF
-          </span>
+        ) : (
+          <>
+            {product.isNew && (
+              <span className="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+                NEW
+              </span>
+            )}
+            {discountPercent > 0 && (
+              <span className="bg-brand-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                -{discountPercent}% OFF
+              </span>
+            )}
+          </>
         )}
       </div>
 
@@ -57,7 +67,7 @@ export default function ProductCard({ product }) {
         <img
           src={product.images[0]}
           alt={product.title}
-          className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+          className={`w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
         />
 
         {/* Hover Quick Actions */}
@@ -73,16 +83,18 @@ export default function ProductCard({ product }) {
             <Eye className="w-5 h-5" />
           </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(product, 1);
-            }}
-            className="w-10 h-10 rounded-full bg-brand-gold text-white flex items-center justify-center shadow-lg hover:bg-stone-900 transition-all transform hover:scale-110"
-            title="Add to Cart"
-          >
-            <ShoppingBag className="w-5 h-5" />
-          </button>
+          {!isOutOfStock && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product, 1);
+              }}
+              className="w-10 h-10 rounded-full bg-brand-gold text-white flex items-center justify-center shadow-lg hover:bg-stone-900 transition-all transform hover:scale-110"
+              title="Add to Cart"
+            >
+              <ShoppingBag className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -122,16 +134,22 @@ export default function ProductCard({ product }) {
         {/* Price & Action */}
         <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
           <div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-base font-bold text-stone-900">{formatPrice(product.price)}</span>
-              {product.comparePrice && (
-                <span className="text-xs line-through text-stone-400 font-normal">
-                  {formatPrice(product.comparePrice)}
-                </span>
-              )}
-            </div>
-            {product.stock <= 5 && product.stock > 0 && (
-              <span className="text-[10px] font-semibold text-amber-600 block">Only {product.stock} left!</span>
+            {isOutOfStock ? (
+              <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md inline-block">
+                OUT OF STOCK
+              </span>
+            ) : (
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-base font-bold text-stone-900">{formatPrice(product.price)}</span>
+                  {product.comparePrice && (
+                    <span className="text-xs line-through text-stone-400 font-normal">
+                      {formatPrice(product.comparePrice)}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-stone-400 block font-medium">Incl. {product.taxPercent || 18}% GST</span>
+              </div>
             )}
           </div>
 
