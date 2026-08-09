@@ -32,7 +32,11 @@ import {
   Menu,
   LogIn,
   Percent,
-  PlusCircle
+  PlusCircle,
+  GripVertical,
+  MoveLeft,
+  MoveRight,
+  Star
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -69,6 +73,11 @@ export default function AdminView() {
   // Filter states in admin
   const [productSearch, setProductSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('All');
+
+  // Drag and drop state for showcase images & files
+  const [isDraggingFiles, setIsDraggingFiles] = useState(false);
+  const [draggedImageIdx, setDraggedImageIdx] = useState(null);
+  const [dragOverImageIdx, setDragOverImageIdx] = useState(null);
 
   // Product Form State with Video Support, Tax Rate, and Dynamic Custom Key-Value Specs!
   const [productForm, setProductForm] = useState({
@@ -270,6 +279,79 @@ export default function AdminView() {
       ...prev,
       images: prev.images.filter((_, idx) => idx !== indexToRemove)
     }));
+  };
+
+  // Drag & Drop File Upload Handlers
+  const handleDropFiles = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingFiles(false);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductForm((prev) => ({
+          ...prev,
+          images: [...prev.images, reader.result]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDragOverFiles = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingFiles(true);
+  };
+
+  const handleDragLeaveFiles = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingFiles(false);
+  };
+
+  // Drag & Drop Showcase Image Reordering Handlers
+  const handleImageDragStart = (e, index) => {
+    setDraggedImageIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleImageDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedImageIdx === null || draggedImageIdx === index) return;
+    setDragOverImageIdx(index);
+  };
+
+  const handleImageDrop = (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedImageIdx === null || draggedImageIdx === targetIndex) return;
+
+    setProductForm((prev) => {
+      const newImages = [...prev.images];
+      const [draggedImg] = newImages.splice(draggedImageIdx, 1);
+      newImages.splice(targetIndex, 0, draggedImg);
+      return { ...prev, images: newImages };
+    });
+
+    setDraggedImageIdx(null);
+    setDragOverImageIdx(null);
+  };
+
+  const moveProductImage = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= productForm.images.length) return;
+    setProductForm((prev) => {
+      const newImages = [...prev.images];
+      const [movedImg] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImg);
+      return { ...prev, images: newImages };
+    });
+  };
+
+  const setImageAsCover = (index) => {
+    moveProductImage(index, 0);
   };
 
   const removeProductVideo = (indexToRemove) => {
@@ -1015,34 +1097,130 @@ export default function AdminView() {
               {/* MEDIA UPLOAD SECTION: PHOTOS & PRODUCT VIDEOS */}
               <div className="space-y-4 pt-2 border-t border-stone-800">
                 
-                {/* Photo Uploader */}
-                <div className="space-y-2">
+                {/* Photo Uploader with Drag and Drop & Showcase Reordering */}
+                <div className="space-y-3">
                   <label className="block text-xs font-semibold text-stone-300">
-                    Product Photos (Uploaded to Supabase Storage)
+                    Product Showcase Photos (Uploaded to Supabase Storage)
                   </label>
                   
-                  <label className="flex items-center justify-center gap-3 border-2 border-dashed border-brand-rose/60 bg-stone-900 p-4 rounded-xl cursor-pointer hover:bg-stone-800/80 transition-colors">
-                    <Upload className="w-5 h-5 text-brand-rose" />
-                    <span className="text-xs text-stone-300">
-                      Upload photos from device folder
-                    </span>
-                    <input type="file" accept="image/*" multiple onChange={handleLocalImageUpload} className="hidden" />
-                  </label>
+                  <div
+                    onDragOver={handleDragOverFiles}
+                    onDragLeave={handleDragLeaveFiles}
+                    onDrop={handleDropFiles}
+                    className={`relative border-2 border-dashed rounded-2xl p-5 text-center transition-all ${
+                      isDraggingFiles 
+                        ? 'border-brand-gold bg-brand-gold/15 scale-[1.01]' 
+                        : 'border-brand-rose/60 bg-stone-900 hover:bg-stone-800/80'
+                    }`}
+                  >
+                    <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
+                      <Upload className={`w-7 h-7 ${isDraggingFiles ? 'text-brand-gold animate-bounce' : 'text-brand-rose'}`} />
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold text-white">
+                          {isDraggingFiles ? 'Release to drop photos into showcase!' : 'Drag & Drop product photos directly here'}
+                        </p>
+                        <p className="text-[11px] text-stone-400">or click to browse files from device folder (JPG, PNG, WebP)</p>
+                      </div>
+                      <input type="file" accept="image/*" multiple onChange={handleLocalImageUpload} className="hidden" />
+                    </label>
+                  </div>
 
                   {productForm.images.length > 0 && (
-                    <div className="flex gap-3 overflow-x-auto pt-2">
-                      {productForm.images.map((img, idx) => (
-                        <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-stone-700 flex-shrink-0 group">
-                          <img src={img} alt="Uploaded preview" className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => removeProductImage(idx)}
-                            className="absolute top-1 right-1 bg-rose-600 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    <div className="space-y-2 pt-2">
+                      <div className="flex justify-between items-center text-[11px] text-stone-400 font-semibold uppercase tracking-wider">
+                        <span>Showcase Image Order ({productForm.images.length})</span>
+                        <span className="text-brand-gold text-[10px] font-bold">✨ Drag cards to reorder showcase</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {productForm.images.map((img, idx) => (
+                          <div
+                            key={idx}
+                            draggable
+                            onDragStart={(e) => handleImageDragStart(e, idx)}
+                            onDragOver={(e) => handleImageDragOver(e, idx)}
+                            onDrop={(e) => handleImageDrop(e, idx)}
+                            onDragEnd={() => { setDraggedImageIdx(null); setDragOverImageIdx(null); }}
+                            className={`relative group bg-stone-900 border rounded-xl overflow-hidden transition-all duration-200 ${
+                              idx === 0 ? 'border-brand-gold ring-2 ring-brand-gold/40' : 'border-stone-800'
+                            } ${
+                              draggedImageIdx === idx ? 'opacity-40 scale-95' : ''
+                            } ${
+                              dragOverImageIdx === idx ? 'border-brand-rose ring-2 ring-brand-rose/60 scale-105' : ''
+                            }`}
                           >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
+                            {/* Badge indicator */}
+                            <div className="absolute top-1.5 left-1.5 z-10">
+                              {idx === 0 ? (
+                                <span className="bg-brand-gold text-stone-950 font-bold text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
+                                  <Star className="w-2.5 h-2.5 fill-stone-950" /> COVER #1
+                                </span>
+                              ) : (
+                                <span className="bg-stone-950/80 text-stone-300 font-bold text-[9px] px-1.5 py-0.5 rounded-full border border-stone-700">
+                                  #{idx + 1}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Drag Handle Icon */}
+                            <div className="absolute top-1.5 right-1.5 z-10 cursor-grab active:cursor-grabbing bg-stone-950/80 text-stone-300 p-1 rounded-full hover:bg-stone-800 border border-stone-700" title="Drag to reorder">
+                              <GripVertical className="w-3.5 h-3.5" />
+                            </div>
+
+                            {/* Image Thumbnail */}
+                            <div className="aspect-square w-full bg-stone-950 overflow-hidden">
+                              <img src={img} alt={`Showcase ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            </div>
+
+                            {/* Action Control Buttons */}
+                            <div className="p-1.5 bg-stone-950/90 border-t border-stone-800 flex items-center justify-between gap-1">
+                              {/* Move Left */}
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => moveProductImage(idx, idx - 1)}
+                                title="Move Left"
+                                className="p-1 text-stone-400 hover:text-white disabled:opacity-30 disabled:hover:text-stone-400 rounded transition-colors"
+                              >
+                                <MoveLeft className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Set as Cover */}
+                              {idx !== 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => setImageAsCover(idx)}
+                                  title="Set as Main Cover Image"
+                                  className="p-1 text-brand-gold hover:text-amber-300 rounded transition-colors flex items-center gap-0.5 text-[10px] font-bold"
+                                >
+                                  <Star className="w-3 h-3" />
+                                </button>
+                              )}
+
+                              {/* Move Right */}
+                              <button
+                                type="button"
+                                disabled={idx === productForm.images.length - 1}
+                                onClick={() => moveProductImage(idx, idx + 1)}
+                                title="Move Right"
+                                className="p-1 text-stone-400 hover:text-white disabled:opacity-30 disabled:hover:text-stone-400 rounded transition-colors"
+                              >
+                                <MoveRight className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Delete */}
+                              <button
+                                type="button"
+                                onClick={() => removeProductImage(idx)}
+                                title="Remove Image"
+                                className="p-1 text-rose-400 hover:text-rose-200 rounded transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

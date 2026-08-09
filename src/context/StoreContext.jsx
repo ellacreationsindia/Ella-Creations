@@ -23,7 +23,10 @@ export const StoreProvider = ({ children }) => {
   const [demoAdminOverride, setDemoAdminOverride] = useState(false);
 
   // Products, Orders, Reviews
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem('ella_products');
+    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+  });
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('ella_cart');
     return saved ? JSON.parse(saved) : [];
@@ -114,8 +117,11 @@ export const StoreProvider = ({ children }) => {
   const fetchProductsFromSupabase = async () => {
     try {
       const { data, error } = await supabase.from('products').select('*');
-      if (error) throw error;
-      if (data) {
+      if (error) {
+        console.warn('Supabase DB products fetch notice:', error.message);
+        return;
+      }
+      if (data && data.length > 0) {
         const mapped = data.map((p) => ({
           id: p.id,
           title: p.title,
@@ -190,7 +196,11 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
-  // Sync cart & wishlist to localStorage
+  // Sync products, cart & wishlist to localStorage
+  useEffect(() => {
+    localStorage.setItem('ella_products', JSON.stringify(products));
+  }, [products]);
+
   useEffect(() => {
     localStorage.setItem('ella_cart', JSON.stringify(cart));
   }, [cart]);
@@ -446,7 +456,7 @@ export const StoreProvider = ({ children }) => {
     };
 
     try {
-      await supabase.from('products').insert([{
+      const { error: dbError } = await supabase.from('products').insert([{
         id: created.id,
         title: created.title,
         category: created.category,
@@ -475,12 +485,15 @@ export const StoreProvider = ({ children }) => {
         warranty_info: created.warrantyInfo,
         custom_specs: created.customSpecs
       }]);
+      if (dbError) {
+        console.warn('Supabase DB product insert notice:', dbError.message);
+      }
     } catch (err) {
       console.warn('Supabase DB product insert notice:', err.message);
     }
 
     setProducts((prev) => [created, ...prev]);
-    showToast(`Product "${created.title}" published & images saved to Supabase bucket!`);
+    showToast(`Product "${created.title}" published & saved!`);
   };
 
   // Admin Update Product
@@ -505,7 +518,7 @@ export const StoreProvider = ({ children }) => {
     };
 
     try {
-      await supabase.from('products').update({
+      const { error: dbError } = await supabase.from('products').update({
         title: payload.title,
         category: payload.category,
         price: payload.price,
@@ -526,6 +539,9 @@ export const StoreProvider = ({ children }) => {
         warranty_info: payload.warrantyInfo,
         custom_specs: payload.customSpecs
       }).eq('id', payload.id);
+      if (dbError) {
+        console.warn('Supabase DB product update notice:', dbError.message);
+      }
     } catch (err) {
       console.warn('Supabase DB product update notice:', err.message);
     }
@@ -537,7 +553,10 @@ export const StoreProvider = ({ children }) => {
   // Admin Delete Product
   const deleteProduct = async (productId) => {
     try {
-      await supabase.from('products').delete().eq('id', productId);
+      const { error: dbError } = await supabase.from('products').delete().eq('id', productId);
+      if (dbError) {
+        console.warn('Supabase DB product delete notice:', dbError.message);
+      }
     } catch (err) {
       console.warn('Supabase DB product delete notice:', err.message);
     }
