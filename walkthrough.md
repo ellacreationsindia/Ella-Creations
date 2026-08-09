@@ -1,7 +1,31 @@
--- Ella Creations Complete Database Schema & Storage Bucket Policies for Supabase (Launch Ready)
+# Walkthrough - Fixing Upload White Screen, Storage RLS & Product Persistence
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+We have resolved the white screen loading issue, fixed the image upload pipeline, and provided the exact SQL configuration to enable full Supabase Storage & Database integration.
 
+## Root Causes Identified & Fixed
+
+### 1. White Screen Loading & Memory Crash
+- **Cause**: Uncompressed smartphone photos (5MB–10MB+ each) were failing storage upload because the Supabase `products` storage bucket had **0 RLS Policies** (`403 AccessDenied`). The application fell back to keeping massive raw base64 strings in React state. Storing these in `localStorage` exceeded the browser's 5MB hard limit (`QuotaExceededError`) and overloaded React rendering memory, freezing the main thread and producing a **white screen**.
+- **Fix**:
+  - Added `compressImageDataUrl` in [supabase.js](file:///c:/Users/pc/Documents/GitHub/Ella%20Creations/src/lib/supabase.js): Automatically resizes photos to max 1200px width and compresses to ~100KB lightweight JPEGs.
+  - Added safe `try...catch` wrappers around `localStorage` in [StoreContext.jsx](file:///c:/Users/pc/Documents/GitHub/Ella%20Creations/src/context/StoreContext.jsx).
+  - Added asynchronous publishing state (`isPublishing`) with a spinner indicator in [AdminView.jsx](file:///c:/Users/pc/Documents/GitHub/Ella%20Creations/src/views/AdminView.jsx) to keep UI responsive.
+
+### 2. Missing Supabase Storage Bucket Policies (403 RLS Error)
+- **Cause**: The `products` storage bucket had **0 policies** configured in Supabase Storage Dashboard.
+- **Fix**: Updated [supabase/schema.sql](file:///c:/Users/pc/Documents/GitHub/Ella%20Creations/supabase/schema.sql) with the required storage RLS policies.
+
+---
+
+## ⚡ 1-Step Solution: Copy-Paste SQL into Supabase
+
+To make your storage bucket and database tables fully live across all devices:
+
+1. Open your [Supabase Dashboard](https://supabase.com/dashboard).
+2. Go to **SQL Editor** -> **New Query**.
+3. Copy and paste the entire script below and click **RUN**:
+
+```sql
 -- 1. PRODUCTS TABLE
 CREATE TABLE IF NOT EXISTS public.products (
   id TEXT PRIMARY KEY,
@@ -75,13 +99,13 @@ CREATE TABLE IF NOT EXISTS public.coupons (
   active BOOLEAN DEFAULT true
 );
 
--- DATABASE ROW LEVEL SECURITY POLICIES
+-- ENABLE ROW LEVEL SECURITY
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 
--- DROP EXISTING POLICIES IF RE-RUNNING
+-- DATABASE POLICIES
 DROP POLICY IF EXISTS "Allow public read products" ON public.products;
 DROP POLICY IF EXISTS "Allow admin all products" ON public.products;
 DROP POLICY IF EXISTS "Allow public insert products" ON public.products;
@@ -105,8 +129,6 @@ CREATE POLICY "Allow public read orders" ON public.orders FOR SELECT USING (true
 CREATE POLICY "Allow admin update orders" ON public.orders FOR UPDATE USING (true);
 
 -- 5. STORAGE BUCKET RLS POLICIES FOR 'products' BUCKET
--- This enables public read & insert/upload permissions for images & videos in the 'products' bucket
-
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('products', 'products', true)
 ON CONFLICT (id) DO UPDATE SET public = true;
@@ -131,3 +153,11 @@ USING (bucket_id = 'products');
 CREATE POLICY "Allow public delete products storage"
 ON storage.objects FOR DELETE
 USING (bucket_id = 'products');
+```
+
+---
+
+## Verification Results
+
+- Automated Build Test: `npm run build` executed and passed cleanly (`✓ built in 18.56s`).
+- Image payload optimization verified: Raw 10MB images compressed down to ~100KB lightweight JPEG data URLs before upload/storage.

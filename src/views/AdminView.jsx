@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useStore, formatPrice } from '../context/StoreContext';
+import { compressImageDataUrl } from '../lib/supabase';
 
 export default function AdminView() {
   const { 
@@ -78,6 +79,7 @@ export default function AdminView() {
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [draggedImageIdx, setDraggedImageIdx] = useState(null);
   const [dragOverImageIdx, setDragOverImageIdx] = useState(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // Product Form State with Video Support, Tax Rate, and Dynamic Custom Key-Value Specs!
   const [productForm, setProductForm] = useState({
@@ -242,20 +244,19 @@ export default function AdminView() {
   const lowStockProducts = products.filter((p) => p.stock <= 5);
 
   // Handle Photo & Video Uploads
-  const handleLocalImageUpload = (e) => {
+  const handleLocalImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+    for (const file of files) {
+      const compressedUrl = await compressImageDataUrl(file, 1200, 0.82);
+      if (compressedUrl) {
         setProductForm((prev) => ({
           ...prev,
-          images: [...prev.images, reader.result]
+          images: [...prev.images, compressedUrl]
         }));
-      };
-      reader.readAsDataURL(file);
-    });
+      }
+    }
   };
 
   const handleLocalVideoUpload = (e) => {
@@ -282,23 +283,22 @@ export default function AdminView() {
   };
 
   // Drag & Drop File Upload Handlers
-  const handleDropFiles = (e) => {
+  const handleDropFiles = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDraggingFiles(false);
     const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
     if (files.length === 0) return;
 
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+    for (const file of files) {
+      const compressedUrl = await compressImageDataUrl(file, 1200, 0.82);
+      if (compressedUrl) {
         setProductForm((prev) => ({
           ...prev,
-          images: [...prev.images, reader.result]
+          images: [...prev.images, compressedUrl]
         }));
-      };
-      reader.readAsDataURL(file);
-    });
+      }
+    }
   };
 
   const handleDragOverFiles = (e) => {
@@ -438,45 +438,54 @@ export default function AdminView() {
     setProductModalOpen(true);
   };
 
-  const handleSaveProduct = (e) => {
+  const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!productForm.title || productForm.images.length === 0) return;
+    if (isPublishing) return;
 
-    const payload = {
-      title: productForm.title,
-      category: productForm.category,
-      price: parseFloat(productForm.price || 0),
-      comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
-      taxPercent: parseFloat(productForm.taxPercent || 18),
-      stock: parseInt(productForm.stock, 10) || 0,
-      sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
-      stoneType: productForm.stoneType,
-      finishOptions: productForm.finishOptions,
-      description: productForm.description,
-      weightGrams: productForm.weightGrams,
-      dimensions: productForm.dimensions,
-      metalPurity: productForm.metalPurity,
-      gemstoneClarity: productForm.gemstoneClarity,
-      platingThickness: productForm.platingThickness,
-      occasionTags: productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean),
-      warrantyInfo: productForm.warrantyInfo,
-      images: productForm.images,
-      videos: productForm.videos,
-      customSpecs: productForm.customSpecs.filter(c => c.key.trim() && c.value.trim()),
-      details: [
-        productForm.metalPurity || "22k Gold Electroplated Brass base",
-        productForm.gemstoneClarity || "Handcrafted Kundan glass crystals",
-        "Includes luxury gift box"
-      ]
-    };
+    setIsPublishing(true);
 
-    if (editingProduct) {
-      updateProduct({ ...editingProduct, ...payload });
-    } else {
-      addProduct(payload);
+    try {
+      const payload = {
+        title: productForm.title,
+        category: productForm.category,
+        price: parseFloat(productForm.price || 0),
+        comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
+        taxPercent: parseFloat(productForm.taxPercent || 18),
+        stock: parseInt(productForm.stock, 10) || 0,
+        sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
+        stoneType: productForm.stoneType,
+        finishOptions: productForm.finishOptions,
+        description: productForm.description,
+        weightGrams: productForm.weightGrams,
+        dimensions: productForm.dimensions,
+        metalPurity: productForm.metalPurity,
+        gemstoneClarity: productForm.gemstoneClarity,
+        platingThickness: productForm.platingThickness,
+        occasionTags: productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean),
+        warrantyInfo: productForm.warrantyInfo,
+        images: productForm.images,
+        videos: productForm.videos,
+        customSpecs: productForm.customSpecs.filter(c => c.key.trim() && c.value.trim()),
+        details: [
+          productForm.metalPurity || "22k Gold Electroplated Brass base",
+          productForm.gemstoneClarity || "Handcrafted Kundan glass crystals",
+          "Includes luxury gift box"
+        ]
+      };
+
+      if (editingProduct) {
+        await updateProduct({ ...editingProduct, ...payload });
+      } else {
+        await addProduct(payload);
+      }
+
+      setProductModalOpen(false);
+    } catch (err) {
+      console.error('Error publishing product:', err);
+    } finally {
+      setIsPublishing(false);
     }
-
-    setProductModalOpen(false);
   };
 
   // Filtered lists
@@ -1262,16 +1271,25 @@ export default function AdminView() {
               <div className="flex justify-end gap-3 pt-4 border-t border-stone-800">
                 <button
                   type="button"
+                  disabled={isPublishing}
                   onClick={() => setProductModalOpen(false)}
-                  className="px-4 py-2.5 text-xs text-stone-400 hover:text-white"
+                  className="px-4 py-2.5 text-xs text-stone-400 hover:text-white disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors"
+                  disabled={isPublishing}
+                  className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
-                  {editingProduct ? 'Save & Sync to Database' : 'Publish Product to Catalog'}
+                  {isPublishing ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Publishing & Uploading to Supabase...
+                    </>
+                  ) : (
+                    editingProduct ? 'Save & Sync to Database' : 'Publish Product to Catalog'
+                  )}
                 </button>
               </div>
 
