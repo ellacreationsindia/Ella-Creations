@@ -25,7 +25,15 @@ export const StoreProvider = ({ children }) => {
   // Products, Orders, Reviews
   const [products, setProducts] = useState(() => {
     const saved = localStorage.getItem('ella_products');
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.warn('Failed parsing saved products:', e);
+      }
+    }
+    return INITIAL_PRODUCTS;
   });
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('ella_cart');

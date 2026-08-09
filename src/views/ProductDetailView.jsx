@@ -131,7 +131,7 @@ export default function ProductDetailView() {
         {/* Left Column: Media Gallery & Interactive Video Player */}
         <div className="lg:col-span-6 space-y-4">
           {/* Main Media Display */}
-          <div className="aspect-square rounded-3xl overflow-hidden bg-brand-cream border border-brand-gold/30 shadow-md relative group">
+          <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white border border-brand-gold/30 shadow-md relative group p-4 flex items-center justify-center">
             {currentMedia.type === 'video' ? (
               <video
                 src={currentMedia.url}
@@ -139,13 +139,13 @@ export default function ProductDetailView() {
                 autoPlay
                 loop
                 muted
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             ) : (
               <img
                 src={currentMedia.url || product.images[0]}
                 alt={product.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
               />
             )}
 
@@ -166,19 +166,19 @@ export default function ProductDetailView() {
               <button
                 key={idx}
                 onClick={() => setActiveMedia(item)}
-                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 relative ${
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 relative bg-white p-1 flex items-center justify-center ${
                   currentMedia.url === item.url 
                     ? 'border-brand-rose ring-2 ring-brand-rose/30 scale-105 shadow-md' 
-                    : 'border-transparent opacity-70 hover:opacity-100'
+                    : 'border-stone-200 opacity-70 hover:opacity-100'
                 }`}
               >
                 {item.type === 'video' ? (
-                  <div className="w-full h-full bg-stone-900 flex flex-col items-center justify-center text-white">
+                  <div className="w-full h-full bg-stone-900 flex flex-col items-center justify-center text-white rounded-lg">
                     <Video className="w-5 h-5 sm:w-6 sm:h-6 text-brand-rose animate-pulse" />
                     <span className="text-[8px] sm:text-[9px] font-bold mt-1">VIDEO</span>
                   </div>
                 ) : (
-                  <img src={item.url} alt={`Media ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img src={item.url} alt={`Media ${idx + 1}`} className="w-full h-full object-contain" />
                 )}
               </button>
             ))}

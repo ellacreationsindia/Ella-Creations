@@ -59,19 +59,40 @@ export default function ProductCard({ product }) {
         <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
       </button>
 
-      {/* Image Container */}
+      {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}
       <div 
         onClick={() => navigateTo('product', product.id)}
-        className="relative aspect-square overflow-hidden bg-brand-cream cursor-pointer group"
+        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-4 cursor-pointer group flex items-center justify-center border-b border-stone-100"
       >
+        {/* Photo Count Indicator */}
+        {product.images && product.images.length > 1 && (
+          <div className="absolute top-3 right-14 z-10 bg-stone-900/70 backdrop-blur-md text-brand-gold text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            {product.images.length} Views
+          </div>
+        )}
+
+        {/* Primary Image (Uncropped) */}
         <img
-          src={product.images[0]}
+          src={product.images?.[0] || '/logo.png'}
           alt={product.title}
-          className={`w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
+          className={`w-full h-full object-contain object-center transition-all duration-500 ease-in-out ${
+            product.images && product.images.length > 1 ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
+          } ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
         />
 
+        {/* Secondary Hover Image (Uncropped) */}
+        {product.images && product.images.length > 1 && (
+          <img
+            src={product.images[1]}
+            alt={`${product.title} alternate view`}
+            className={`absolute inset-0 w-full h-full object-contain object-center p-4 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out ${
+              isOutOfStock ? 'opacity-60 grayscale' : ''
+            }`}
+          />
+        )}
+
         {/* Hover Quick Actions */}
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+        <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
           <button
             onClick={(e) => {
               e.stopPropagation();

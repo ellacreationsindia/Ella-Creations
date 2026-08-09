@@ -100,7 +100,7 @@ export default function CartDrawer() {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-20 h-20 object-cover rounded-lg border border-brand-gold/20 flex-shrink-0"
+                    className="w-20 h-20 object-contain p-1 bg-white rounded-lg border border-brand-gold/20 flex-shrink-0"
                   />
                   <div className="flex-1 flex flex-col justify-between">
                     <div>

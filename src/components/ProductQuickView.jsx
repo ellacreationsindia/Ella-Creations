@@ -36,11 +36,11 @@ export default function ProductQuickView() {
 
         {/* Gallery Section */}
         <div className="md:w-1/2 bg-brand-cream p-6 flex flex-col justify-between">
-          <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-inner mb-4 relative">
+          <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-inner mb-4 relative p-4 flex items-center justify-center border border-stone-100">
             <img
               src={selectedImage}
               alt={quickViewProduct.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 
@@ -51,11 +51,11 @@ export default function ProductQuickView() {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
-                    selectedImage === img ? 'border-brand-rose shadow-md' : 'border-transparent opacity-70'
+                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 bg-white p-1 flex items-center justify-center ${
+                    selectedImage === img ? 'border-brand-rose shadow-md' : 'border-stone-200 opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                  <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>

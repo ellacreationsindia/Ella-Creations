@@ -10,6 +10,7 @@ import SEOHead from './components/SEOHead';
 import HomeView from './views/HomeView';
 import ShopView from './views/ShopView';
 import ProductDetailView from './views/ProductDetailView';
+import CheckoutView from './views/CheckoutView';
 import AdminView from './views/AdminView';
 import { Sparkles, AlertCircle, Info } from 'lucide-react';
 
@@ -30,6 +31,7 @@ function AppContent() {
         {currentView === 'home' && <HomeView />}
         {currentView === 'shop' && <ShopView />}
         {currentView === 'product' && <ProductDetailView />}
+        {currentView === 'checkout' && <CheckoutView />}
         {currentView === 'admin' && <AdminView />}
       </main>
 
