@@ -36,13 +36,23 @@ export const StoreProvider = ({ children }) => {
     return INITIAL_PRODUCTS;
   });
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('ella_cart');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('ella_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.warn('Failed parsing saved cart:', e);
+      return [];
+    }
   });
 
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem('ella_wishlist');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('ella_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.warn('Failed parsing saved wishlist:', e);
+      return [];
+    }
   });
 
   const [orders, setOrders] = useState(() => {
@@ -59,8 +69,13 @@ export const StoreProvider = ({ children }) => {
   });
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [coupons, setCoupons] = useState(() => {
-    const saved = localStorage.getItem('ella_coupons');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('ella_coupons');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.warn('Failed parsing saved coupons:', e);
+      return [];
+    }
   });
   const [subscribers, setSubscribers] = useState(() => {
     const saved = localStorage.getItem('ella_subscribers');
