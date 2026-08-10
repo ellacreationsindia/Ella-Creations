@@ -123,8 +123,8 @@ export default function SEOHead() {
         "description": "Contemporary artificial jewelry brand crafted for the modern, confident and elegant woman.",
         "email": "ellacreationsindia@gmail.com",
         "sameAs": [
-          "https://instagram.com/ellacreations",
-          "https://facebook.com/ellacreations"
+          "https://www.instagram.com/ellacreationsindia/",
+          "https://www.instagram.com/ellacreationsindia/"
         ]
       },
       {

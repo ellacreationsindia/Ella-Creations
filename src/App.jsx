@@ -12,6 +12,10 @@ import ShopView from './views/ShopView';
 import ProductDetailView from './views/ProductDetailView';
 import CheckoutView from './views/CheckoutView';
 import AdminView from './views/AdminView';
+import TermsView from './views/TermsView';
+import PrivacyView from './views/PrivacyView';
+import BrandGuidelinesView from './views/BrandGuidelinesView';
+import SitemapView from './views/SitemapView';
 import { Sparkles, AlertCircle, Info } from 'lucide-react';
 
 function AppContent() {
@@ -33,6 +37,10 @@ function AppContent() {
         {currentView === 'product' && <ProductDetailView />}
         {currentView === 'checkout' && <CheckoutView />}
         {currentView === 'admin' && <AdminView />}
+        {currentView === 'terms' && <TermsView />}
+        {currentView === 'privacy' && <PrivacyView />}
+        {currentView === 'brand-guidelines' && <BrandGuidelinesView />}
+        {currentView === 'sitemap' && <SitemapView />}
       </main>
 
       {/* Show Storefront Footer on non-admin views */}

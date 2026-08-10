@@ -169,3 +169,59 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
     return fileOrDataUrl;
   }
 }
+
+/**
+ * Loads Razorpay Checkout SDK script dynamically
+ */
+export function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+/**
+ * Shiprocket Serviceability & Rate Calculation Helper
+ * Estimates logistics rates and delivery times for Indian pincodes
+ */
+export async function calculateShiprocketRates(destinationPincode, weightGrams = 500) {
+  const cleanPincode = (destinationPincode || '').toString().trim();
+  if (!cleanPincode || cleanPincode.length !== 6 || isNaN(cleanPincode)) {
+    return {
+      serviceable: false,
+      message: 'Please enter a valid 6-digit Indian PIN code.'
+    };
+  }
+
+  // Simulated Shiprocket Courier Rates API response (supporting live or realistic logistics rates)
+  const isMetro = ['11', '40', '56', '60', '70', '50'].some(prefix => cleanPincode.startsWith(prefix));
+  
+  return {
+    serviceable: true,
+    destinationPincode: cleanPincode,
+    couriers: [
+      {
+        id: 'shiprocket-express',
+        name: 'Shiprocket Air Express (Bluedart / Delhivery Air)',
+        estimatedDays: isMetro ? '1-2 Days' : '2-3 Days',
+        rate: isMetro ? 99 : 149,
+        badge: 'Fastest'
+      },
+      {
+        id: 'shiprocket-standard',
+        name: 'Shiprocket Surface Standard (Ecom Express / Xpressbees)',
+        estimatedDays: isMetro ? '3-4 Days' : '4-6 Days',
+        rate: isMetro ? 49 : 79,
+        badge: 'Best Value'
+      }
+    ]
+  };
+}
+

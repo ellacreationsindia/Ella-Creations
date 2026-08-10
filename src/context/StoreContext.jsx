@@ -22,7 +22,7 @@ export const StoreProvider = ({ children }) => {
   const [isSecretAdminModalOpen, setIsSecretAdminModalOpen] = useState(false);
   const [demoAdminOverride, setDemoAdminOverride] = useState(false);
 
-  // Products, Orders, Reviews
+  // Products, Orders, Reviews, Coupons
   const [products, setProducts] = useState(() => {
     const saved = localStorage.getItem('ella_products');
     if (saved) {
@@ -45,12 +45,43 @@ export const StoreProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem('ella_orders');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.warn('Failed parsing saved orders:', e);
+      }
+    }
+    return INITIAL_ORDERS;
+  });
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  const [coupons, setCoupons] = useState(() => {
+    const saved = localStorage.getItem('ella_coupons');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [subscribers, setSubscribers] = useState(() => {
+    const saved = localStorage.getItem('ella_subscribers');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.warn('Failed parsing saved subscribers:', e);
+      }
+    }
+    return [
+      { id: 'sub-1', email: 'ananya.sharma@example.com', source: 'VIP Sparkle Club Footer', createdAt: new Date().toISOString() },
+      { id: 'sub-2', email: 'priya.kapoor@example.com', source: 'Hero Drop Banner', createdAt: new Date(Date.now() - 86400000).toISOString() }
+    ];
+  });
 
   // UI state
   const [currentView, setCurrentView] = useState('home');
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -63,10 +94,13 @@ export const StoreProvider = ({ children }) => {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const navigateTo = (view, productId = null) => {
+  const navigateTo = (view, productId = null, category = null) => {
     setCurrentView(view);
     if (productId) {
       setSelectedProductId(productId);
+    }
+    if (category) {
+      setSelectedCategory(category);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -120,6 +154,7 @@ export const StoreProvider = ({ children }) => {
     fetchProductsFromSupabase();
     fetchOrdersFromSupabase();
     fetchReviewsFromSupabase();
+    fetchCouponsFromSupabase();
   }, []);
 
   const fetchProductsFromSupabase = async () => {
@@ -143,7 +178,7 @@ export const StoreProvider = ({ children }) => {
           sku: p.sku,
           isFeatured: p.is_featured,
           isNew: p.is_new,
-          finishOptions: p.finish_options || ['Rose Gold', 'Gold'],
+          variants: p.variants || (p.finish_options ? p.finish_options.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
           stoneType: p.stone_type || 'Cubic Zirconia (CZ)',
           images: p.images || [],
           videos: p.videos || [],
@@ -157,7 +192,7 @@ export const StoreProvider = ({ children }) => {
           platingThickness: p.plating_thickness,
           occasionTags: p.occasion_tags || [],
           warrantyInfo: p.warranty_info,
-          customSpecs: p.custom_specs || []
+          customSections: p.custom_sections || p.custom_specs || []
         }));
         setProducts(mapped);
         if (mapped.length > 0 && !selectedProductId) {
@@ -204,7 +239,47 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
-  // Sync products, cart & wishlist to localStorage
+  const fetchCouponsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
+      if (error) {
+        console.warn('Supabase DB coupons fetch notice:', error.message);
+        return;
+      }
+      if (data) {
+        const mapped = data.map(c => ({
+          code: c.code,
+          discountPercent: c.discount_percent,
+          minSpend: Number(c.min_spend || 0),
+          description: c.description,
+          active: c.active !== false
+        }));
+        setCoupons(mapped);
+      }
+    } catch (err) {
+      console.warn('Supabase DB coupons fetch notice:', err.message);
+    }
+  };
+
+  const fetchSubscribersFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase.from('newsletter_subscribers').select('*').order('created_at', { ascending: false });
+      if (error) return;
+      if (data && data.length > 0) {
+        const mapped = data.map(s => ({
+          id: s.id,
+          email: s.email,
+          source: s.source || 'VIP Sparkle Club',
+          createdAt: s.created_at
+        }));
+        setSubscribers(mapped);
+      }
+    } catch (err) {
+      console.warn('Supabase DB subscribers fetch notice:', err.message);
+    }
+  };
+
+  // Sync products, cart, wishlist, coupons, orders, subscribers to localStorage
   useEffect(() => {
     localStorage.setItem('ella_products', JSON.stringify(products));
   }, [products]);
@@ -216,6 +291,18 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('ella_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
+
+  useEffect(() => {
+    localStorage.setItem('ella_coupons', JSON.stringify(coupons));
+  }, [coupons]);
+
+  useEffect(() => {
+    localStorage.setItem('ella_orders', JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('ella_subscribers', JSON.stringify(subscribers));
+  }, [subscribers]);
 
   // Check Admin Privilege: Restricted exclusively to ellacreationsindia@gmail.com
   const isAdmin = (user && user.email === ADMIN_EMAIL) || demoAdminOverride;
@@ -283,19 +370,27 @@ export const StoreProvider = ({ children }) => {
     showToast('Signed out of Ella Creations', 'info');
   };
 
-  // Cart operations
-  const addToCart = (product, quantity = 1, finish = null) => {
-    // Check if price zero or out of stock
-    if (product.price <= 0 || product.stock <= 0) {
-      showToast(`"${product.title}" is currently out of stock`, 'error');
+  // Cart operations (Variant Aware)
+  const addToCart = (product, quantity = 1, selectedVariant = null) => {
+    // Determine target variant or fallback to product baseline
+    const variantObj = typeof selectedVariant === 'object' && selectedVariant !== null
+      ? selectedVariant
+      : (product.variants && product.variants.length > 0
+          ? product.variants.find(v => v.name === selectedVariant) || product.variants[0]
+          : { id: 'default', name: selectedVariant || 'Standard', price: product.price, stock: product.stock, sku: product.sku });
+
+    const itemPrice = Number(variantObj?.price ?? product.price);
+    const itemStock = Number(variantObj?.stock ?? product.stock);
+    const variantName = variantObj?.name || 'Standard';
+
+    if (itemPrice <= 0 || itemStock <= 0) {
+      showToast(`"${product.title}" (${variantName}) is currently out of stock`, 'error');
       return;
     }
 
-    const selectedFinish = finish || (product.finishOptions ? product.finishOptions[0] : 'Standard');
-    
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (item) => item.id === product.id && item.finish === selectedFinish
+        (item) => item.id === product.id && (item.variantId === variantObj?.id || item.finish === variantName)
       );
 
       if (existingIndex > -1) {
@@ -308,18 +403,20 @@ export const StoreProvider = ({ children }) => {
           {
             id: product.id,
             title: product.title,
-            price: product.price,
+            price: itemPrice,
             taxPercent: product.taxPercent || 18,
-            image: product.images[0],
-            finish: selectedFinish,
+            image: variantObj?.image || product.images[0],
+            finish: variantName,
+            variantId: variantObj?.id || 'default',
+            variantSku: variantObj?.sku || product.sku,
             qty: quantity,
-            stock: product.stock
+            stock: itemStock
           }
         ];
       }
     });
 
-    showToast(`Added "${product.title}" (${selectedFinish}) to your cart!`);
+    showToast(`Added "${product.title}" (${variantName}) to your cart!`);
     setIsCartOpen(true);
   };
 
@@ -358,11 +455,16 @@ export const StoreProvider = ({ children }) => {
     });
   };
 
+  // Dynamic Admin Coupon Management & Application
   const applyCoupon = (code) => {
     const cleanCode = code.trim().toUpperCase();
-    const coupon = ACTIVE_COUPONS[cleanCode];
+    const coupon = coupons.find(c => c.code.toUpperCase() === cleanCode);
     if (!coupon) {
-      showToast('Invalid coupon code. Try ELLA10 or SPARKLE20', 'error');
+      showToast('Invalid coupon code. Please check and try again.', 'error');
+      return false;
+    }
+    if (!coupon.active) {
+      showToast('This coupon code is currently inactive or expired.', 'error');
       return false;
     }
     const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -380,16 +482,68 @@ export const StoreProvider = ({ children }) => {
     showToast('Coupon removed', 'info');
   };
 
-  // Submit Order (Inserts into Supabase DB `orders` table)
-  const submitOrder = async (customerDetails, paymentMethod) => {
+  const addCoupon = async (newCouponData) => {
+    const formatted = {
+      code: newCouponData.code.trim().toUpperCase(),
+      discount_percent: Number(newCouponData.discountPercent),
+      min_spend: Number(newCouponData.minSpend || 0),
+      description: newCouponData.description || `${newCouponData.discountPercent}% Discount Coupon`,
+      active: newCouponData.active !== false
+    };
+
+    try {
+      const { error } = await supabase.from('coupons').insert([formatted]);
+      if (error) throw error;
+    } catch (err) {
+      console.warn('Supabase coupon insert notice:', err.message);
+    }
+
+    const stateCoupon = {
+      code: formatted.code,
+      discountPercent: formatted.discount_percent,
+      minSpend: formatted.min_spend,
+      description: formatted.description,
+      active: formatted.active
+    };
+
+    setCoupons(prev => [stateCoupon, ...prev.filter(c => c.code !== stateCoupon.code)]);
+    showToast(`Coupon "${stateCoupon.code}" created successfully!`);
+  };
+
+  const deleteCoupon = async (code) => {
+    try {
+      await supabase.from('coupons').delete().eq('code', code);
+    } catch (err) {
+      console.warn('Supabase coupon delete notice:', err.message);
+    }
+    setCoupons(prev => prev.filter(c => c.code !== code));
+    if (activeCoupon?.code === code) {
+      setActiveCoupon(null);
+    }
+    showToast(`Coupon "${code}" deleted`, 'info');
+  };
+
+  const toggleCouponStatus = async (code, currentActive) => {
+    const updatedActive = !currentActive;
+    try {
+      await supabase.from('coupons').update({ active: updatedActive }).eq('code', code);
+    } catch (err) {
+      console.warn('Supabase coupon update notice:', err.message);
+    }
+    setCoupons(prev => prev.map(c => c.code === code ? { ...c, active: updatedActive } : c));
+    showToast(`Coupon "${code}" is now ${updatedActive ? 'Active' : 'Inactive'}`);
+  };
+
+  // Submit Order (With Razorpay Payment ID & Shiprocket Logistics details)
+  const submitOrder = async (customerDetails, paymentMethod, paymentId = null, logisticsDetails = {}) => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const taxAmount = (subtotal * 18) / 100; // 18% GST calculation
+    const taxAmount = (subtotal * 18) / 100;
     const discountAmount = activeCoupon ? (subtotal * activeCoupon.discountPercent) / 100 : 0;
-    const shipping = subtotal >= 2500 ? 0 : 199;
+    const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : (subtotal >= 2500 ? 0 : 199);
     const total = subtotal - discountAmount + shipping;
 
     const newOrder = {
-      id: `EC-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `EC-${Math.floor(10000 + Math.random() * 90000)}`,
       user_id: user?.id || null,
       customer: customerDetails,
       items: [...cart],
@@ -400,10 +554,15 @@ export const StoreProvider = ({ children }) => {
       total: parseFloat(total.toFixed(2)),
       status: 'Processing',
       payment_method: paymentMethod,
+      payment_id: paymentId || `PAY-${Date.now()}`,
+      shipping_pincode: logisticsDetails.pincode || customerDetails.zip || '',
+      shipping_courier: logisticsDetails.courierName || 'Shiprocket Standard',
+      awb_code: logisticsDetails.awbCode || `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
+      tracking_url: logisticsDetails.trackingUrl || `https://shiprocket.co/tracking/${Math.floor(100000000 + Math.random() * 900000000)}`,
       date: new Date().toISOString()
     };
 
-    // Deduct stock in memory & DB
+    // Deduct stock in memory
     setProducts((prevProducts) =>
       prevProducts.map((p) => {
         const itemInCart = cart.find((c) => c.id === p.id);
@@ -435,6 +594,123 @@ export const StoreProvider = ({ children }) => {
     return newOrder;
   };
 
+  // Update Order Shipment / Shiprocket AWB Dispatch
+  const updateOrderShipment = async (orderId, courierName, awbCode, trackingUrl) => {
+    const patch = {
+      status: 'Shipped',
+      shipping_courier: courierName,
+      awb_code: awbCode,
+      tracking_url: trackingUrl
+    };
+
+    try {
+      await supabase.from('orders').update(patch).eq('id', orderId);
+    } catch (err) {
+      console.warn('Supabase order shipment update notice:', err.message);
+    }
+
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...patch } : o));
+    showToast(`Order #${orderId} dispatched via ${courierName}! AWB: ${awbCode}`);
+  };
+
+  // Update Order Status (Processing -> Shipped -> Delivered -> Cancelled)
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+    } catch (err) {
+      console.warn('Supabase DB order status update notice:', err.message);
+    }
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    showToast(`Order #${orderId} status updated to ${newStatus}`);
+  };
+
+  // Delete Order
+  const deleteOrder = async (orderId) => {
+    try {
+      await supabase.from('orders').delete().eq('id', orderId);
+    } catch (err) {
+      console.warn('Supabase DB order delete notice:', err.message);
+    }
+    setOrders(prev => prev.filter(o => o.id !== orderId));
+    showToast(`Order #${orderId} deleted`);
+  };
+
+  // VIP Sparkle Club Newsletter Subscription
+  const subscribeNewsletter = async (email, source = 'VIP Sparkle Club Footer') => {
+    if (!email || !email.includes('@')) {
+      showToast('Please enter a valid email address.', 'error');
+      return false;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (subscribers.some(s => s.email.toLowerCase() === cleanEmail)) {
+      showToast('You are already subscribed to the VIP Sparkle Club! ✨', 'info');
+      return true;
+    }
+
+    const newSub = {
+      id: `sub-${Date.now()}`,
+      email: cleanEmail,
+      source,
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      await supabase.from('newsletter_subscribers').insert([{
+        email: cleanEmail,
+        source: source
+      }]);
+    } catch (err) {
+      console.warn('Supabase subscriber insert notice:', err.message);
+    }
+
+    setSubscribers(prev => [newSub, ...prev]);
+    
+    confetti({
+      particleCount: 80,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ['#D4AF37', '#8B263E', '#FAF4EE']
+    });
+
+    showToast('✨ Welcome to VIP Sparkle Club! Exclusive drops & 10% code sent to your email.');
+    return true;
+  };
+
+  // Delete Subscriber (Admin control)
+  const deleteSubscriber = async (email) => {
+    try {
+      await supabase.from('newsletter_subscribers').delete().eq('email', email);
+    } catch (err) {
+      console.warn('Supabase subscriber delete notice:', err.message);
+    }
+    setSubscribers(prev => prev.filter(s => s.email !== email));
+    showToast(`Subscriber ${email} removed`);
+  };
+
+  // Helper: Verify if user has purchased this product in any past completed/processing order
+  const hasUserPurchasedProduct = (userId, userEmail, productId) => {
+    if (!productId) return false;
+    return orders.some(order => {
+      if (order.status === 'Cancelled') return false;
+      const isUserMatch = (userId && order.user_id === userId) || (userEmail && order.customer?.email?.toLowerCase() === userEmail.toLowerCase());
+      if (!isUserMatch) return false;
+      return Array.isArray(order.items) && order.items.some(item => item.id === productId);
+    });
+  };
+
+  // Helper: Require User Sign-In for Purchase Actions
+  const requireAuthForAction = (actionCallback, message = 'Please sign in or create an account to proceed.') => {
+    if (!user) {
+      showToast(message, 'info');
+      setIsAuthModalOpen(true);
+      return false;
+    }
+    if (actionCallback) actionCallback();
+    return true;
+  };
+
   // Admin Add Product (Uploads local images & videos directly to Supabase Storage bucket 'products' & inserts to Supabase DB)
   const addProduct = async (newProduct) => {
     showToast('Uploading images & videos to Supabase bucket "products"...', 'info');
@@ -460,7 +736,8 @@ export const StoreProvider = ({ children }) => {
       isNew: true,
       images: uploadedImages,
       videos: uploadedVideos,
-      customSpecs: newProduct.customSpecs || []
+      variants: newProduct.variants || [],
+      customSections: newProduct.customSections || []
     };
 
     try {
@@ -477,7 +754,7 @@ export const StoreProvider = ({ children }) => {
         sku: created.sku,
         is_featured: created.isFeatured,
         is_new: created.isNew,
-        finish_options: created.finishOptions,
+        variants: created.variants,
         stone_type: created.stoneType,
         images: created.images,
         videos: created.videos,
@@ -491,7 +768,7 @@ export const StoreProvider = ({ children }) => {
         plating_thickness: created.platingThickness,
         occasion_tags: created.occasionTags,
         warranty_info: created.warrantyInfo,
-        custom_specs: created.customSpecs
+        custom_sections: created.customSections
       }]);
       if (dbError) {
         console.warn('Supabase DB product insert notice:', dbError.message);
@@ -522,7 +799,8 @@ export const StoreProvider = ({ children }) => {
       stock: updatedProduct.price <= 0 ? 0 : Number(updatedProduct.stock || 0),
       images: uploadedImages, 
       videos: uploadedVideos,
-      customSpecs: updatedProduct.customSpecs || []
+      variants: updatedProduct.variants || [],
+      customSections: updatedProduct.customSections || []
     };
 
     try {
@@ -534,7 +812,7 @@ export const StoreProvider = ({ children }) => {
         tax_percent: payload.taxPercent || 18,
         stock: payload.stock,
         stone_type: payload.stoneType,
-        finish_options: payload.finishOptions,
+        variants: payload.variants,
         images: payload.images,
         videos: payload.videos,
         description: payload.description,
@@ -545,7 +823,7 @@ export const StoreProvider = ({ children }) => {
         plating_thickness: payload.platingThickness,
         occasion_tags: payload.occasionTags,
         warranty_info: payload.warrantyInfo,
-        custom_specs: payload.customSpecs
+        custom_sections: payload.customSections
       }).eq('id', payload.id);
       if (dbError) {
         console.warn('Supabase DB product update notice:', dbError.message);
@@ -571,20 +849,6 @@ export const StoreProvider = ({ children }) => {
 
     setProducts((prev) => prev.filter((p) => p.id !== productId));
     showToast('Product deleted from database', 'info');
-  };
-
-  // Admin Update Order Status
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-    } catch (err) {
-      console.warn('Supabase DB order status update notice:', err.message);
-    }
-
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-    );
-    showToast(`Order #${orderId} status updated to ${newStatus}`);
   };
 
   // Add Review
@@ -656,8 +920,11 @@ export const StoreProvider = ({ children }) => {
         wishlist,
         orders,
         reviews,
+        coupons,
+        subscribers,
         currentView,
         selectedProductId,
+        selectedCategory,
         quickViewProduct,
         isCartOpen,
         isCheckoutOpen,
@@ -666,6 +933,7 @@ export const StoreProvider = ({ children }) => {
         toast,
         cartItemsCount,
         cartSubtotal,
+        setSelectedCategory,
         setIsAuthModalOpen,
         setIsSecretAdminModalOpen,
         setDemoAdminOverride,
@@ -685,7 +953,16 @@ export const StoreProvider = ({ children }) => {
         toggleWishlist,
         applyCoupon,
         removeCoupon,
+        addCoupon,
+        deleteCoupon,
+        toggleCouponStatus,
         submitOrder,
+        updateOrderShipment,
+        deleteOrder,
+        subscribeNewsletter,
+        deleteSubscriber,
+        hasUserPurchasedProduct,
+        requireAuthForAction,
         addProduct,
         updateProduct,
         deleteProduct,

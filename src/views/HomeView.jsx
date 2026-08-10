@@ -156,7 +156,7 @@ export default function HomeView() {
           ].map((cat, idx) => (
             <div
               key={idx}
-              onClick={() => navigateTo('shop')}
+              onClick={() => navigateTo('shop', null, cat.title)}
               className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer shadow-sm hover:shadow-soft-rose border border-brand-gold/20 transition-all duration-300 bg-brand-cream/40 p-2 flex items-center justify-center"
             >
               <img

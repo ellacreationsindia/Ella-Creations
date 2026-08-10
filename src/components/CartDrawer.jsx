@@ -13,7 +13,10 @@ export default function CartDrawer() {
     activeCoupon, 
     applyCoupon, 
     removeCoupon,
-    setIsCheckoutOpen 
+    setIsCheckoutOpen,
+    user,
+    requireAuthForAction,
+    navigateTo
   } = useStore();
 
   const [couponInput, setCouponInput] = useState('');
@@ -27,6 +30,13 @@ export default function CartDrawer() {
   const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
   const shippingCost = cartSubtotal >= freeShippingThreshold || cart.length === 0 ? 0 : 199;
   const grandTotal = cartSubtotal - discountAmount + shippingCost;
+
+  const handleProceedToCheckout = () => {
+    requireAuthForAction(() => {
+      setIsCartOpen(false);
+      navigateTo('checkout');
+    }, 'Please sign in or create an account to proceed to checkout.');
+  };
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
@@ -224,10 +234,7 @@ export default function CartDrawer() {
 
               {/* Checkout CTA */}
               <button
-                onClick={() => {
-                  setIsCartOpen(false);
-                  setIsCheckoutOpen(true);
-                }}
+                onClick={handleProceedToCheckout}
                 className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-all transform active:scale-95 text-xs uppercase tracking-wider"
               >
                 Proceed to Checkout <ArrowRight className="w-4 h-4" />

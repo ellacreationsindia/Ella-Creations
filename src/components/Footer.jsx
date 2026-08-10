@@ -15,7 +15,15 @@ import {
 import { useStore, formatPrice } from '../context/StoreContext';
 
 export default function Footer() {
-  const { navigateTo, isAdmin } = useStore();
+  const { navigateTo, isAdmin, subscribeNewsletter } = useStore();
+  const [newsletterEmail, setNewsletterEmail] = React.useState('');
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    const ok = await subscribeNewsletter(newsletterEmail, 'VIP Sparkle Club Footer');
+    if (ok) setNewsletterEmail('');
+  };
 
   return (
     <footer className="w-full bg-stone-950 text-stone-200 pt-16 pb-12 border-t border-brand-gold/30 relative z-30 block">
@@ -70,13 +78,13 @@ export default function Footer() {
               Ella Creations is a contemporary artificial jewelry brand crafted for the modern, confident and elegant woman. Our pieces are designed to add a touch of timeless beauty and sparkle to every moment.
             </p>
             <div className="flex space-x-3 pt-2">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/ellacreationsindia/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/ellacreationsindia/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/ellacreationsindia/" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors">
                 <Globe className="w-4 h-4" />
               </a>
             </div>
@@ -98,10 +106,10 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-3">
             <h5 className="font-serif text-sm font-semibold tracking-wider text-brand-gold uppercase">Customer Care</h5>
             <ul className="space-y-2 text-xs text-stone-400">
-              <li><button onClick={() => navigateTo('shop')} className="hover:text-white transition-colors">Jewelry Care Guide</button></li>
-              <li><button onClick={() => navigateTo('shop')} className="hover:text-white transition-colors">Size & Fit Chart</button></li>
-              <li><button onClick={() => navigateTo('shop')} className="hover:text-white transition-colors">Shipping & Returns</button></li>
-              <li><button onClick={() => navigateTo('shop')} className="hover:text-white transition-colors">Track Order Status</button></li>
+              <li><button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors">Jewelry Care Guide</button></li>
+              <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Size & Fit Chart</button></li>
+              <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Shipping & Returns</button></li>
+              <li><button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors">Sitemap Directory</button></li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
               {isAdmin && (
@@ -120,12 +128,14 @@ export default function Footer() {
           {/* Newsletter Box */}
           <div className="lg:col-span-4 space-y-3">
             <h5 className="font-serif text-sm font-semibold tracking-wider text-brand-gold uppercase">VIP Sparkle Club</h5>
-            <p className="text-xs text-stone-400">Subscribe to receive exclusive preview access to new artificial jewelry drops and 15% off your first order.</p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you for subscribing to VIP Sparkle Club!'); }} className="flex gap-2">
+            <p className="text-xs text-stone-400">Subscribe to receive exclusive preview access to new artificial jewelry drops and secret discount codes.</p>
+            <form onSubmit={handleSubscribe} className="flex gap-2">
               <input
                 type="email"
                 placeholder="Enter your email address"
                 required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="bg-stone-800 text-xs px-3.5 py-2.5 rounded-lg border border-stone-700 text-white placeholder:text-stone-500 focus:outline-none focus:border-brand-gold flex-1"
               />
               <button
@@ -144,11 +154,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-stone-800 text-center text-xs text-stone-500 flex flex-col md:flex-row items-center justify-between gap-4">
         <p>© {new Date().getFullYear()} Ella Creations. All Rights Reserved. Crafted with <Heart className="w-3.5 h-3.5 text-brand-rose inline mx-0.5 fill-current" /> for artificial jewelry lovers.</p>
         <div className="flex space-x-4 text-stone-400">
-          <a href="#" className="hover:text-white">Privacy Policy</a>
+          <button onClick={() => navigateTo('privacy')} className="hover:text-white">Privacy Policy</button>
           <span>•</span>
-          <a href="#" className="hover:text-white">Terms of Service</a>
+          <button onClick={() => navigateTo('terms')} className="hover:text-white">Terms of Service</button>
           <span>•</span>
-          <a href="#" className="hover:text-white">Brand Guidelines</a>
+          <button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white">Brand Guidelines</button>
+          <span>•</span>
+          <button onClick={() => navigateTo('sitemap')} className="hover:text-white">Sitemap</button>
         </div>
       </div>
     </footer>

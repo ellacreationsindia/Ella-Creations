@@ -13,7 +13,10 @@ export const INITIAL_PRODUCTS = [
     sku: "EC-SET-101",
     isFeatured: true,
     isNew: true,
-    finishOptions: ["Gold", "Antique Gold"],
+    variants: [
+      { id: "v-101-1", name: "22k Gold Polish", sku: "EC-SET-101-GLD", price: 4999, stock: 8, swatchColor: "#D4AF37" },
+      { id: "v-101-2", name: "Antique Gold Finish", sku: "EC-SET-101-ANT", price: 5299, stock: 4, swatchColor: "#B8860B" }
+    ],
     stoneType: "Uncut Kundan & Fresh Pearls",
     images: [
       "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000",
@@ -22,20 +25,32 @@ export const INITIAL_PRODUCTS = [
     ],
     videos: [],
     description: "An opulent 22k gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and festive celebrations.",
-    details: [
-      "22k Yellow Gold Electroplated Finish",
-      "Hand-set AAA+ grade Kundan glass stones",
-      "Adjustable silk dori neck attachment",
-      "Includes matching drop earrings with push-back post"
+    customSections: [
+      {
+        title: "Craftsmanship & Materials",
+        items: [
+          { label: "Base Alloy", value: "Premium Brass (100% Lead & Nickel Free)" },
+          { label: "Plating", value: "22k Yellow Gold Electroplated Finish" },
+          { label: "Stones", value: "Hand-set AAA+ Grade Kundan & Fresh Water Pearls" }
+        ]
+      },
+      {
+        title: "Dimensions & Fit",
+        items: [
+          { label: "Choker Length", value: "8.5 inches (Adjustable Silk Dori Attachment)" },
+          { label: "Earrings Height", value: "2.8 inches with Push-Back Closure" },
+          { label: "Net Weight", value: "145 grams" }
+        ]
+      },
+      {
+        title: "Care & Warranty",
+        items: [
+          { label: "Care Instructions", value: "Avoid contact with water, perfume, and cosmetics. Store in velvet pouch." },
+          { label: "Warranty", value: "1-Year Ella Creations Anti-Tarnish Guarantee" }
+        ]
+      }
     ],
-    care: "Keep away from water, perfumes, and hairsprays. Store in provided luxury velvet box.",
-    weightGrams: 145,
-    dimensions: "Choker Length: 8 inches | Earring Height: 2.8 inches",
-    metalPurity: "Brass Base Alloy (100% Lead & Nickel Free)",
-    gemstoneClarity: "AAA Grade Synthetic Kundan",
-    platingThickness: "2.5 Micron Anti-Tarnish Gold",
-    occasionTags: ["Bridal", "Wedding", "Festive"],
-    warrantyInfo: "1-Year Anti-Tarnish Guarantee"
+    occasionTags: ["Bridal", "Wedding", "Festive"]
   },
   {
     id: "ec-102",
@@ -50,7 +65,10 @@ export const INITIAL_PRODUCTS = [
     sku: "EC-ER-102",
     isFeatured: true,
     isNew: true,
-    finishOptions: ["Rose Gold", "Silver"],
+    variants: [
+      { id: "v-102-1", name: "18k Rose Gold", sku: "EC-ER-102-RG", price: 1899, stock: 15, swatchColor: "#B76E79" },
+      { id: "v-102-2", name: "Pure Silver Polish", sku: "EC-ER-102-SLV", price: 1899, stock: 10, swatchColor: "#C0C0C0" }
+    ],
     stoneType: "AAA+ Cubic Zirconia (CZ)",
     images: [
       "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000",
@@ -58,20 +76,17 @@ export const INITIAL_PRODUCTS = [
     ],
     videos: [],
     description: "Dazzling solitaire drop earrings with diamond-cut AAA+ cubic zirconia crystals set in 18k rose gold plating. Lightweight and hypoallergenic for effortless evening wear.",
-    details: [
-      "18k Rose Gold Plating",
-      "Precision diamond-cut CZ crystals",
-      "Hypoallergenic 925 sterling silver posts",
-      "Secure push-back closure"
+    customSections: [
+      {
+        title: "Specifications",
+        items: [
+          { label: "Metal", value: "18k Rose Gold / Rhodium Plated Silver" },
+          { label: "Posts", value: "Hypoallergenic 925 Sterling Silver" },
+          { label: "Stone Cut", value: "Hearts & Arrows Precision CZ" }
+        ]
+      }
     ],
-    care: "Wipe with soft microfiber cloth after each wear.",
-    weightGrams: 18,
-    dimensions: "Length: 1.5 inches | Width: 0.6 inches",
-    metalPurity: "Brass Base Alloy",
-    gemstoneClarity: "VVS Equivalent Synthetic CZ",
-    platingThickness: "2 Micron Rose Gold",
-    occasionTags: ["Cocktail", "Party", "Workwear"],
-    warrantyInfo: "6-Month Color Polish Warranty"
+    occasionTags: ["Cocktail", "Party", "Workwear"]
   },
   {
     id: "ec-103",
@@ -86,7 +101,10 @@ export const INITIAL_PRODUCTS = [
     sku: "EC-RG-103",
     isFeatured: true,
     isNew: false,
-    finishOptions: ["Rose Gold", "Gold"],
+    variants: [
+      { id: "v-103-1", name: "Rose Gold", sku: "EC-RG-103-RG", price: 1299, stock: 12, swatchColor: "#B76E79" },
+      { id: "v-103-2", name: "Yellow Gold", sku: "EC-RG-103-YG", price: 1299, stock: 6, swatchColor: "#FFD700" }
+    ],
     stoneType: "Cubic Zirconia (CZ)",
     images: [
       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=1000",
@@ -94,124 +112,16 @@ export const INITIAL_PRODUCTS = [
     ],
     videos: [],
     description: "An adjustable statement ring adorned with shimmering floral petals crafted with brilliant micro-pave CZ stones in dual tone 18k rose gold.",
-    details: [
-      "Adjustable ring band fits sizes 6 to 10",
-      "Micro-pave stone setting",
-      "Anti-tarnish protective lacquer coat"
+    customSections: [
+      {
+        title: "Sizing & Fit",
+        items: [
+          { label: "Size", value: "Universal Adjustable (Fits US 6 to 10)" },
+          { label: "Motif Diameter", value: "2.0 cm" }
+        ]
+      }
     ],
-    care: "Avoid direct contact with alcohol hand sanitizers.",
-    weightGrams: 12,
-    dimensions: "Flower Motif: 2 cm diameter",
-    metalPurity: "Brass Alloy",
-    gemstoneClarity: "AAA Cubic Zirconia",
-    platingThickness: "1.5 Micron Rose Gold",
-    occasionTags: ["Daily Elegance", "Gifting", "Anniversary"],
-    warrantyInfo: "1-Year Warranty"
-  },
-  {
-    id: "ec-104",
-    title: "Temple Laxmi Gold Motif Layered Necklace",
-    category: "Necklaces",
-    price: 3499,
-    comparePrice: 5499,
-    taxPercent: 18,
-    rating: 4.7,
-    reviewsCount: 19,
-    stock: 8,
-    sku: "EC-NK-104",
-    isFeatured: true,
-    isNew: true,
-    finishOptions: ["Antique Gold", "Gold"],
-    stoneType: "Ruby Red Kemp Stones & Antique Beads",
-    images: [
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=1000"
-    ],
-    videos: [],
-    description: "Traditional South Indian temple jewelry short necklace showcasing intricate Goddess Laxmi motifs and deep ruby kemp stone highlights.",
-    details: [
-      "Matte Antique Gold Polish",
-      "Handcrafted Temple motif detailing",
-      "Soft gold-beaded chain extensions"
-    ],
-    care: "Store wrapped in cotton cloth in airtight zip lock pouch.",
-    weightGrams: 85,
-    dimensions: "Necklace Length: 12 inches",
-    metalPurity: "Copper-Brass Alloy",
-    gemstoneClarity: "Synthetic Kemp Rubies",
-    platingThickness: "2 Micron Matte Gold",
-    occasionTags: ["Puja", "Traditional", "Festive"],
-    warrantyInfo: "1-Year Anti-Tarnish Guarantee"
-  },
-  {
-    id: "ec-105",
-    title: "Crystal Elegance Tennis Bracelet",
-    category: "Bracelets",
-    price: 1599,
-    comparePrice: 2499,
-    taxPercent: 18,
-    rating: 4.9,
-    reviewsCount: 41,
-    stock: 20,
-    sku: "EC-BR-105",
-    isFeatured: false,
-    isNew: true,
-    finishOptions: ["Silver", "Rose Gold"],
-    stoneType: "AAA+ Cubic Zirconia",
-    images: [
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=1000"
-    ],
-    videos: [],
-    description: "A timeless classic CZ tennis bracelet featuring continuous claw-set round stones that catch the light from every angle.",
-    details: [
-      "Rhodium & Rose Gold Silver Plating",
-      "Dual fold-over safety clasp",
-      "Smooth rounded links for non-snag wear"
-    ],
-    care: "Avoid moisture and harsh chemicals.",
-    weightGrams: 22,
-    dimensions: "Length: 7 inches (Includes 0.5 in extender)",
-    metalPurity: "Brass Alloy",
-    gemstoneClarity: "VVS Grade CZ",
-    platingThickness: "2 Micron Rhodium",
-    occasionTags: ["Workwear", "Cocktail", "Gifting"],
-    warrantyInfo: "6-Month Polish Warranty"
-  },
-  {
-    id: "ec-106",
-    title: "Emerald Glow Statement Kundan Earrings",
-    category: "Earrings",
-    price: 2199,
-    comparePrice: 3299,
-    taxPercent: 18,
-    rating: 4.8,
-    reviewsCount: 34,
-    stock: 14,
-    sku: "EC-ER-106",
-    isFeatured: true,
-    isNew: false,
-    finishOptions: ["Gold"],
-    stoneType: "Hydro Emerald & Kundan Glass",
-    images: [
-      "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000"
-    ],
-    videos: [],
-    description: "Gorgeous chandelier earrings featuring central tear-drop emerald green hydro stones framed by golden Kundan foil work.",
-    details: [
-      "Handcrafted Kundan setting",
-      "Faux Emerald glass teardrops",
-      "Lightweight alloy frame"
-    ],
-    care: "Store in moisture-free velvet box.",
-    weightGrams: 36,
-    dimensions: "Height: 3 inches",
-    metalPurity: "Brass Alloy",
-    gemstoneClarity: "Hydro Emerald Glass",
-    platingThickness: "2 Micron Gold",
-    occasionTags: ["Sangeet", "Wedding", "Festive"],
-    warrantyInfo: "1-Year Guarantee"
+    occasionTags: ["Daily Elegance", "Gifting", "Anniversary"]
   }
 ];
 
@@ -242,7 +152,4 @@ export const INITIAL_REVIEWS = [
 
 export const INITIAL_ORDERS = [];
 
-export const ACTIVE_COUPONS = {
-  "ELLA10": { code: "ELLA10", discountPercent: 10, minSpend: 0, description: "10% off welcome gift" },
-  "SPARKLE20": { code: "SPARKLE20", discountPercent: 20, minSpend: 5000, description: "20% off orders over ₹5,000" }
-};
+export const ACTIVE_COUPONS = {};

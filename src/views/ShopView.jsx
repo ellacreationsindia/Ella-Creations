@@ -4,10 +4,8 @@ import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 
 export default function ShopView() {
-  const { products } = useStore();
+  const { products, selectedCategory, setSelectedCategory } = useStore();
 
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedFinish, setSelectedFinish] = useState('All');
   const [selectedStone, setSelectedStone] = useState('All');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(50000);
@@ -19,8 +17,15 @@ export default function ShopView() {
 
   // Filter products
   let filtered = products.filter((p) => {
-    if (selectedCategory !== 'All' && p.category !== selectedCategory) return false;
-    if (selectedFinish !== 'All' && (!p.finishOptions || !p.finishOptions.includes(selectedFinish))) return false;
+    if (selectedCategory && selectedCategory !== 'All') {
+      const normSel = selectedCategory.toLowerCase().trim();
+      const normCat = (p.category || '').toLowerCase().trim();
+      
+      const isSetMatch = (normSel.includes('set') || normSel.includes('bridal')) && (normCat.includes('set') || normCat.includes('bridal'));
+      const isDirectMatch = normCat === normSel || normCat.includes(normSel) || normSel.includes(normCat);
+      
+      if (!isSetMatch && !isDirectMatch) return false;
+    }
     if (selectedStone !== 'All' && !p.stoneType.toLowerCase().includes(selectedStone.toLowerCase())) return false;
     if (p.price < minPrice || p.price > maxPrice) return false;
     if (inStockOnly && (p.price <= 0 || p.stock <= 0)) return false;
@@ -39,7 +44,6 @@ export default function ShopView() {
 
   const resetFilters = () => {
     setSelectedCategory('All');
-    setSelectedFinish('All');
     setSelectedStone('All');
     setMinPrice(0);
     setMaxPrice(50000);
@@ -125,26 +129,6 @@ export default function ShopView() {
                 >
                   <span>{cat}</span>
                   {selectedCategory === cat && <Sparkles className="w-3 h-3" />}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Metal Finish Filter */}
-          <div>
-            <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2.5">Metal Finish</label>
-            <div className="flex flex-wrap gap-1.5">
-              {finishes.map((finish) => (
-                <button
-                  key={finish}
-                  onClick={() => setSelectedFinish(finish)}
-                  className={`text-xs px-3 py-1.5 rounded-full font-semibold border transition-all ${
-                    selectedFinish === finish
-                      ? 'border-brand-rose bg-brand-rose text-white'
-                      : 'border-stone-200 text-stone-700 hover:border-brand-rose'
-                  }`}
-                >
-                  {finish}
                 </button>
               ))}
             </div>

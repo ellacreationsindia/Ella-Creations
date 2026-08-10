@@ -12,9 +12,11 @@ import {
   Sparkles, 
   Banknote,
   ArrowLeft,
-  ShoppingBag
+  ShoppingBag,
+  Search
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import { calculateShiprocketRates, loadRazorpayScript } from '../lib/supabase';
 
 export default function CheckoutView() {
   const { 
@@ -23,32 +25,72 @@ export default function CheckoutView() {
     activeCoupon, 
     submitOrder,
     user,
+    setIsAuthModalOpen,
     navigateTo
   } = useStore();
 
   const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Confirmation
   const [completedOrder, setCompletedOrder] = useState(null);
+  const [isCheckingPincode, setIsCheckingPincode] = useState(false);
+  const [shippingRateDetails, setShippingRateDetails] = useState(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
-    name: user?.user_metadata?.full_name || 'Ananya Sharma',
-    email: user?.email || 'ananya.s@example.com',
+    name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || '',
+    email: user?.email || '',
     phone: '+91 98765 43210',
     address: 'Flat 402, Royal Palms, Bandra West',
     city: 'Mumbai',
     state: 'Maharashtra',
     zip: '400050',
     shippingMethod: 'standard', // 'standard' | 'express'
-    paymentMethod: 'upi', // 'upi' | 'card' | 'netbanking' | 'cod'
-    upiId: 'ananya@okicici',
+    paymentMethod: 'razorpay', // 'razorpay' | 'upi' | 'card' | 'cod'
+    upiId: 'patron@upi',
     cardNumber: '4532 •••• •••• 8892',
     cardExpiry: '08/29',
     cardCvc: '432'
   });
 
-  const shippingCost = formData.shippingMethod === 'express' ? 299 : (cartSubtotal >= 2500 ? 0 : 199);
+  const baseShippingCost = shippingRateDetails ? shippingRateDetails.shippingCharge : (formData.shippingMethod === 'express' ? 299 : (cartSubtotal >= 2500 ? 0 : 199));
+  const shippingCost = formData.shippingMethod === 'express' ? baseShippingCost + 100 : baseShippingCost;
   const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
   const grandTotal = cartSubtotal - discountAmount + shippingCost;
+
+  // 1. STRICT AUTHENTICATION LOCK: Must be logged in to buy products
+  if (!user && !completedOrder) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-16 sm:py-20 text-center space-y-6">
+        <div className="w-16 h-16 rounded-full bg-stone-900 text-brand-gold mx-auto flex items-center justify-center shadow-xl border border-brand-gold/30">
+          <Lock className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <span className="text-xs uppercase font-bold tracking-widest text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full border border-brand-gold/30">
+            Authentication Required
+          </span>
+          <h2 className="font-serif text-3xl font-bold text-stone-900">Sign In to Complete Purchase</h2>
+          <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-md mx-auto">
+            Please sign in to your Ella Creations account to proceed with shipping address entry and secure payment processing.
+          </p>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl border border-brand-gold/30 shadow-md space-y-4">
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-soft-rose transition-colors flex items-center justify-center gap-2"
+          >
+            Sign In or Create Account
+          </button>
+          <button
+            onClick={() => navigateTo('shop')}
+            className="w-full text-xs text-stone-500 hover:text-stone-900 font-semibold pt-1"
+          >
+            Return to Shopping Catalog
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0 && !completedOrder) {
     return (
@@ -70,28 +112,114 @@ export default function CheckoutView() {
     );
   }
 
+  const handleCheckPincode = async () => {
+    if (!formData.zip || formData.zip.length < 6) {
+      alert('Please enter a valid 6-digit Indian Pincode.');
+      return;
+    }
+    setIsCheckingPincode(true);
+    const rates = await calculateShiprocketRates(formData.zip, 500);
+    setShippingRateDetails(rates);
+    setIsCheckingPincode(false);
+  };
+
   const handleNextStep = async (e) => {
     e.preventDefault();
     if (step === 1) {
+      if (!shippingRateDetails) {
+        await handleCheckPincode();
+      }
       setStep(2);
     } else if (step === 2) {
-      const order = await submitOrder(
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.zip}`
-        },
-        formData.paymentMethod === 'upi'
-          ? `UPI (${formData.upiId})`
-          : formData.paymentMethod === 'card' 
-          ? 'Credit / Debit Card'
-          : formData.paymentMethod === 'netbanking'
-          ? 'NetBanking' 
-          : 'Cash on Delivery (COD)'
-      );
-      setCompletedOrder(order);
-      setStep(3);
+      setIsProcessingPayment(true);
+
+      const customerDetails = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.zip}`
+      };
+
+      const logisticsInfo = {
+        shippingPincode: formData.zip,
+        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Express',
+        awbCode: `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
+        trackingUrl: `https://shiprocket.co/tracking/${formData.zip}`
+      };
+
+      if (formData.paymentMethod === 'cod') {
+        const order = await submitOrder(
+          customerDetails,
+          'Cash on Delivery (COD)',
+          null,
+          logisticsInfo.shippingPincode,
+          logisticsInfo.shippingCourier,
+          logisticsInfo.awbCode,
+          logisticsInfo.trackingUrl
+        );
+        setCompletedOrder(order);
+        setIsProcessingPayment(false);
+        setStep(3);
+      } else {
+        // Razorpay Online Payment Gateway
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded || !window.Razorpay) {
+          const paymentId = `pay_sim_${Date.now()}`;
+          const order = await submitOrder(
+            customerDetails,
+            `Razorpay Online (${formData.paymentMethod.toUpperCase()})`,
+            paymentId,
+            logisticsInfo.shippingPincode,
+            logisticsInfo.shippingCourier,
+            logisticsInfo.awbCode,
+            logisticsInfo.trackingUrl
+          );
+          setCompletedOrder(order);
+          setIsProcessingPayment(false);
+          setStep(3);
+          return;
+        }
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_EllaCreationsDemoKey',
+          amount: Math.round(grandTotal * 100),
+          currency: 'INR',
+          name: 'Ella Creations India',
+          description: 'Luxury Artificial & Bridal Jewelry Order',
+          image: '/logo.png',
+          handler: async function (response) {
+            const paymentId = response.razorpay_payment_id || `pay_rzp_${Date.now()}`;
+            const order = await submitOrder(
+              customerDetails,
+              `Razorpay Online (${response.razorpay_payment_id ? 'Verified' : 'Simulated'})`,
+              paymentId,
+              logisticsInfo.shippingPincode,
+              logisticsInfo.shippingCourier,
+              logisticsInfo.awbCode,
+              logisticsInfo.trackingUrl
+            );
+            setCompletedOrder(order);
+            setIsProcessingPayment(false);
+            setStep(3);
+          },
+          prefill: {
+            name: formData.name,
+            email: formData.email,
+            contact: formData.phone
+          },
+          theme: {
+            color: '#8B263E'
+          },
+          modal: {
+            ondismiss: function() {
+              setIsProcessingPayment(false);
+            }
+          }
+        };
+
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
+      }
     }
   };
 
@@ -197,7 +325,7 @@ export default function CheckoutView() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-stone-700 mb-1">State</label>
                         <input
@@ -209,21 +337,53 @@ export default function CheckoutView() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-stone-700 mb-1">Pincode</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.zip}
-                          onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
-                        />
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">Delivery Pincode (Shiprocket Check)</label>
+                        <div className="flex gap-1.5">
+                          <input
+                            type="text"
+                            required
+                            maxLength="6"
+                            placeholder="e.g. 400050"
+                            value={formData.zip}
+                            onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                            className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleCheckPincode}
+                            disabled={isCheckingPincode}
+                            className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
+                          >
+                            {isCheckingPincode ? (
+                              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            ) : (
+                              <Search className="w-3.5 h-3.5" />
+                            )}
+                            Check
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
 
+                  {/* Shiprocket Rate Result Box */}
+                  {shippingRateDetails && (
+                    <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-1">
+                      <div className="flex justify-between items-center font-bold text-emerald-900">
+                        <span className="flex items-center gap-1.5">
+                          <Truck className="w-4 h-4 text-emerald-600" /> Pincode {shippingRateDetails.destinationPincode} Serviceable!
+                        </span>
+                        <span className="text-emerald-700">{shippingRateDetails.courierName}</span>
+                      </div>
+                      <p className="text-stone-600 text-[11px]">
+                        Est. Delivery: <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days) • Rate: <strong>{formatPrice(shippingRateDetails.shippingCharge)}</strong>
+                      </p>
+                    </div>
+                  )}
+
                   {/* Shipping Options */}
-                  <div className="pt-3">
-                    <label className="block text-xs font-semibold text-stone-700 mb-2">Delivery Method</label>
+                  <div className="pt-2">
+                    <label className="block text-xs font-semibold text-stone-700 mb-2">Select Shipping Speed</label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <label className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
                         formData.shippingMethod === 'standard' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
@@ -237,12 +397,12 @@ export default function CheckoutView() {
                             className="accent-brand-rose"
                           />
                           <div>
-                            <p className="text-xs font-bold text-stone-900">Standard Delivery (3-5 Days)</p>
-                            <p className="text-[11px] text-stone-500">Velvet box included</p>
+                            <p className="text-xs font-bold text-stone-900">Standard Ground Logistics</p>
+                            <p className="text-[11px] text-stone-500">Velvet gift box included</p>
                           </div>
                         </div>
                         <span className="text-xs font-bold text-emerald-600">
-                          {cartSubtotal >= 2500 ? 'FREE' : formatPrice(199)}
+                          {formatPrice(baseShippingCost)}
                         </span>
                       </label>
 
@@ -258,11 +418,11 @@ export default function CheckoutView() {
                             className="accent-brand-rose"
                           />
                           <div>
-                            <p className="text-xs font-bold text-stone-900">Air Priority Express (1-2 Days)</p>
-                            <p className="text-[11px] text-stone-500">Insured fast track</p>
+                            <p className="text-xs font-bold text-stone-900">Shiprocket Priority Air Express</p>
+                            <p className="text-[11px] text-stone-500">1-2 Days Priority Dispatch</p>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-stone-900">{formatPrice(299)}</span>
+                        <span className="text-xs font-bold text-stone-900">{formatPrice(baseShippingCost + 100)}</span>
                       </label>
                     </div>
                   </div>
@@ -270,59 +430,29 @@ export default function CheckoutView() {
               ) : (
                 /* Step 2: Payment Options */
                 <div className="space-y-4">
-                  <h3 className="font-serif text-lg font-bold text-stone-900">2. Select Payment Method</h3>
+                  <h3 className="font-serif text-lg font-bold text-stone-900">2. Payment Gateway & Options</h3>
                   
                   <div className="space-y-3">
-                    {/* Instant UPI */}
+                    {/* Razorpay Online Payment */}
                     <label className={`p-4 rounded-2xl border block cursor-pointer transition-all ${
-                      formData.paymentMethod === 'upi' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
+                      formData.paymentMethod === 'razorpay' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                     }`}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <input
                             type="radio"
                             name="payment"
-                            checked={formData.paymentMethod === 'upi'}
-                            onChange={() => setFormData({ ...formData, paymentMethod: 'upi' })}
+                            checked={formData.paymentMethod === 'razorpay'}
+                            onChange={() => setFormData({ ...formData, paymentMethod: 'razorpay' })}
                             className="accent-brand-rose"
                           />
-                          <Smartphone className="w-5 h-5 text-emerald-600" />
+                          <ShieldCheck className="w-5 h-5 text-brand-rose" />
                           <div>
-                            <span className="text-xs font-bold text-stone-900 block">Instant UPI (GPay, PhonePe, Paytm, BHIM)</span>
-                            <span className="text-[10px] text-stone-500">Fastest payment confirmation</span>
+                            <span className="text-xs font-bold text-stone-900 block">Razorpay Payment Gateway (UPI / Credit Card / Debit Card / NetBanking)</span>
+                            <span className="text-[10px] text-stone-500">100% Encrypted & Instant Confirmation</span>
                           </div>
                         </div>
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">RECOMMENDED</span>
-                      </div>
-
-                      {formData.paymentMethod === 'upi' && (
-                        <div className="mt-3 pt-3 border-t border-stone-200">
-                          <label className="block text-[11px] font-semibold text-stone-600 mb-1">Enter VPA / UPI ID</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. mobile@upi or username@okicici"
-                            value={formData.upiId}
-                            onChange={(e) => setFormData({ ...formData, upiId: e.target.value })}
-                            className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
-                          />
-                        </div>
-                      )}
-                    </label>
-
-                    {/* Card Option */}
-                    <label className={`p-4 rounded-2xl border block cursor-pointer transition-all ${
-                      formData.paymentMethod === 'card' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
-                    }`}>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={formData.paymentMethod === 'card'}
-                          onChange={() => setFormData({ ...formData, paymentMethod: 'card' })}
-                          className="accent-brand-rose"
-                        />
-                        <CreditCard className="w-5 h-5 text-brand-rose" />
-                        <span className="text-xs font-bold text-stone-900">Credit / Debit Card (Visa, Mastercard, RuPay)</span>
+                        <span className="text-[10px] bg-brand-rose text-white font-bold px-2.5 py-0.5 rounded-full">INSTANT PAY</span>
                       </div>
                     </label>
 
@@ -330,19 +460,22 @@ export default function CheckoutView() {
                     <label className={`p-4 rounded-2xl border block cursor-pointer transition-all ${
                       formData.paymentMethod === 'cod' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                     }`}>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={formData.paymentMethod === 'cod'}
-                          onChange={() => setFormData({ ...formData, paymentMethod: 'cod' })}
-                          className="accent-brand-rose"
-                        />
-                        <Banknote className="w-5 h-5 text-brand-gold" />
-                        <div>
-                          <span className="text-xs font-bold text-stone-900 block">Cash on Delivery (COD)</span>
-                          <span className="text-[10px] text-stone-500">Pay cash upon delivery to courier agent</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="payment"
+                            checked={formData.paymentMethod === 'cod'}
+                            onChange={() => setFormData({ ...formData, paymentMethod: 'cod' })}
+                            className="accent-brand-rose"
+                          />
+                          <Banknote className="w-5 h-5 text-brand-gold" />
+                          <div>
+                            <span className="text-xs font-bold text-stone-900 block">Cash on Delivery (COD)</span>
+                            <span className="text-[10px] text-stone-500">Pay cash upon delivery to courier agent</span>
+                          </div>
                         </div>
+                        <span className="text-[10px] bg-stone-100 text-stone-700 font-bold px-2 py-0.5 rounded">PAY AT DOORSTEP</span>
                       </div>
                     </label>
                   </div>

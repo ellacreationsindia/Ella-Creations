@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -36,7 +35,13 @@ import {
   GripVertical,
   MoveLeft,
   MoveRight,
-  Star
+  Star,
+  Truck,
+  Layers,
+  ListPlus,
+  Ticket,
+  Mail,
+  Download
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -47,6 +52,8 @@ export default function AdminView() {
     products, 
     orders, 
     reviews, 
+    coupons,
+    subscribers,
     user,
     isAdmin,
     ADMIN_EMAIL,
@@ -56,14 +63,38 @@ export default function AdminView() {
     addProduct, 
     updateProduct, 
     deleteProduct, 
-    updateOrderStatus, 
+    updateOrderStatus,
+    deleteOrder,
+    addCoupon,
+    deleteCoupon,
+    toggleCouponStatus,
+    updateOrderShipment,
+    deleteSubscriber,
     navigateTo 
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews' | 'coupons' | 'subscribers'
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [subscriberSearch, setSubscriberSearch] = useState('');
+
+  // Shiprocket Dispatch Modal State
+  const [dispatchOrder, setDispatchOrder] = useState(null);
+  const [dispatchForm, setDispatchForm] = useState({
+    courierName: 'Shiprocket Air Express (Bluedart)',
+    awbCode: '',
+    trackingUrl: ''
+  });
+
+  // Coupon Generator Form State
+  const [couponForm, setCouponForm] = useState({
+    code: '',
+    discountPercent: '15',
+    minSpend: '0',
+    description: '',
+    active: true
+  });
 
   // Admin Barrier Inline Auth State
   const [adminEmailInput, setAdminEmailInput] = useState(ADMIN_EMAIL);
@@ -81,7 +112,7 @@ export default function AdminView() {
   const [dragOverImageIdx, setDragOverImageIdx] = useState(null);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // Product Form State with Video Support, Tax Rate, and Dynamic Custom Key-Value Specs!
+  // Product Form State with Variants, Custom Sections, Video Support, and Tax Rate
   const [productForm, setProductForm] = useState({
     title: '',
     category: 'Necklaces',
@@ -91,18 +122,12 @@ export default function AdminView() {
     stock: '',
     sku: '',
     stoneType: 'Cubic Zirconia (CZ)',
-    finishOptions: ['Rose Gold', 'Gold'],
     description: '',
-    weightGrams: '',
-    dimensions: '',
-    metalPurity: '',
-    gemstoneClarity: '',
-    platingThickness: '',
     occasionTagsStr: '',
-    warrantyInfo: '',
     images: [],
     videos: [],
-    customSpecs: [] // Array of { key: '', value: '' }
+    variants: [], // Array of { id, name, sku, price, stock, swatchColor }
+    customSections: [] // Array of { title, items: [{ label, value }] }
   });
 
   const handleInlineAdminLogin = async (e) => {
@@ -361,27 +386,127 @@ export default function AdminView() {
     }));
   };
 
-  // Custom Key-Value Attribute Helper
-  const addCustomSpecField = () => {
+  // Product Variants Builder Helpers
+  const addVariantField = () => {
     setProductForm((prev) => ({
       ...prev,
-      customSpecs: [...prev.customSpecs, { key: '', value: '' }]
+      variants: [
+        ...prev.variants,
+        {
+          id: `v-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          name: 'Rose Gold',
+          sku: `${prev.sku || 'SKU'}-${prev.variants.length + 1}`,
+          price: Number(prev.price || 0),
+          stock: Number(prev.stock || 10),
+          swatchColor: '#B76E79'
+        }
+      ]
     }));
   };
 
-  const updateCustomSpecField = (index, field, val) => {
+  const updateVariantField = (index, field, value) => {
     setProductForm((prev) => {
-      const updated = [...prev.customSpecs];
-      updated[index][field] = val;
-      return { ...prev, customSpecs: updated };
+      const updated = [...prev.variants];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, variants: updated };
     });
   };
 
-  const removeCustomSpecField = (index) => {
+  const removeVariantField = (index) => {
     setProductForm((prev) => ({
       ...prev,
-      customSpecs: prev.customSpecs.filter((_, idx) => idx !== index)
+      variants: prev.variants.filter((_, idx) => idx !== index)
     }));
+  };
+
+  // Custom Sections & Specifications Builder Helpers
+  const addCustomSection = () => {
+    setProductForm((prev) => ({
+      ...prev,
+      customSections: [
+        ...prev.customSections,
+        {
+          title: 'Section Name',
+          items: [{ label: 'Attribute', value: 'Specification Details' }]
+        }
+      ]
+    }));
+  };
+
+  const updateCustomSectionTitle = (secIdx, title) => {
+    setProductForm((prev) => {
+      const updated = [...prev.customSections];
+      updated[secIdx].title = title;
+      return { ...prev, customSections: updated };
+    });
+  };
+
+  const removeCustomSection = (secIdx) => {
+    setProductForm((prev) => ({
+      ...prev,
+      customSections: prev.customSections.filter((_, idx) => idx !== secIdx)
+    }));
+  };
+
+  const addCustomSectionItem = (secIdx) => {
+    setProductForm((prev) => {
+      const updated = [...prev.customSections];
+      updated[secIdx].items.push({ label: '', value: '' });
+      return { ...prev, customSections: updated };
+    });
+  };
+
+  const updateCustomSectionItem = (secIdx, itemIdx, field, val) => {
+    setProductForm((prev) => {
+      const updated = [...prev.customSections];
+      updated[secIdx].items[itemIdx][field] = val;
+      return { ...prev, customSections: updated };
+    });
+  };
+
+  const removeCustomSectionItem = (secIdx, itemIdx) => {
+    setProductForm((prev) => {
+      const updated = [...prev.customSections];
+      updated[secIdx].items = updated[secIdx].items.filter((_, i) => i !== itemIdx);
+      return { ...prev, customSections: updated };
+    });
+  };
+
+  // Coupon Generator Handler
+  const handleGenerateCoupon = async (e) => {
+    e.preventDefault();
+    if (!couponForm.code || !couponForm.discountPercent) return;
+    await addCoupon(couponForm);
+    setCouponForm({
+      code: '',
+      discountPercent: '15',
+      minSpend: '0',
+      description: '',
+      active: true
+    });
+  };
+
+  // Shiprocket Order Dispatch Handler
+  const handleOpenDispatchModal = (order) => {
+    const defaultAwb = order.awb_code || `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`;
+    setDispatchOrder(order);
+    setDispatchForm({
+      courierName: order.shipping_courier || 'Shiprocket Air Express (Bluedart)',
+      awbCode: defaultAwb,
+      trackingUrl: `https://shiprocket.co/tracking/${defaultAwb}`
+    });
+  };
+
+  const handleSaveDispatch = async (e) => {
+    e.preventDefault();
+    if (!dispatchOrder) return;
+    await updateOrderShipment(
+      dispatchOrder.id,
+      dispatchForm.courierName,
+      dispatchForm.awbCode,
+      dispatchForm.trackingUrl
+    );
+    setDispatchOrder(null);
   };
 
   const handleOpenAddModal = () => {
@@ -393,20 +518,25 @@ export default function AdminView() {
       comparePrice: '',
       taxPercent: '18',
       stock: '10',
-      sku: '',
+      sku: `EC-${Math.floor(1000 + Math.random() * 9000)}`,
       stoneType: 'Cubic Zirconia (CZ)',
-      finishOptions: ['Rose Gold', 'Gold'],
       description: '',
-      weightGrams: '',
-      dimensions: '',
-      metalPurity: '',
-      gemstoneClarity: '',
-      platingThickness: '',
       occasionTagsStr: '',
-      warrantyInfo: '',
       images: [],
       videos: [],
-      customSpecs: []
+      variants: [
+        { id: `v-1`, name: 'Rose Gold', sku: `EC-VAR-1`, price: 4999, stock: 10, swatchColor: '#B76E79' },
+        { id: `v-2`, name: 'Yellow Gold', sku: `EC-VAR-2`, price: 4999, stock: 10, swatchColor: '#D4AF37' }
+      ],
+      customSections: [
+        {
+          title: 'Specifications & Materials',
+          items: [
+            { label: 'Base Metal', value: 'Brass Base Alloy' },
+            { label: 'Plating', value: '22K Gold Electroplated' }
+          ]
+        }
+      ]
     });
     setProductModalOpen(true);
   };
@@ -414,26 +544,20 @@ export default function AdminView() {
   const handleOpenEditModal = (p) => {
     setEditingProduct(p);
     setProductForm({
-      title: p.title,
-      category: p.category,
+      title: p.title || '',
+      category: p.category || 'Necklaces',
       price: p.price ? p.price.toString() : '0',
       comparePrice: p.comparePrice ? p.comparePrice.toString() : '',
       taxPercent: (p.taxPercent || 18).toString(),
       stock: p.stock ? p.stock.toString() : '0',
       sku: p.sku || '',
       stoneType: p.stoneType || 'Cubic Zirconia (CZ)',
-      finishOptions: p.finishOptions || ['Rose Gold'],
       description: p.description || '',
-      weightGrams: p.weightGrams || '',
-      dimensions: p.dimensions || '',
-      metalPurity: p.metalPurity || '',
-      gemstoneClarity: p.gemstoneClarity || '',
-      platingThickness: p.platingThickness || '',
       occasionTagsStr: (p.occasionTags || []).join(', '),
-      warrantyInfo: p.warrantyInfo || '',
       images: [...(p.images || [])],
       videos: [...(p.videos || [])],
-      customSpecs: [...(p.customSpecs || [])]
+      variants: p.variants || (p.finishOptions ? p.finishOptions.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
+      customSections: p.customSections || p.customSpecs || []
     });
     setProductModalOpen(true);
   };
@@ -455,22 +579,15 @@ export default function AdminView() {
         stock: parseInt(productForm.stock, 10) || 0,
         sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
         stoneType: productForm.stoneType,
-        finishOptions: productForm.finishOptions,
         description: productForm.description,
-        weightGrams: productForm.weightGrams,
-        dimensions: productForm.dimensions,
-        metalPurity: productForm.metalPurity,
-        gemstoneClarity: productForm.gemstoneClarity,
-        platingThickness: productForm.platingThickness,
         occasionTags: productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean),
-        warrantyInfo: productForm.warrantyInfo,
         images: productForm.images,
         videos: productForm.videos,
-        customSpecs: productForm.customSpecs.filter(c => c.key.trim() && c.value.trim()),
+        variants: productForm.variants,
+        customSections: productForm.customSections,
         details: [
-          productForm.metalPurity || "22k Gold Electroplated Brass base",
-          productForm.gemstoneClarity || "Handcrafted Kundan glass crystals",
-          "Includes luxury gift box"
+          "Handcrafted Kundan glass crystals",
+          "Includes luxury velvet gift box"
         ]
       };
 
@@ -579,6 +696,30 @@ export default function AdminView() {
               <Sparkles className="w-4 h-4" /> Reviews Moderation
             </div>
             <span className="bg-stone-800 text-stone-300 text-[10px] px-2 py-0.5 rounded-full">{reviews.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('coupons'); setIsMobileSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+              activeTab === 'coupons' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Ticket className="w-4 h-4 text-brand-gold" /> Coupons Generator
+            </div>
+            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{coupons.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('subscribers'); setIsMobileSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+              activeTab === 'subscribers' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Mail className="w-4 h-4 text-emerald-400" /> VIP Subscribers
+            </div>
+            <span className="bg-emerald-950 text-emerald-400 font-bold text-[10px] px-2 py-0.5 rounded-full border border-emerald-800">{subscribers?.length || 0}</span>
           </button>
         </aside>
 
@@ -793,16 +934,17 @@ export default function AdminView() {
                 </div>
               ) : (
                 <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
-                  <table className="w-full text-left text-xs text-stone-300 min-w-[700px]">
+                  <table className="w-full text-left text-xs text-stone-300 min-w-[850px]">
                     <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
                       <tr>
                         <th className="p-4">Order ID</th>
                         <th className="p-4">Customer</th>
-                        <th className="p-4">Items Count</th>
+                        <th className="p-4">Items</th>
                         <th className="p-4">Total (₹)</th>
-                        <th className="p-4">Payment Method</th>
+                        <th className="p-4">Payment</th>
+                        <th className="p-4">Shiprocket Logistics</th>
                         <th className="p-4">Status</th>
-                        <th className="p-4 text-right">Update Status</th>
+                        <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-800">
@@ -810,12 +952,29 @@ export default function AdminView() {
                         <tr key={o.id} className="hover:bg-stone-900/50 transition-colors">
                           <td className="p-4 font-bold text-white font-mono">#{o.id}</td>
                           <td className="p-4">
-                            <span className="font-semibold text-white block">{o.customer.name}</span>
-                            <span className="text-[10px] text-stone-400">{o.customer.email}</span>
+                            <span className="font-semibold text-white block">{o.customer?.name}</span>
+                            <span className="text-[10px] text-stone-400 block">{o.customer?.email}</span>
+                            <span className="text-[10px] text-stone-500 font-mono">PIN: {o.shipping_pincode || o.customer?.zip || 'N/A'}</span>
                           </td>
                           <td className="p-4">{o.items.length} item(s)</td>
                           <td className="p-4 font-bold text-emerald-400">{formatPrice(o.total)}</td>
-                          <td className="p-4 text-stone-400">{o.paymentMethod}</td>
+                          <td className="p-4">
+                            <span className="text-stone-300 font-semibold block">{o.payment_method || o.paymentMethod}</span>
+                            {o.payment_id && <span className="text-[9px] text-stone-500 font-mono block">ID: {o.payment_id}</span>}
+                          </td>
+                          <td className="p-4">
+                            {o.awb_code ? (
+                              <div className="space-y-0.5 text-[11px]">
+                                <span className="text-brand-gold font-bold block">{o.shipping_courier || 'Shiprocket Express'}</span>
+                                <span className="text-stone-400 font-mono block">AWB: {o.awb_code}</span>
+                                {o.tracking_url && (
+                                  <a href={o.tracking_url} target="_blank" rel="noreferrer" className="text-brand-rose underline text-[10px]">Track Shipment</a>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-stone-500 text-[11px] italic">Not Dispatched</span>
+                            )}
+                          </td>
                           <td className="p-4">
                             <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
                               o.status === 'Delivered' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
@@ -825,17 +984,34 @@ export default function AdminView() {
                               {o.status}
                             </span>
                           </td>
-                          <td className="p-4 text-right">
+                          <td className="p-4 text-right space-x-2">
+                            <button
+                              onClick={() => handleOpenDispatchModal(o)}
+                              className="px-2.5 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 border border-brand-gold/40 text-brand-gold font-bold text-[10px] rounded-lg transition-colors inline-flex items-center gap-1"
+                              title="Dispatch via Shiprocket / AWB"
+                            >
+                              <Truck className="w-3 h-3" /> Shiprocket AWB
+                            </button>
                             <select
                               value={o.status}
                               onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                              className="bg-stone-900 text-white text-xs px-2.5 py-1 rounded-lg border border-stone-700 outline-none focus:border-brand-rose"
+                              className="bg-stone-900 text-white text-xs px-2 py-1 rounded-lg border border-stone-700 outline-none focus:border-brand-rose"
                             >
                               <option value="Pending">Pending</option>
                               <option value="Processing">Processing</option>
                               <option value="Shipped">Shipped</option>
                               <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
                             </select>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Delete order #${o.id}?`)) deleteOrder(o.id);
+                              }}
+                              className="p-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors inline-flex items-center"
+                              title="Delete Order Record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -851,14 +1027,21 @@ export default function AdminView() {
             <div className="space-y-6">
               <div>
                 <h1 className="font-serif text-2xl font-bold text-white">Customer Reviews Moderation</h1>
-                <p className="text-xs text-stone-400">Review feedback submitted by customers across the site.</p>
+                <p className="text-xs text-stone-400">Review feedback submitted by verified buyers across the store.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {reviews.map((rev) => (
                   <div key={rev.id} className="bg-stone-950 p-5 rounded-2xl border border-stone-800 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-white text-sm">{rev.author}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-sm">{rev.author}</span>
+                        {rev.verified && (
+                          <span className="bg-emerald-950 text-emerald-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">
+                            ✓ Verified Buyer
+                          </span>
+                        )}
+                      </div>
                       <span className="text-amber-400 font-bold text-xs">★ {rev.rating}/5</span>
                     </div>
                     <h4 className="font-semibold text-xs text-brand-gold">{rev.title}</h4>
@@ -868,6 +1051,232 @@ export default function AdminView() {
                     )}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: COUPONS GENERATOR */}
+          {activeTab === 'coupons' && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+                  <Ticket className="w-6 h-6 text-brand-gold" /> Admin Coupon Code Generator
+                </h1>
+                <p className="text-xs text-stone-400">Create, activate, and manage discount coupons for customer checkout.</p>
+              </div>
+
+              {/* Add Coupon Form */}
+              <form onSubmit={handleGenerateCoupon} className="bg-stone-950 p-5 rounded-2xl border border-brand-gold/30 space-y-4 shadow-xl">
+                <h3 className="font-serif text-sm font-bold text-brand-gold uppercase tracking-wider">Generate New Discount Coupon</h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-300 mb-1">Coupon Code</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. FESTIVE25"
+                      value={couponForm.code}
+                      onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white font-mono uppercase font-bold outline-none focus:border-brand-rose"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-300 mb-1">Discount Percentage (%)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      required
+                      placeholder="15"
+                      value={couponForm.discountPercent}
+                      onChange={(e) => setCouponForm({ ...couponForm, discountPercent: e.target.value })}
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white font-bold text-brand-rose outline-none focus:border-brand-rose"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-300 mb-1">Minimum Order Spend (₹ INR)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="2000 (0 for no limit)"
+                      value={couponForm.minSpend}
+                      onChange={(e) => setCouponForm({ ...couponForm, minSpend: e.target.value })}
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-300 mb-1">Short Description</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 15% off festive celebration"
+                      value={couponForm.description}
+                      onChange={(e) => setCouponForm({ ...couponForm, description: e.target.value })}
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" /> Generate & Publish Coupon
+                  </button>
+                </div>
+              </form>
+
+              {/* Coupons List Table */}
+              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
+                  <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Coupon Code</th>
+                      <th className="p-4">Discount</th>
+                      <th className="p-4">Min Spend</th>
+                      <th className="p-4">Description</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-800">
+                    {coupons.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="p-8 text-center text-stone-500">
+                          No active coupons generated yet. Use the generator above to create store coupons!
+                        </td>
+                      </tr>
+                    ) : (
+                      coupons.map((c) => (
+                        <tr key={c.code} className="hover:bg-stone-900/50 transition-colors">
+                          <td className="p-4 font-mono font-bold text-brand-gold text-sm">{c.code}</td>
+                          <td className="p-4 font-bold text-white">{c.discountPercent}% OFF</td>
+                          <td className="p-4 text-stone-300">{c.minSpend > 0 ? formatPrice(c.minSpend) : 'No Minimum'}</td>
+                          <td className="p-4 text-stone-400">{c.description || 'Special Discount'}</td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+                              c.active ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-stone-800 text-stone-400'
+                            }`}>
+                              {c.active ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right space-x-2">
+                            <button
+                              onClick={() => toggleCouponStatus(c.code, c.active)}
+                              className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-stone-200 text-[10px] font-semibold rounded-lg transition-colors"
+                            >
+                              {c.active ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Delete coupon "${c.code}"?`)) deleteCoupon(c.code);
+                              }}
+                              className="p-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors"
+                              title="Delete Coupon"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: VIP SPARKLE CLUB SUBSCRIBERS */}
+          {activeTab === 'subscribers' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+                    <Mail className="w-6 h-6 text-emerald-400" /> VIP Sparkle Club Subscribers
+                  </h1>
+                  <p className="text-xs text-stone-400">Live newsletter subscriber list synced with Supabase database.</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const csvContent = "data:text/csv;charset=utf-8," + ["Email,Source,Joined Date", ...(subscribers || []).map(s => `"${s.email}","${s.source}","${s.createdAt}"`)].join("\n");
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `ella_subscribers_${Date.now()}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 font-bold text-xs px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 self-start sm:self-auto"
+                >
+                  <Download className="w-4 h-4" /> Export CSV List
+                </button>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Search subscriber by email address..."
+                  value={subscriberSearch}
+                  onChange={(e) => setSubscriberSearch(e.target.value)}
+                  className="w-full text-xs pl-10 pr-4 py-2.5 rounded-xl bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              {/* Subscribers Table */}
+              <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
+                  <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Subscriber Email</th>
+                      <th className="p-4">Opt-in Channel / Source</th>
+                      <th className="p-4">Joined Date</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-800">
+                    {(!subscribers || subscribers.length === 0) ? (
+                      <tr>
+                        <td colSpan="4" className="p-8 text-center text-stone-500">
+                          No VIP Sparkle Club subscribers recorded yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      subscribers
+                        .filter(s => s.email.toLowerCase().includes(subscriberSearch.toLowerCase()))
+                        .map((s) => (
+                          <tr key={s.id || s.email} className="hover:bg-stone-900/50 transition-colors">
+                            <td className="p-4 font-mono font-bold text-white">{s.email}</td>
+                            <td className="p-4">
+                              <span className="bg-stone-900 text-brand-gold text-[10px] font-semibold px-2.5 py-1 rounded-full border border-stone-800">
+                                {s.source || 'VIP Sparkle Club'}
+                              </span>
+                            </td>
+                            <td className="p-4 text-stone-400">{new Date(s.createdAt).toLocaleDateString()}</td>
+                            <td className="p-4 text-right">
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Remove subscriber "${s.email}"?`)) deleteSubscriber(s.email);
+                                }}
+                                className="p-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors"
+                                title="Remove Subscriber"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -998,97 +1407,184 @@ export default function AdminView() {
                 </div>
               </div>
 
-              {/* SECTION: EXPANDED DETAILED JEWELRY SPECIFICATIONS */}
+              {/* SECTION 1: DYNAMIC PRODUCT VARIANTS BUILDER */}
               <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-4">
-                <h4 className="font-serif text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Technical Specifications
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex justify-between items-center">
                   <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Net Weight (Grams)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 48.5g"
-                      value={productForm.weightGrams}
-                      onChange={(e) => setProductForm({ ...productForm, weightGrams: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
+                    <h4 className="font-serif text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
+                      <Layers className="w-3.5 h-3.5" /> Product Variants Manager
+                    </h4>
+                    <p className="text-[11px] text-stone-400">Add different colors, finishes (e.g. Rose Gold, Yellow Gold, Silver), or sizes for this item.</p>
                   </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Dimensions & Chain Fit</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 16 inch choker + 4 inch cord"
-                      value={productForm.dimensions}
-                      onChange={(e) => setProductForm({ ...productForm, dimensions: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Metal Purity & Base Alloy</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 22K Gold Electroplated over Brass"
-                      value={productForm.metalPurity}
-                      onChange={(e) => setProductForm({ ...productForm, metalPurity: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-400 mb-1">Plating Thickness & Coating</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 3.5 Micron Anti-Tarnish E-Coating"
-                      value={productForm.platingThickness}
-                      onChange={(e) => setProductForm({ ...productForm, platingThickness: e.target.value })}
-                      className="w-full text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    onClick={addVariantField}
+                    className="bg-brand-rose/20 hover:bg-brand-rose/30 text-brand-rose font-bold text-xs px-3 py-1.5 rounded-xl border border-brand-rose/30 transition-colors flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Variant
+                  </button>
                 </div>
 
-                {/* DYNAMIC CUSTOM KEY & VALUE SPECIFICATION FIELDS */}
-                <div className="pt-3 border-t border-stone-800 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold text-stone-300">Custom Specification Attributes (Key / Value)</label>
-                    <button
-                      type="button"
-                      onClick={addCustomSpecField}
-                      className="text-xs text-brand-gold hover:underline font-bold flex items-center gap-1"
-                    >
-                      <PlusCircle className="w-3.5 h-3.5" /> Add Custom Attribute
-                    </button>
+                {productForm.variants.length === 0 ? (
+                  <div className="p-4 bg-stone-950 rounded-xl text-center text-xs text-stone-500 border border-stone-800">
+                    No custom variants added yet. Click "Add Variant" above to define variant choices for this product.
                   </div>
+                ) : (
+                  <div className="space-y-3">
+                    {productForm.variants.map((v, idx) => (
+                      <div key={v.id || idx} className="p-3 bg-stone-950 rounded-xl border border-stone-800 grid grid-cols-1 sm:grid-cols-6 gap-2.5 items-center">
+                        <div className="sm:col-span-2">
+                          <label className="block text-[10px] text-stone-400 font-semibold mb-0.5">Variant Name / Finish</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Rose Gold"
+                            value={v.name}
+                            onChange={(e) => updateVariantField(idx, 'name', e.target.value)}
+                            className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                          />
+                        </div>
 
-                  {productForm.customSpecs.map((cs, idx) => (
-                    <div key={idx} className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        placeholder="Attribute Key (e.g. Pendant Length)"
-                        value={cs.key}
-                        onChange={(e) => updateCustomSpecField(idx, 'key', e.target.value)}
-                        className="flex-1 text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Value (e.g. 4.2 cm)"
-                        value={cs.value}
-                        onChange={(e) => updateCustomSpecField(idx, 'value', e.target.value)}
-                        className="flex-1 text-xs px-3 py-2 rounded-lg bg-stone-950 border border-stone-800 text-white outline-none focus:border-brand-rose"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeCustomSpecField(idx)}
-                        className="p-2 text-rose-400 hover:text-rose-200"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div>
+                          <label className="block text-[10px] text-stone-400 font-semibold mb-0.5">SKU</label>
+                          <input
+                            type="text"
+                            placeholder="EC-VAR-1"
+                            value={v.sku}
+                            onChange={(e) => updateVariantField(idx, 'sku', e.target.value)}
+                            className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white font-mono outline-none focus:border-brand-rose"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] text-stone-400 font-semibold mb-0.5">Price (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="4999"
+                            value={v.price}
+                            onChange={(e) => updateVariantField(idx, 'price', e.target.value)}
+                            className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white font-bold outline-none focus:border-brand-rose"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] text-stone-400 font-semibold mb-0.5">Stock</label>
+                          <input
+                            type="number"
+                            placeholder="10"
+                            value={v.stock}
+                            onChange={(e) => updateVariantField(idx, 'stock', e.target.value)}
+                            className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <label className="block text-[10px] text-stone-400 font-semibold mb-0.5">Swatch</label>
+                            <input
+                              type="color"
+                              value={v.swatchColor || '#B76E79'}
+                              onChange={(e) => updateVariantField(idx, 'swatchColor', e.target.value)}
+                              className="w-8 h-7 rounded bg-transparent cursor-pointer border border-stone-700"
+                            />
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => removeVariantField(idx)}
+                            className="p-1.5 text-rose-400 hover:text-rose-200"
+                            title="Remove Variant"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 2: DYNAMIC CUSTOM PRODUCT SECTIONS BUILDER */}
+              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-serif text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
+                      <ListPlus className="w-3.5 h-3.5" /> Custom Product Sections & Specifications
+                    </h4>
+                    <p className="text-[11px] text-stone-400">Create custom section titles and spec items specifically for this product.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addCustomSection}
+                    className="bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold font-bold text-xs px-3 py-1.5 rounded-xl border border-brand-gold/30 transition-colors flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Section
+                  </button>
                 </div>
+
+                {productForm.customSections.length === 0 ? (
+                  <div className="p-4 bg-stone-950 rounded-xl text-center text-xs text-stone-500 border border-stone-800">
+                    No custom sections added. Click "Add Section" above to add product details cards.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {productForm.customSections.map((sec, secIdx) => (
+                      <div key={secIdx} className="p-4 bg-stone-950 rounded-2xl border border-stone-800 space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <input
+                            type="text"
+                            placeholder="Section Title (e.g. Materials & Craftsmanship)"
+                            value={sec.title}
+                            onChange={(e) => updateCustomSectionTitle(secIdx, e.target.value)}
+                            className="text-xs font-bold px-3 py-1.5 rounded-xl bg-stone-900 border border-stone-700 text-brand-gold outline-none focus:border-brand-rose flex-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeCustomSection(secIdx)}
+                            className="p-1 text-rose-400 hover:text-rose-200 text-xs font-semibold flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Remove Section
+                          </button>
+                        </div>
+
+                        <div className="space-y-2 pl-2 border-l-2 border-brand-gold/30">
+                          {sec.items.map((item, itemIdx) => (
+                            <div key={itemIdx} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                placeholder="Label (e.g. Base Metal)"
+                                value={item.label}
+                                onChange={(e) => updateCustomSectionItem(secIdx, itemIdx, 'label', e.target.value)}
+                                className="w-1/3 text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-stone-300 outline-none focus:border-brand-rose"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Value (e.g. 22K Gold Plated Brass)"
+                                value={item.value}
+                                onChange={(e) => updateCustomSectionItem(secIdx, itemIdx, 'value', e.target.value)}
+                                className="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeCustomSectionItem(secIdx, itemIdx)}
+                                className="p-1 text-stone-500 hover:text-rose-400"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+
+                          <button
+                            type="button"
+                            onClick={() => addCustomSectionItem(secIdx)}
+                            className="text-[11px] text-brand-gold font-semibold hover:underline flex items-center gap-1 pt-1"
+                          >
+                            <PlusCircle className="w-3 h-3" /> Add Item to {sec.title || 'Section'}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -1293,6 +1789,84 @@ export default function AdminView() {
                 </button>
               </div>
 
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* SHIPROCKET LOGISTICS DISPATCH & AWB GENERATOR MODAL */}
+      {dispatchOrder && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-stone-950 border border-stone-800 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl text-stone-100 relative">
+            <div className="flex justify-between items-center border-b border-stone-800 pb-3">
+              <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
+                <Truck className="w-5 h-5 text-brand-gold" /> Shiprocket Order Dispatch #{dispatchOrder.id}
+              </h3>
+              <button onClick={() => setDispatchOrder(null)} className="text-stone-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveDispatch} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-[11px] font-semibold text-stone-400 mb-1">Select Courier Partner</label>
+                <select
+                  value={dispatchForm.courierName}
+                  onChange={(e) => setDispatchForm({ ...dispatchForm, courierName: e.target.value })}
+                  className="w-full text-xs px-3 py-2 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                >
+                  <option value="Shiprocket Air Express (Bluedart)">Shiprocket Air Express (Bluedart)</option>
+                  <option value="Shiprocket Standard Surface (Delhivery)">Shiprocket Standard Surface (Delhivery)</option>
+                  <option value="Shiprocket Express (DTDC)">Shiprocket Express (DTDC)</option>
+                  <option value="Shiprocket Priority (Xpressbees)">Shiprocket Priority (Xpressbees)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-stone-400 mb-1">Generated Air Waybill Number (AWB Code)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="AWB-198273645"
+                  value={dispatchForm.awbCode}
+                  onChange={(e) => setDispatchForm({ ...dispatchForm, awbCode: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white font-mono font-bold outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-stone-400 mb-1">Live Shipment Tracking Link</label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://shiprocket.co/tracking/123456"
+                  value={dispatchForm.trackingUrl}
+                  onChange={(e) => setDispatchForm({ ...dispatchForm, trackingUrl: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div className="bg-stone-900 p-3 rounded-xl border border-stone-800 text-[11px] text-stone-400 space-y-1">
+                <span className="font-semibold text-stone-300 block">Customer Shipping Address:</span>
+                <p>{dispatchOrder.customer?.name} ({dispatchOrder.customer?.phone})</p>
+                <p>{dispatchOrder.customer?.address}</p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDispatchOrder(null)}
+                  className="px-3 py-2 text-stone-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold px-5 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+                >
+                  <Truck className="w-4 h-4" /> Confirm & Mark Shipped
+                </button>
+              </div>
             </form>
           </div>
         </div>

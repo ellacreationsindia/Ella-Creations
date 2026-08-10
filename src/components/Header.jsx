@@ -105,25 +105,25 @@ export default function Header() {
                 Home
               </button>
               <button 
-                onClick={() => navigateTo('shop')} 
+                onClick={() => navigateTo('shop', null, 'All')} 
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Shop Collections
               </button>
               <button 
-                onClick={() => navigateTo('shop')} 
+                onClick={() => navigateTo('shop', null, 'Necklaces')} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Necklaces
               </button>
               <button 
-                onClick={() => navigateTo('shop')} 
+                onClick={() => navigateTo('shop', null, 'Earrings')} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Earrings
               </button>
               <button 
-                onClick={() => navigateTo('shop')} 
+                onClick={() => navigateTo('shop', null, 'Bridal Sets')} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Bridal Sets
@@ -285,25 +285,25 @@ export default function Header() {
             Home Page
           </button>
           <button
-            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            onClick={() => { navigateTo('shop', null, 'All'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Shop All Jewelry Catalog
           </button>
           <button
-            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            onClick={() => { navigateTo('shop', null, 'Necklaces'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Necklaces
           </button>
           <button
-            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            onClick={() => { navigateTo('shop', null, 'Earrings'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Earrings
           </button>
           <button
-            onClick={() => { navigateTo('shop'); setIsMobileMenuOpen(false); }}
+            onClick={() => { navigateTo('shop', null, 'Bridal Sets'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Bridal Sets

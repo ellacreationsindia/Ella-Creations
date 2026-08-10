@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   sku TEXT UNIQUE NOT NULL,
   is_featured BOOLEAN DEFAULT false,
   is_new BOOLEAN DEFAULT true,
-  finish_options JSONB DEFAULT '["Rose Gold", "Gold"]',
+  variants JSONB DEFAULT '[]',
   stone_type TEXT DEFAULT 'Cubic Zirconia (CZ)',
   images JSONB NOT NULL,
   videos JSONB DEFAULT '[]',
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   plating_thickness TEXT,
   occasion_tags JSONB,
   warranty_info TEXT,
-  custom_specs JSONB DEFAULT '[]',
+  custom_sections JSONB DEFAULT '[]',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -62,6 +62,11 @@ CREATE TABLE IF NOT EXISTS public.orders (
   total NUMERIC NOT NULL,
   status TEXT DEFAULT 'Processing',
   payment_method TEXT NOT NULL,
+  payment_id TEXT,
+  shipping_pincode TEXT,
+  shipping_courier TEXT,
+  awb_code TEXT,
+  tracking_url TEXT,
   date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -72,7 +77,8 @@ CREATE TABLE IF NOT EXISTS public.coupons (
   discount_percent INTEGER NOT NULL,
   min_spend NUMERIC DEFAULT 0,
   description TEXT,
-  active BOOLEAN DEFAULT true
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- DATABASE ROW LEVEL SECURITY POLICIES
@@ -104,6 +110,12 @@ CREATE POLICY "Allow public insert orders" ON public.orders FOR INSERT WITH CHEC
 CREATE POLICY "Allow public read orders" ON public.orders FOR SELECT USING (true);
 CREATE POLICY "Allow admin update orders" ON public.orders FOR UPDATE USING (true);
 
+DROP POLICY IF EXISTS "Allow public read coupons" ON public.coupons;
+DROP POLICY IF EXISTS "Allow admin manage coupons" ON public.coupons;
+
+CREATE POLICY "Allow public read coupons" ON public.coupons FOR SELECT USING (true);
+CREATE POLICY "Allow admin manage coupons" ON public.coupons FOR ALL USING (true);
+
 -- 5. STORAGE BUCKET RLS POLICIES FOR 'products' BUCKET
 -- This enables public read & insert/upload permissions for images & videos in the 'products' bucket
 
@@ -131,3 +143,22 @@ USING (bucket_id = 'products');
 CREATE POLICY "Allow public delete products storage"
 ON storage.objects FOR DELETE
 USING (bucket_id = 'products');
+
+-- 6. NEWSLETTER SUBSCRIBERS TABLE
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  source TEXT DEFAULT 'VIP Sparkle Club Footer',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public insert newsletter" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow public read newsletter" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow admin manage newsletter" ON public.newsletter_subscribers;
+
+CREATE POLICY "Allow public insert newsletter" ON public.newsletter_subscribers FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public read newsletter" ON public.newsletter_subscribers FOR SELECT USING (true);
+CREATE POLICY "Allow admin manage newsletter" ON public.newsletter_subscribers FOR ALL USING (true);
+

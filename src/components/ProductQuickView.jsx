@@ -15,8 +15,8 @@ export default function ProductQuickView() {
   if (!quickViewProduct) return null;
 
   const [selectedImage, setSelectedImage] = useState(quickViewProduct.images[0]);
-  const [selectedFinish, setSelectedFinish] = useState(
-    quickViewProduct.finishOptions ? quickViewProduct.finishOptions[0] : 'Standard'
+  const [selectedVariant, setSelectedVariant] = useState(
+    quickViewProduct.variants && quickViewProduct.variants.length > 0 ? quickViewProduct.variants[0] : null
   );
   const [qty, setQty] = useState(1);
 
@@ -89,7 +89,7 @@ export default function ProductQuickView() {
             </div>
 
             <div className="flex items-baseline gap-3 mt-3">
-              <span className="text-2xl font-bold text-brand-rose">{formatPrice(quickViewProduct.price)}</span>
+              <span className="text-2xl font-bold text-brand-rose">{formatPrice(selectedVariant?.price || quickViewProduct.price)}</span>
               {quickViewProduct.comparePrice && (
                 <span className="text-sm line-through text-stone-400">{formatPrice(quickViewProduct.comparePrice)}</span>
               )}
@@ -99,26 +99,32 @@ export default function ProductQuickView() {
               {quickViewProduct.description}
             </p>
 
-            {/* Finish Variant Selector */}
-            {quickViewProduct.finishOptions && (
-              <div className="mt-4">
-                <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">
-                  Metal Finish: <span className="text-brand-rose">{selectedFinish}</span>
+            {/* Product Variants Selector */}
+            {quickViewProduct.variants && quickViewProduct.variants.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider">
+                  Variant: <span className="text-brand-rose">{selectedVariant?.name || 'Standard'}</span>
                 </label>
-                <div className="flex gap-2">
-                  {quickViewProduct.finishOptions.map((finish) => (
-                    <button
-                      key={finish}
-                      onClick={() => setSelectedFinish(finish)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                        selectedFinish === finish
-                          ? 'border-brand-rose bg-brand-rose text-white shadow-sm'
-                          : 'border-stone-200 text-stone-700 hover:border-brand-rose'
-                      }`}
-                    >
-                      {finish}
-                    </button>
-                  ))}
+                <div className="flex flex-wrap gap-2">
+                  {quickViewProduct.variants.map((v) => {
+                    const isSelected = selectedVariant?.id === v.id || selectedVariant?.name === v.name;
+                    return (
+                      <button
+                        key={v.id || v.name}
+                        onClick={() => setSelectedVariant(v)}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'border-brand-rose bg-brand-rose text-white shadow-sm'
+                            : 'border-stone-200 text-stone-700 hover:border-brand-rose'
+                        }`}
+                      >
+                        {v.swatchColor && (
+                          <span className="w-3 h-3 rounded-full border border-white/50 inline-block" style={{ backgroundColor: v.swatchColor }} />
+                        )}
+                        <span>{v.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -149,7 +155,7 @@ export default function ProductQuickView() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  addToCart(quickViewProduct, qty, selectedFinish);
+                  addToCart(quickViewProduct, qty, selectedVariant || 'Standard');
                   setQuickViewProduct(null);
                 }}
                 className="flex-1 bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider"
