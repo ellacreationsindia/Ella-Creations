@@ -265,10 +265,10 @@ export default function ProductDetailView() {
             </div>
           )}
 
-          {/* Short Description */}
-          <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-normal">
+          {/* Product Description with Preserved Formatting */}
+          <div className="text-xs sm:text-sm text-stone-600 leading-relaxed font-normal whitespace-pre-wrap">
             {product.description}
-          </p>
+          </div>
 
           {/* Custom Sections & Specifications per product */}
           {product.customSections && product.customSections.length > 0 && (

@@ -95,9 +95,9 @@ export default function ProductQuickView() {
               )}
             </div>
 
-            <p className="text-xs text-stone-600 leading-relaxed mt-3">
+            <div className="text-xs text-stone-600 leading-relaxed mt-3 whitespace-pre-wrap">
               {quickViewProduct.description}
-            </p>
+            </div>
 
             {/* Product Variants Selector */}
             {quickViewProduct.variants && quickViewProduct.variants.length > 0 && (
