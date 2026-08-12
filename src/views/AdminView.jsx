@@ -43,9 +43,105 @@ import {
   Mail,
   Download
 } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { useState } from 'react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { compressImageDataUrl } from '../lib/supabase';
+
+function SalesAreaChart({ data }) {
+  const [hoveredPoint, setHoveredPoint] = useState(null);
+
+  const paddingLeft = 55;
+  const paddingRight = 20;
+  const paddingTop = 25;
+  const paddingBottom = 35;
+  const width = 650;
+  const height = 260;
+
+  const safeData = Array.isArray(data) && data.length > 0 ? data : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(name => ({ name, sales: 0 }));
+  const maxVal = Math.max(...safeData.map((d) => Number(d?.sales) || 0), 1000);
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+
+  const points = safeData.map((d, i) => {
+    const x = paddingLeft + (i / Math.max(1, safeData.length - 1)) * chartWidth;
+    const y = paddingTop + chartHeight - ((Number(d?.sales) || 0) / maxVal) * chartHeight;
+    return { x, y, name: d?.name || '', sales: Number(d?.sales) || 0 };
+  });
+
+  if (!points || points.length === 0) {
+    return (
+      <div className="h-64 flex items-center justify-center text-stone-500 text-xs font-mono">
+        No Telemetry Sales Data Available
+      </div>
+    );
+  }
+
+  const pathD = points.reduce((acc, pt, i) => {
+    return i === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`;
+  }, '');
+
+  const areaD = points.length > 0 
+    ? `${pathD} L ${points[points.length - 1].x} ${paddingTop + chartHeight} L ${points[0].x} ${paddingTop + chartHeight} Z`
+    : '';
+
+  return (
+    <div className="w-full relative select-none">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible">
+        <defs>
+          <linearGradient id="svgAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#D49AA5" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#D49AA5" stopOpacity={0.0} />
+          </linearGradient>
+        </defs>
+
+        {/* Horizontal Grid lines */}
+        {[0, 0.33, 0.66, 1].map((ratio, idx) => {
+          const y = paddingTop + chartHeight * (1 - ratio);
+          const val = Math.round(maxVal * ratio);
+          return (
+            <g key={idx}>
+              <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#27272a" strokeDasharray="3 3" />
+              <text x={paddingLeft - 8} y={y + 4} textAnchor="end" fill="#71717a" fontSize="10" fontFamily="monospace">
+                ₹{val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Area fill */}
+        {areaD && <path d={areaD} fill="url(#svgAreaGrad)" />}
+
+        {/* Line stroke */}
+        {pathD && <path d={pathD} fill="none" stroke="#D49AA5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+
+        {/* Data points & X Labels */}
+        {points.map((pt, idx) => (
+          <g key={idx} className="cursor-pointer group" onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
+            <text x={pt.x} y={height - 8} textAnchor="middle" fill="#9ca3af" fontSize="11" fontWeight="600">
+              {pt.name}
+            </text>
+            <circle cx={pt.x} cy={pt.y} r="4" fill="#1c1917" stroke="#D49AA5" strokeWidth="2" />
+            <circle cx={pt.x} cy={pt.y} r="10" fill="#D49AA5" fillOpacity={0} className="group-hover:fill-opacity-20 transition-all" />
+          </g>
+        ))}
+      </svg>
+
+      {/* Floating Tooltip */}
+      {hoveredPoint && (
+        <div
+          className="absolute bg-stone-950 border border-brand-gold/40 text-white text-xs px-3 py-1.5 rounded-xl shadow-2xl z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 font-sans"
+          style={{
+            left: `${(hoveredPoint.x / width) * 100}%`,
+            top: `${(hoveredPoint.y / height) * 100}%`
+          }}
+        >
+          <span className="text-[10px] text-stone-400 font-bold block">{hoveredPoint.name} Revenue</span>
+          <span className="font-bold text-brand-gold">{formatPrice(hoveredPoint.sales)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminView() {
   const { 
@@ -779,22 +875,8 @@ export default function AdminView() {
                   <h3 className="font-serif text-lg font-bold text-white">Authentic Weekly Revenue (₹)</h3>
                   <span className="text-xs text-stone-400">Live database revenue</span>
                 </div>
-                <div className="h-72 w-full pt-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={REAL_SALES_GRAPH_DATA}>
-                      <defs>
-                        <linearGradient id="realSalesGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#D49AA5" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#D49AA5" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                      <XAxis dataKey="name" stroke="#888" fontSize={12} />
-                      <YAxis stroke="#888" fontSize={12} />
-                      <Tooltip contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', color: '#fff' }} />
-                      <Area type="monotone" dataKey="sales" stroke="#D49AA5" fillOpacity={1} fill="url(#realSalesGrad)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                <div className="w-full pt-2">
+                  <SalesAreaChart data={REAL_SALES_GRAPH_DATA} />
                 </div>
               </div>
 

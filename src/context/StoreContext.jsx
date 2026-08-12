@@ -146,8 +146,8 @@ export const StoreProvider = ({ children }) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
-      // Role-Based Post-Login Auto Redirect
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') && currentUser) {
+      // Role-Based Post-Login Auto Redirect (only on explicit SIGNED_IN event)
+      if (event === 'SIGNED_IN' && currentUser) {
         setIsAuthModalOpen(false);
         const userEmail = currentUser.email;
 
