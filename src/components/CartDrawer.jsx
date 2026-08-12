@@ -24,12 +24,8 @@ export default function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const freeShippingThreshold = 2500;
-  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
-  const freeShippingProgress = Math.min(100, (cartSubtotal / freeShippingThreshold) * 100);
-
   const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
-  const shippingCost = cartSubtotal >= freeShippingThreshold || cart.length === 0 ? 0 : 199;
+  const shippingCost = cart.length === 0 ? 0 : 99;
   const grandTotal = cartSubtotal - discountAmount + shippingCost;
 
   const handleProceedToCheckout = () => {
@@ -66,22 +62,11 @@ export default function CartDrawer() {
             </button>
           </div>
 
-          {/* Free Shipping Meter */}
-          <div className="px-6 py-3 bg-brand-sand/50 border-b border-brand-gold/20">
-            <div className="flex items-center justify-between text-xs font-semibold text-stone-700 mb-1">
-              <span>
-                {remainingForFreeShipping > 0
-                  ? `Add ${formatPrice(remainingForFreeShipping)} more for FREE Shipping`
-                  : '🎉 Congratulations! You unlocked FREE Express Shipping!'}
-              </span>
-              <span>{Math.round(freeShippingProgress)}%</span>
-            </div>
-            <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-brand-rose transition-all duration-500 rounded-full"
-                style={{ width: `${freeShippingProgress}%` }}
-              ></div>
-            </div>
+          {/* Insured Delivery Banner */}
+          <div className="px-6 py-2.5 bg-brand-sand/50 border-b border-brand-gold/20 flex items-center justify-between text-xs font-semibold text-stone-700">
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> Anti-tarnish velvet gift box & insured shipping
+            </span>
           </div>
 
           {/* Cart Items List */}
@@ -231,9 +216,7 @@ export default function CartDrawer() {
                 )}
                 <div className="flex justify-between">
                   <span>Estimated Shipping</span>
-                  <span className="font-semibold text-stone-900">
-                    {shippingCost === 0 ? <strong className="text-emerald-600">FREE</strong> : formatPrice(shippingCost)}
-                  </span>
+                  <span className="font-semibold text-stone-900">{formatPrice(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-stone-900 pt-2 border-t border-stone-200">
                   <span>Total</span>

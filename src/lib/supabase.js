@@ -346,15 +346,15 @@ export async function calculateShiprocketRates(destinationPincode, weightGrams =
   expEtdDate.setDate(expEtdDate.getDate() + (isMetro ? 1 : 2));
   const expDateStr = expEtdDate.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
 
-  const standardFee = cartSubtotal >= 2500 ? 0 : 99;
-  const expressFee = cartSubtotal >= 2500 ? 100 : 199;
+  const standardFee = 99;
+  const expressFee = 199;
 
   return {
     serviceable: true,
     destinationPincode: cleanPincode,
     city: location?.city || '',
     state: location?.state || '',
-    courierName: isMetro ? 'Shiprocket Priority Air (BlueDart / Delhivery Air)' : 'Shiprocket Surface (Delhivery / Xpressbees)',
+    courierName: isMetro ? 'Priority Express Air (BlueDart Air)' : 'Standard Ground Delivery (Delhivery Surface)',
     etd: expDateStr,
     estimatedDays: isMetro ? 2 : 4,
     shippingCharge: standardFee,
@@ -362,13 +362,13 @@ export async function calculateShiprocketRates(destinationPincode, weightGrams =
     codAvailable: true,
     options: {
       standard: {
-        courier: isMetro ? 'Shiprocket Surface (Delhivery / Ecom Express)' : 'Shiprocket Surface (Xpressbees)',
+        courier: isMetro ? 'Standard Surface Delivery' : 'Standard Ground Logistics',
         etd: stdDateStr,
         days: isMetro ? '3-4 Days' : '4-6 Days',
         rate: standardFee
       },
       express: {
-        courier: isMetro ? 'Shiprocket Priority Air (BlueDart Express Air)' : 'Shiprocket Priority Air (Delhivery Air)',
+        courier: isMetro ? 'Priority Air Express (BlueDart Air)' : 'Priority Air Express (Delhivery Air)',
         etd: expDateStr,
         days: isMetro ? '1-2 Days' : '2-3 Days',
         rate: expressFee

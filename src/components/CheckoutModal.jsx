@@ -48,11 +48,12 @@ export default function CheckoutModal() {
   const safeSubtotal = Number(cartSubtotal) || 0;
   const discountAmount = activeCoupon ? (safeSubtotal * (Number(activeCoupon.discountPercent) || 0)) / 100 : 0;
   
+  // Standard ground is ₹99, Express Air priority is ₹199 (No free shipping)
   const baseShippingCost = shippingRateDetails 
-    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 0))
-    : (formData.shippingMethod === 'express' ? 199 : (safeSubtotal >= 2500 ? 0 : 99));
+    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 99))
+    : (formData.shippingMethod === 'express' ? 199 : 99);
 
-  const shippingCost = Number(baseShippingCost) || 0;
+  const shippingCost = Number(baseShippingCost) || 99;
   const grandTotal = Math.max(0, safeSubtotal - discountAmount + shippingCost);
 
   // Handle Pincode Auto-Lookup & Shiprocket Serviceability Verification
@@ -218,7 +219,7 @@ export default function CheckoutModal() {
           <div className="px-6 py-3 bg-brand-sand/40 border-b border-stone-200 flex justify-center gap-8 text-xs font-semibold">
             <div className={`flex items-center gap-1.5 ${step === 1 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${step === 1 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>1</span>
-              Delivery Address (Shiprocket)
+              Delivery Address
             </div>
             <div className={`flex items-center gap-1.5 ${step === 2 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${step === 2 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>2</span>
@@ -234,9 +235,6 @@ export default function CheckoutModal() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-stone-100 pb-2">
                   <h3 className="font-serif text-base font-bold text-stone-900">1. Customer & Shipping Address</h3>
-                  <span className="text-[10px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded font-mono">
-                    Shiprocket Integrated
-                  </span>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -290,7 +288,7 @@ export default function CheckoutModal() {
 
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Pincode (Shiprocket Check) <span className="text-rose-500">*</span>
+                      Pincode <span className="text-rose-500">*</span>
                     </label>
                     <div className="flex gap-1.5">
                       <input
@@ -357,7 +355,7 @@ export default function CheckoutModal() {
                   </div>
                 </div>
 
-                {/* Shiprocket Rate Result Box */}
+                {/* Rate Result Box */}
                 {shippingRateDetails && (
                   <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-1">
                     <div className="flex justify-between items-center font-bold text-emerald-900">
@@ -374,12 +372,12 @@ export default function CheckoutModal() {
                   </div>
                 )}
 
-                {/* Shipping Method Options (Synced with Shiprocket) */}
+                {/* Shipping Method Options */}
                 <div className="pt-2">
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-semibold text-stone-700">Select Shipping Speed</label>
-                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
-                      <Truck className="w-3 h-3 text-emerald-600" /> Shiprocket API Synced
+                    <span className="text-[10px] text-stone-700 font-bold bg-stone-100 px-2 py-0.5 rounded border border-stone-200 flex items-center gap-1">
+                      <Truck className="w-3 h-3 text-stone-600" /> Insured Delivery
                     </span>
                   </div>
 
@@ -397,15 +395,15 @@ export default function CheckoutModal() {
                         />
                         <div>
                           <p className="text-xs font-bold text-stone-900">
-                            {shippingRateDetails?.options?.standard?.courier || 'Shiprocket Surface (Delhivery / Ecom)'}
+                            {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
                           </p>
-                          <p className="text-[11px] text-emerald-700 font-medium">
+                          <p className="text-[11px] text-stone-500 font-medium">
                             {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Includes anti-tarnish velvet gift box'}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-600 flex-shrink-0 ml-2">
-                        {safeSubtotal >= 2500 ? 'FREE' : formatPrice(99)}
+                      <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
+                        {formatPrice(99)}
                       </span>
                     </label>
 
@@ -422,14 +420,14 @@ export default function CheckoutModal() {
                         />
                         <div>
                           <p className="text-xs font-bold text-stone-900">
-                            {shippingRateDetails?.options?.express?.courier || 'Shiprocket Priority Air (BlueDart Air)'}
+                            {shippingRateDetails?.options?.express?.courier || 'Priority Air Express'}
                           </p>
                           <p className="text-[11px] text-stone-500 font-medium">
                             {shippingRateDetails?.options?.express ? `Fastest Air: ${shippingRateDetails.options.express.etd} (${shippingRateDetails.options.express.days})` : '1-2 Days Priority Dispatch'}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">{formatPrice(safeSubtotal >= 2500 ? 100 : 199)}</span>
+                      <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">{formatPrice(199)}</span>
                     </label>
                   </div>
                 </div>

@@ -578,7 +578,7 @@ export const StoreProvider = ({ children }) => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const taxAmount = (subtotal * 18) / 100;
     const discountAmount = activeCoupon ? (subtotal * activeCoupon.discountPercent) / 100 : 0;
-    const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : (subtotal >= 2500 ? 0 : 199);
+    const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : 99;
     const total = subtotal - discountAmount + shipping;
 
     const newOrder = {

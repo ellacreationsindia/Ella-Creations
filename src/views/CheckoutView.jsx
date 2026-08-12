@@ -66,12 +66,12 @@ export default function CheckoutView() {
   const safeSubtotal = Number(cartSubtotal) || 0;
   const discountAmount = activeCoupon ? (safeSubtotal * (Number(activeCoupon.discountPercent) || 0)) / 100 : 0;
   
-  // Base shipping from Shiprocket lookup or standard threshold (Free > 2500, else 99)
+  // Standard ground is ₹99, Express Air priority is ₹199 (No free shipping)
   const baseShippingCost = shippingRateDetails 
-    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 0))
-    : (formData.shippingMethod === 'express' ? 199 : (safeSubtotal >= 2500 ? 0 : 99));
+    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 99))
+    : (formData.shippingMethod === 'express' ? 199 : 99);
 
-  const shippingCost = Number(baseShippingCost) || 0;
+  const shippingCost = Number(baseShippingCost) || 99;
   const grandTotal = Math.max(0, safeSubtotal - discountAmount + shippingCost);
 
   // 1. STRICT AUTHENTICATION LOCK: Must be logged in to complete purchase
@@ -291,7 +291,7 @@ export default function CheckoutView() {
         <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 flex justify-center gap-8 text-xs font-semibold">
           <div className={`flex items-center gap-2 ${step === 1 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 1 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>1</span>
-            1. Shipping Address & Shiprocket Partner
+            1. Shipping Address & Delivery
           </div>
           <div className={`flex items-center gap-2 ${step === 2 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 2 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>2</span>
@@ -311,9 +311,6 @@ export default function CheckoutView() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                     <h3 className="font-serif text-lg font-bold text-stone-900">1. Customer & Shipping Details</h3>
-                    <span className="text-[10px] bg-stone-100 text-stone-600 px-2.5 py-0.5 rounded-full font-mono">
-                      Shiprocket Integrated
-                    </span>
                   </div>
 
                   {/* Customer Information (Clean fields, NO prefilled dummy values) */}
@@ -368,7 +365,7 @@ export default function CheckoutView() {
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1">
-                        Pincode (Shiprocket Serviceability) <span className="text-rose-500">*</span>
+                        Pincode <span className="text-rose-500">*</span>
                       </label>
                       <div className="flex gap-1.5">
                         <input
@@ -472,7 +469,7 @@ export default function CheckoutView() {
                     </div>
                   </div>
 
-                  {/* Live Shiprocket Carrier Serviceability Info Box */}
+                  {/* Live Carrier Serviceability Info Box */}
                   {shippingRateDetails && (
                     <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-xs space-y-1.5">
                       <div className="flex justify-between items-center font-bold text-emerald-900">
@@ -489,12 +486,12 @@ export default function CheckoutView() {
                     </div>
                   )}
 
-                  {/* Shipping Options (Synced with Shiprocket) */}
+                  {/* Shipping Options */}
                   <div className="pt-2">
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-semibold text-stone-700">Select Shipping Speed</label>
-                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
-                        <Truck className="w-3 h-3 text-emerald-600" /> Shiprocket API Synced
+                      <span className="text-[10px] text-stone-700 font-bold bg-stone-100 px-2 py-0.5 rounded border border-stone-200 flex items-center gap-1">
+                        <Truck className="w-3 h-3 text-stone-600" /> Verified Express Shipping
                       </span>
                     </div>
 
@@ -513,15 +510,15 @@ export default function CheckoutView() {
                           />
                           <div>
                             <p className="text-xs font-bold text-stone-900">
-                              {shippingRateDetails?.options?.standard?.courier || 'Shiprocket Surface (Delhivery / Ecom)'}
+                              {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
                             </p>
-                            <p className="text-[11px] text-emerald-700 font-medium">
+                            <p className="text-[11px] text-stone-500 font-medium">
                               {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Velvet gift box included'}
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-emerald-600 flex-shrink-0 ml-2">
-                          {safeSubtotal >= 2500 ? 'FREE' : formatPrice(99)}
+                        <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
+                          {formatPrice(99)}
                         </span>
                       </label>
 
@@ -539,7 +536,7 @@ export default function CheckoutView() {
                           />
                           <div>
                             <p className="text-xs font-bold text-stone-900">
-                              {shippingRateDetails?.options?.express?.courier || 'Shiprocket Priority Air (BlueDart Air)'}
+                              {shippingRateDetails?.options?.express?.courier || 'Priority Air Express'}
                             </p>
                             <p className="text-[11px] text-stone-500 font-medium">
                               {shippingRateDetails?.options?.express ? `Fastest Air: ${shippingRateDetails.options.express.etd} (${shippingRateDetails.options.express.days})` : '1-2 Days Priority Dispatch'}
@@ -547,7 +544,7 @@ export default function CheckoutView() {
                           </div>
                         </div>
                         <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
-                          {formatPrice(safeSubtotal >= 2500 ? 100 : 199)}
+                          {formatPrice(199)}
                         </span>
                       </label>
                     </div>
