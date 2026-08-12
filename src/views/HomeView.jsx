@@ -58,7 +58,7 @@ export default function HomeView() {
               
               <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-brand-gold/40 text-xs font-semibold uppercase tracking-widest text-brand-gold shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
-                Handcrafted Anti-Tarnish Jewelry
+                Handcrafted Luxury Artificial Jewelry
               </div>
 
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-stone-900 leading-[1.15]">
@@ -67,7 +67,7 @@ export default function HomeView() {
               </h1>
 
               <p className="text-stone-600 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
-                Ella Creations is designed for the modern, confident, and elegant woman. Discover our 100% anti-tarnish Kundan, Cubic Zirconia crystal drops, and 22k gold-plated statement pieces.
+                Ella Creations is designed for the modern, confident, and elegant woman. Discover our handcrafted Kundan, Cubic Zirconia crystal drops, and 22k gold-plated statement pieces.
               </p>
 
               {/* Gold Divider Motif */}
@@ -94,10 +94,10 @@ export default function HomeView() {
               {/* Quick Trust Badges */}
               <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-stone-600 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-brand-gold" /> 100% Anti-Tarnish
+                  <ShieldCheck className="w-4 h-4 text-brand-gold" /> Handcrafted Quality
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Gift className="w-4 h-4 text-brand-rose" /> Luxury Velvet Packaging
+                  <Gift className="w-4 h-4 text-brand-rose" /> Insured Protective Packaging
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Award className="w-4 h-4 text-brand-gold" /> AAA+ Cubic Zirconia
@@ -118,7 +118,6 @@ export default function HomeView() {
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950/85 via-stone-900/40 to-transparent p-6 text-white rounded-b-3xl">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-brand-pink bg-brand-rose/20 px-2.5 py-1 rounded-full border border-brand-pink/30">Signature Piece</span>
                     <h3 className="font-serif text-xl font-bold mt-2">Royal Kundan & Pearl Choker</h3>
-                    <p className="text-xs text-stone-300 mt-1">{formatPrice(4999)} • 22k Gold Plated</p>
                   </div>
                 </div>
 
@@ -175,17 +174,15 @@ export default function HomeView() {
         </div>
       </section>
 
-      {/* Interactive Products Showcase (Tabbed Featured / New Arrivals) */}
+      {/* Product Highlights Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-200 pb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between border-b border-brand-gold/20 pb-4 gap-4">
           <div>
-            <div className="flex items-center gap-2 text-brand-rose font-bold text-xs uppercase tracking-widest">
-              <Flame className="w-4 h-4 fill-current" /> Bestseller Spotlight
-            </div>
-            <h2 className="font-serif text-3xl font-bold text-stone-900 mt-1">Explore Our Handcrafted Creations</h2>
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-gold">Handpicked Statement Pieces</span>
+            <h2 className="font-serif text-3xl font-bold text-stone-900 mt-1">Featured Collections</h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('featured')}
               className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
@@ -194,9 +191,8 @@ export default function HomeView() {
                   : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
               }`}
             >
-              Most Loved
+              Curated Favorites
             </button>
-
             <button
               onClick={() => setActiveTab('new')}
               className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
@@ -225,7 +221,7 @@ export default function HomeView() {
         </div>
       </section>
 
-      {/* Promotional Offers & Discount Banner */}
+      {/* Promotional Offers Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden border border-brand-gold/30">
           <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
@@ -235,36 +231,22 @@ export default function HomeView() {
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full inline-block">
-                Exclusive Launch Offer
+                Artisanal Excellence
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-cream leading-tight">
-                Unlock 10% Extra Off On Your First Luxury Order
+                Handcrafted Artificial & Bridal Fine Jewelry
               </h2>
               <p className="text-stone-300 text-xs sm:text-sm leading-relaxed max-w-lg">
-                Use special coupon code <strong className="text-white">ELLA10</strong> at checkout to claim instant 10% discount + free velvet gift box & insured delivery!
+                Explore statement Kundan chokers, AAA+ Cubic Zirconia crystal drops, and 22k gold-plated statement pieces handcrafted for every occasion.
               </p>
             </div>
 
-            <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3">
-              <div className="bg-white/10 backdrop-blur-md border border-brand-gold/40 px-5 py-3 rounded-2xl flex items-center justify-between w-full sm:w-auto gap-4">
-                <div>
-                  <span className="text-[10px] uppercase text-stone-400 font-semibold block">Coupon Code</span>
-                  <span className="font-mono text-base font-bold text-brand-gold">ELLA10</span>
-                </div>
-                <button
-                  onClick={() => handleCopyCoupon('ELLA10')}
-                  className="bg-brand-gold text-stone-900 hover:bg-brand-gold/90 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors"
-                >
-                  {copiedCoupon === 'ELLA10' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  {copiedCoupon === 'ELLA10' ? 'Applied!' : 'Copy Code'}
-                </button>
-              </div>
-
+            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
               <button
                 onClick={() => navigateTo('shop')}
-                className="w-full sm:w-auto bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-soft-rose transition-all text-xs uppercase tracking-wider text-center"
+                className="w-full sm:w-auto bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-4 px-8 rounded-2xl shadow-soft-rose transition-all text-xs uppercase tracking-wider text-center"
               >
-                Shop Now
+                Browse Master Catalog
               </button>
             </div>
           </div>

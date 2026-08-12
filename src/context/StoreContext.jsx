@@ -146,17 +146,17 @@ export const StoreProvider = ({ children }) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
-      // Role-Based Post-Login Auto Redirect (only on explicit SIGNED_IN event)
-      if (event === 'SIGNED_IN' && currentUser) {
+      // Role-Based Post-Login Auto Redirect (only once on explicit user login action, not on tab switches)
+      if (event === 'SIGNED_IN' && currentUser && !sessionStorage.getItem('ella_auth_handled')) {
+        sessionStorage.setItem('ella_auth_handled', 'true');
         setIsAuthModalOpen(false);
         const userEmail = currentUser.email;
 
         if (userEmail === ADMIN_EMAIL) {
-          showToast('👑 Welcome Admin! Opening Admin Dashboard...', 'success');
+          showToast('👑 Welcome Admin! Opening Admin Panel...', 'success');
           setCurrentView('admin');
         } else {
           showToast(`Welcome back, ${currentUser.user_metadata?.full_name || currentUser.email}!`, 'success');
-          setCurrentView('shop');
         }
       }
     });
@@ -401,6 +401,7 @@ export const StoreProvider = ({ children }) => {
   };
 
   const signOutUser = async () => {
+    sessionStorage.removeItem('ella_auth_handled');
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);

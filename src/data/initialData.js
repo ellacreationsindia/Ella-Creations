@@ -43,10 +43,10 @@ export const INITIAL_PRODUCTS = [
         ]
       },
       {
-        title: "Care & Warranty",
+        title: "Care & Quality",
         items: [
-          { label: "Care Instructions", value: "Avoid contact with water, perfume, and cosmetics. Store in velvet pouch." },
-          { label: "Warranty", value: "1-Year Ella Creations Anti-Tarnish Guarantee" }
+          { label: "Care Instructions", value: "Avoid contact with water, perfume, and cosmetics. Store in protective pouch." },
+          { label: "Quality Inspection", value: "Handcrafted Quality Assured" }
         ]
       }
     ],
@@ -132,7 +132,7 @@ export const INITIAL_REVIEWS = [
     author: "Pooja Verma (Mumbai)",
     rating: 5,
     title: "Breathtaking Kundan set!",
-    comment: "I wore this for my sister's sangeet and received endless compliments! The shine is indistinguishable from real gold Kundan. Packaging was royal velvet box.",
+    comment: "I wore this for my sister's sangeet and received endless compliments! The shine is indistinguishable from real gold Kundan. Packaging was elegant gift box.",
     photo: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=300",
     date: "2026-07-28",
     verified: true
@@ -143,7 +143,7 @@ export const INITIAL_REVIEWS = [
     author: "Rhea Sen (Bangalore)",
     rating: 5,
     title: "Obsessed with the CZ sparkle",
-    comment: "The earrings look super premium. Doesn't irritate my sensitive ears at all. 100% anti-tarnish so far after 3 months of wear!",
+    comment: "The earrings look super premium. Doesn't irritate my sensitive ears at all. Lasting finish so far after 3 months of wear!",
     photo: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=300",
     date: "2026-08-01",
     verified: true

@@ -34,24 +34,24 @@ export default function Footer() {
             <div className="w-12 h-12 rounded-full bg-brand-rose/20 flex items-center justify-center text-brand-rose mb-2">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h4 className="font-serif text-lg font-bold text-white">100% Anti-Tarnish</h4>
-            <p className="text-xs text-stone-400">Handcrafted with premium protective e-coating for lasting shine.</p>
+            <h4 className="font-serif text-lg font-bold text-white">Handcrafted Quality</h4>
+            <p className="text-xs text-stone-400">Handcrafted with premium finish for lasting beauty and elegance.</p>
           </div>
 
           <div className="flex flex-col items-center sm:items-start space-y-2">
             <div className="w-12 h-12 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold mb-2">
               <Truck className="w-6 h-6" />
             </div>
-            <h4 className="font-serif text-lg font-bold text-white">Express Shipping</h4>
-            <p className="text-xs text-stone-400">Complimentary priority delivery on all orders exceeding {formatPrice(2500)}.</p>
+            <h4 className="font-serif text-lg font-bold text-white">Insured Courier Shipping</h4>
+            <p className="text-xs text-stone-400">Insured courier dispatch and fast delivery across India.</p>
           </div>
 
           <div className="flex flex-col items-center sm:items-start space-y-2">
             <div className="w-12 h-12 rounded-full bg-brand-pink/20 flex items-center justify-center text-brand-pink mb-2">
               <Gift className="w-6 h-6" />
             </div>
-            <h4 className="font-serif text-lg font-bold text-white">Luxury Gift Packaging</h4>
-            <p className="text-xs text-stone-400">Every order arrives in our signature velvet jewellery keepsake box.</p>
+            <h4 className="font-serif text-lg font-bold text-white">Protective Packaging</h4>
+            <p className="text-xs text-stone-400">Every order arrives carefully wrapped in protective gift packaging.</p>
           </div>
 
           <div className="flex flex-col items-center sm:items-start space-y-2">
@@ -59,7 +59,7 @@ export default function Footer() {
               <Clock className="w-6 h-6" />
             </div>
             <h4 className="font-serif text-lg font-bold text-white">Dedicated Support</h4>
-            <p className="text-xs text-stone-400">24/7 Concierge assistance for styling guidance & custom orders.</p>
+            <p className="text-xs text-stone-400">24/7 Concierge assistance for styling guidance & order updates.</p>
           </div>
         </div>
       </div>
@@ -108,7 +108,6 @@ export default function Footer() {
             <ul className="space-y-2 text-xs text-stone-400">
               <li><button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors">Jewelry Care Guide</button></li>
               <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Size & Fit Chart</button></li>
-              <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Shipping & Returns</button></li>
               <li><button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors">Sitemap Directory</button></li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}

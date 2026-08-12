@@ -9,8 +9,8 @@ export default function SEOHead() {
     const domain = 'https://ellacreations.co';
 
     let title = 'Ella Creations | Contemporary Artificial Jewelry India';
-    let description = 'Shop 100% anti-tarnish artificial jewelry at Ella Creations. Explore Kundan chokers, rose gold crystal drop earrings, CZ solitaire rings, and bridal sets in India.';
-    let keywords = 'artificial jewelry, kundan choker set, rose gold earrings, cubic zirconia rings, bridal jewelry India, anti tarnish jewelry, Ella Creations';
+    let description = 'Shop handcrafted luxury artificial jewelry at Ella Creations. Explore Kundan chokers, rose gold crystal drop earrings, CZ solitaire rings, and bridal sets in India.';
+    let keywords = 'artificial jewelry, kundan choker set, rose gold earrings, cubic zirconia rings, bridal jewelry India, Ella Creations';
     let canonicalUrl = domain;
     let ogImage = `${domain}/logo.png`;
     let ogType = 'website';
@@ -26,7 +26,7 @@ export default function SEOHead() {
       canonicalUrl = `${domain}/#shop`;
     } else if (currentView === 'product' && activeProduct) {
       title = `${activeProduct.title} - Buy Online ${formatPrice(activeProduct.price)} | Ella Creations`;
-      description = activeProduct.description || `Buy ${activeProduct.title} online at Ella Creations. Plated in 22K Gold / Rose Gold with anti-tarnish protective coating.`;
+      description = activeProduct.description || `Buy ${activeProduct.title} online at Ella Creations. Plated in 22K Gold / Rose Gold with protective coating.`;
       keywords = `${activeProduct.title}, ${activeProduct.category}, ${activeProduct.stoneType}, artificial jewelry, Ella Creations`;
       canonicalUrl = `${domain}/#product-${activeProduct.id}`;
       if (activeProduct.images && activeProduct.images.length > 0) {

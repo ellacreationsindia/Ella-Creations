@@ -394,15 +394,15 @@ export default function ProductDetailView() {
           <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 border-t border-stone-200 text-center">
             <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
               <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold mx-auto mb-1" />
-              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">100% Anti-Tarnish</p>
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Handcrafted Quality</p>
             </div>
             <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
               <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-rose mx-auto mb-1" />
-              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Free Velvet Box</p>
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Insured Dispatch</p>
             </div>
             <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold mx-auto mb-1" />
-              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Easy Returns</p>
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-stone-600 mx-auto mb-1" />
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">No Return Policy</p>
             </div>
           </div>
 

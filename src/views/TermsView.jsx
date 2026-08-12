@@ -83,28 +83,28 @@ export default function TermsView() {
         {/* Section 4 */}
         <section className="space-y-3">
           <h2 className="font-serif text-lg font-bold text-stone-900 flex items-center gap-2">
-            <Truck className="w-4 h-4 text-brand-gold" /> 4. Shipping, Delivery & Shiprocket Tracking
+            <Truck className="w-4 h-4 text-brand-gold" /> 4. Shipping, Delivery & Tracking
           </h2>
           <p>
-            Orders are dispatched via our integrated logistics partner <strong>Shiprocket</strong> (utilizing BlueDart, Delhivery, DTDC, and Xpressbees).
+            Orders are dispatched via our logistics partners across India.
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-stone-700">
-            <li><strong>Standard Shipping:</strong> 3-5 business days across major Indian metros. Complimentary on orders over ₹2,500.</li>
-            <li><strong>Air Priority Express:</strong> 1-2 business days express dispatch available at checkout.</li>
-            <li><strong>Tracking:</strong> An Air Waybill (AWB) tracking number and live Shiprocket link are assigned upon dispatch.</li>
+            <li><strong>Standard Ground Shipping:</strong> 3-5 business days delivery (₹99 fixed fee).</li>
+            <li><strong>Air Priority Express:</strong> 1-2 business days express dispatch (₹199 fixed fee).</li>
+            <li><strong>Tracking:</strong> An Air Waybill (AWB) tracking number is assigned upon dispatch.</li>
           </ul>
         </section>
 
         {/* Section 5 */}
         <section className="space-y-3">
           <h2 className="font-serif text-lg font-bold text-stone-900 flex items-center gap-2">
-            <RotateCcw className="w-4 h-4 text-brand-rose" /> 5. Returns, Exchanges & 1-Year Anti-Tarnish Guarantee
+            <RotateCcw className="w-4 h-4 text-stone-600" /> 5. No Return & No Exchange Policy
           </h2>
           <p>
-            We take pride in our 3.5 Micron Anti-Tarnish E-Coating process. If your jewelry experiences unprompted tarnishing within 1 year of purchase (excluding damage from direct perfume spraying or harsh chemical exposure), we offer complimentary re-plating or store credit.
+            Due to hygiene and safety standards for jewelry items, all products sold by <strong>Ella Creations</strong> are final sale and strictly non-returnable and non-exchangeable once dispatched.
           </p>
           <p>
-            For damaged or defective items received upon unboxing, customers must notify support within 48 hours with an unboxing video clip.
+            In the rare event of receiving a defective or damaged product upon initial delivery, customers must notify our support team within 48 hours of delivery with a clear unboxing video clip.
           </p>
         </section>
 

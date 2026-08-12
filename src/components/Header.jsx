@@ -77,7 +77,7 @@ export default function Header() {
       {/* Top Announcement Bar */}
       <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-[11px] sm:text-xs py-2 px-3 text-center tracking-wider font-medium flex items-center justify-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
-        <span>COMPLIMENTARY LUXURY VELVET GIFT BOX & INSURED EXPRESS PACKAGING | USE CODE: <strong className="text-brand-gold font-bold">ELLA10</strong></span>
+        <span>INSURED EXPRESS COURIER PACKAGING & DELIVERY ACROSS INDIA | ELLA CREATIONS LUXURY ARTIFICIAL JEWELRY</span>
         <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
       </div>
 

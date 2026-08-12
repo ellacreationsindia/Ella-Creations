@@ -14,8 +14,8 @@ export default function SitemapView() {
       links: [
         { label: 'Home Page', view: 'home', desc: 'Hero showcase, featured Kundan sets & customer reviews' },
         { label: 'Shop Catalog', view: 'shop', desc: 'Complete collection of necklaces, earrings, rings & sets' },
-        { label: 'About Ella Creations', view: 'home', desc: 'Our brand story, heritage & anti-tarnish guarantee' },
-        { label: 'Contact Us & Concierge', view: 'contact', desc: 'Customer support, custom orders & WhatsApp help' }
+        { label: 'About Ella Creations', view: 'home', desc: 'Our brand story & handcrafted craftsmanship' },
+        { label: 'Contact Us & Concierge', view: 'contact', desc: 'Customer support & WhatsApp help' }
       ]
     },
     {
@@ -23,9 +23,9 @@ export default function SitemapView() {
       icon: ShieldCheck,
       color: 'text-brand-gold',
       links: [
-        { label: 'Jewelry Care Guide', view: 'brand-guidelines', desc: 'Maintenance tips for anti-tarnish longevity' },
-        { label: 'Shipping & Delivery', view: 'terms', desc: 'Shiprocket pincode serviceability & rates' },
-        { label: 'Returns & 1-Year Guarantee', view: 'terms', desc: 'Anti-tarnish warranty and return policies' },
+        { label: 'Jewelry Care Guide', view: 'brand-guidelines', desc: 'Maintenance tips for handcrafted jewelry longevity' },
+        { label: 'Shipping & Delivery', view: 'terms', desc: 'Pincode serviceability & express shipping rates' },
+        { label: 'No Return Policy & Terms', view: 'terms', desc: 'Store guidelines and shipping policies' },
         { label: 'VIP Sparkle Club', view: 'home', desc: 'Newsletter subscription for preview drops' }
       ]
     },

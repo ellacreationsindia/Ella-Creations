@@ -123,7 +123,7 @@ export default function BrandGuidelinesView() {
           <ul className="space-y-2 text-stone-600">
             <li className="flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-brand-rose flex-shrink-0 mt-0.5" />
-              <span>3.5 Micron E-Coated Anti-Tarnish Finish</span>
+              <span>Handcrafted Premium Quality Finish</span>
             </li>
             <li className="flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-brand-rose flex-shrink-0 mt-0.5" />
@@ -131,7 +131,7 @@ export default function BrandGuidelinesView() {
             </li>
             <li className="flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-brand-rose flex-shrink-0 mt-0.5" />
-              <span>Signature Velvet Keepsake Gift Packaging</span>
+              <span>Signature Protective Gift Packaging</span>
             </li>
           </ul>
         </div>
