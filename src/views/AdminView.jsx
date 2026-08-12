@@ -2495,8 +2495,9 @@ export default function AdminView() {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
                   disabled={isPublishing}
+                  onClick={handleSaveProduct}
                   className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   {isPublishing ? (

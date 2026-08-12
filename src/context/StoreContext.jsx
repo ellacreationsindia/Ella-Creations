@@ -996,7 +996,7 @@ export const StoreProvider = ({ children }) => {
       console.warn('Supabase DB product update notice:', err.message);
     }
 
-    setProducts((prev) => prev.map((p) => (p.id === payload.id ? payload : p)));
+    setProducts((prev) => prev.map((p) => (String(p.id) === String(payload.id) ? payload : p)));
     showToast(`Product "${payload.title}" updated successfully!`);
   };
 

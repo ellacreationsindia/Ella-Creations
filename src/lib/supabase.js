@@ -193,7 +193,8 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
+    // If already a URL (starts with http, https, / or asset path), return as-is
+    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:')) {
       return fileOrDataUrl;
     }
 
@@ -239,7 +240,7 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
     return publicUrlData?.publicUrl || compressedDataUrl || fileOrDataUrl;
   } catch (err) {
     console.error('Error uploading photo to Supabase storage:', err);
-    return fileOrDataUrl;
+    return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
   }
 }
 
@@ -251,7 +252,8 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
+    // If already a URL (starts with http, https, / or asset path), return as-is
+    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:')) {
       return fileOrDataUrl;
     }
 
