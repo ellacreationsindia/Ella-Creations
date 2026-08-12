@@ -1,5 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, ShieldCheck, CreditCard, Smartphone, Truck, Lock, ArrowRight, Printer, Download, Sparkles, Building2, Banknote, Search, UserCheck } from 'lucide-react';
+import { 
+  X, 
+  CheckCircle2, 
+  ShieldCheck, 
+  CreditCard, 
+  Smartphone, 
+  Truck, 
+  Lock, 
+  ArrowRight, 
+  Printer, 
+  Sparkles, 
+  Banknote,
+  Search,
+  Building,
+  MapPin,
+  PhoneCall,
+  UserCheck,
+  Gift,
+  Bookmark,
+  Check
+} from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { calculateShiprocketRates, lookupIndianPincode, loadRazorpayScript } from '../lib/supabase';
 
@@ -20,8 +40,27 @@ export default function CheckoutModal() {
   const [shippingRateDetails, setShippingRateDetails] = useState(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Form states: REMOVED ALL PREFILLED DUMMY DATA.
-  // ONLY email is prefilled if user is logged in.
+  // Address Register State
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ella_saved_addresses');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  const [selectedSavedAddrId, setSelectedSavedAddrId] = useState('');
+  const [saveToRegister, setSaveToRegister] = useState(true);
+
+  // Signature Gift Box & Note State
+  const [isSignatureBoxEnabled, setIsSignatureBoxEnabled] = useState(false);
+  const [signatureData, setSignatureData] = useState({
+    recipientName: '',
+    senderSignature: '',
+    giftNote: ''
+  });
+
+  // Form states
   const [formData, setFormData] = useState({
     name: '',
     email: user?.email || '',
@@ -31,11 +70,12 @@ export default function CheckoutModal() {
     city: '',
     state: '',
     zip: '',
-    addressType: 'Home',
+    addressType: 'Home', // 'Home' | 'Office'
     shippingMethod: 'standard', // 'standard' | 'express'
     paymentMethod: 'razorpay' // 'razorpay' | 'cod'
   });
 
+  // Keep email synced if user logs in
   useEffect(() => {
     if (user?.email) {
       setFormData((prev) => ({ ...prev, email: user.email }));
@@ -48,13 +88,30 @@ export default function CheckoutModal() {
   const safeSubtotal = Number(cartSubtotal) || 0;
   const discountAmount = activeCoupon ? (safeSubtotal * (Number(activeCoupon.discountPercent) || 0)) / 100 : 0;
   
-  // Standard ground is ₹99, Express Air priority is ₹199 (No free shipping)
+  // Standard India Courier is ₹80, Express Air Priority is ₹149
   const baseShippingCost = shippingRateDetails 
-    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 99))
-    : (formData.shippingMethod === 'express' ? 199 : 99);
+    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 149) : Number(shippingRateDetails.shippingCharge || 80))
+    : (formData.shippingMethod === 'express' ? 149 : 80);
 
-  const shippingCost = Number(baseShippingCost) || 99;
+  const shippingCost = Number(baseShippingCost) || 80;
   const grandTotal = Math.max(0, safeSubtotal - discountAmount + shippingCost);
+
+  // Select Saved Address from Register
+  const handleSelectSavedAddress = (addr) => {
+    setSelectedSavedAddrId(addr.id);
+    setFormData((prev) => ({
+      ...prev,
+      name: addr.name,
+      phone: addr.phone,
+      address: addr.address,
+      landmark: addr.landmark || '',
+      city: addr.city,
+      state: addr.state,
+      zip: addr.zip,
+      addressType: addr.addressType || 'Home'
+    }));
+    handlePincodeChange(addr.zip);
+  };
 
   // Handle Pincode Auto-Lookup & Shiprocket Serviceability Verification
   const handlePincodeChange = async (pincodeVal) => {
@@ -72,7 +129,11 @@ export default function CheckoutModal() {
       }
       setIsCheckingPincode(true);
       const rates = await calculateShiprocketRates(pin, 500, safeSubtotal);
-      setShippingRateDetails(rates);
+      setShippingRateDetails({
+        ...rates,
+        shippingCharge: 80,
+        expressCharge: 149
+      });
       setIsCheckingPincode(false);
     }
   };
@@ -84,7 +145,11 @@ export default function CheckoutModal() {
     }
     setIsCheckingPincode(true);
     const rates = await calculateShiprocketRates(formData.zip, 500, safeSubtotal);
-    setShippingRateDetails(rates);
+    setShippingRateDetails({
+      ...rates,
+      shippingCharge: 80,
+      expressCharge: 149
+    });
     setIsCheckingPincode(false);
   };
 
@@ -95,6 +160,28 @@ export default function CheckoutModal() {
         alert('Please fill in all required shipping address fields.');
         return;
       }
+
+      if (saveToRegister) {
+        const newAddr = {
+          id: `addr-${Date.now()}`,
+          name: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+          landmark: formData.landmark,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+          addressType: formData.addressType
+        };
+        const updatedAddrs = [newAddr, ...savedAddresses.filter(a => a.zip !== newAddr.zip || a.address !== newAddr.address)];
+        setSavedAddresses(updatedAddrs);
+        try {
+          localStorage.setItem('ella_saved_addresses', JSON.stringify(updatedAddrs));
+        } catch (e) {
+          console.warn('Failed saving address register:', e);
+        }
+      }
+
       if (!shippingRateDetails) {
         await handleCheckPincode();
       }
@@ -106,7 +193,8 @@ export default function CheckoutModal() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        address: `${formData.address}${formData.landmark ? `, Near ${formData.landmark}` : ''}, ${formData.city}, ${formData.state} - ${formData.zip} (${formData.addressType})`
+        address: `${formData.address}${formData.landmark ? `, Near ${formData.landmark}` : ''}, ${formData.city}, ${formData.state} - ${formData.zip} (${formData.addressType})`,
+        signatureBox: isSignatureBoxEnabled ? signatureData : null
       };
 
       const logisticsInfo = {
@@ -194,102 +282,126 @@ export default function CheckoutModal() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative">
+      <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="bg-brand-cream px-6 py-4 border-b border-stone-200 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Ella Creations Logo" className="h-8 w-auto" />
-            <h2 className="font-serif text-lg font-bold text-stone-900">Secure Checkout</h2>
+        <div className="bg-brand-cream px-6 py-4 border-b border-stone-200 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-rose" />
+            <h3 className="font-serif text-lg font-bold text-stone-900">
+              {step === 1 ? '1. Shipping Address & Delivery' : step === 2 ? '2. Payment & Signature Gift Note' : '3. Order Confirmation'}
+            </h3>
           </div>
           <button
-            onClick={() => {
-              setIsCheckoutOpen(false);
-              setStep(1);
-              setCompletedOrder(null);
-            }}
+            onClick={() => setIsCheckoutOpen(false)}
             className="p-1 rounded-full text-stone-400 hover:text-stone-700"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Checkout Steps Indicator */}
-        {step < 3 && (
-          <div className="px-6 py-3 bg-brand-sand/40 border-b border-stone-200 flex justify-center gap-8 text-xs font-semibold">
-            <div className={`flex items-center gap-1.5 ${step === 1 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${step === 1 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>1</span>
-              Delivery Address
-            </div>
-            <div className={`flex items-center gap-1.5 ${step === 2 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${step === 2 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>2</span>
-              Payment & Place Order
-            </div>
-          </div>
-        )}
-
-        {/* Step 1 & Step 2 Form Content */}
+        {/* Content Body */}
         {step < 3 ? (
-          <form onSubmit={handleNextStep} className="p-6 md:p-8 space-y-6">
+          <form onSubmit={handleNextStep} className="p-6 overflow-y-auto space-y-6 flex-1">
+            
             {step === 1 ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-stone-100 pb-2">
-                  <h3 className="font-serif text-base font-bold text-stone-900">1. Customer & Shipping Address</h3>
-                </div>
+              <div className="space-y-5">
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Address Register (Saved Addresses) */}
+                {savedAddresses.length > 0 && (
+                  <div className="space-y-3 bg-brand-cream/40 p-4 rounded-2xl border border-brand-gold/30">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-stone-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <Bookmark className="w-3.5 h-3.5 text-brand-gold" /> Address Register ({savedAddresses.length} Saved)
+                      </span>
+                      {selectedSavedAddrId && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedSavedAddrId('');
+                            setFormData(prev => ({ ...prev, name: '', phone: '', address: '', landmark: '', city: '', state: '', zip: '' }));
+                          }}
+                          className="text-[10px] text-brand-rose hover:underline font-bold"
+                        >
+                          + Clear & Enter New Address
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2">
+                      {savedAddresses.map((addr) => (
+                        <div
+                          key={addr.id}
+                          onClick={() => handleSelectSavedAddress(addr)}
+                          className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start justify-between ${
+                            selectedSavedAddrId === addr.id
+                              ? 'bg-white border-brand-rose shadow-sm'
+                              : 'bg-white/80 border-stone-200 hover:border-stone-400'
+                          }`}
+                        >
+                          <div className="space-y-1 text-xs">
+                            <div className="flex items-center gap-2 font-bold text-stone-900">
+                              <span>{addr.name}</span>
+                              <span className="bg-stone-100 text-stone-600 text-[10px] px-2 py-0.5 rounded font-mono">
+                                {addr.addressType || 'Home'}
+                              </span>
+                            </div>
+                            <p className="text-stone-600 text-[11px] leading-tight">
+                              {addr.address}, {addr.city}, {addr.state} - {addr.zip}
+                            </p>
+                          </div>
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-1 ${
+                            selectedSavedAddrId === addr.id ? 'border-brand-rose bg-brand-rose text-white' : 'border-stone-300'
+                          }`}>
+                            {selectedSavedAddrId === addr.id && <Check className="w-3 h-3" />}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Shipping Form Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Full Name <span className="text-rose-500">*</span>
-                    </label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">Full Name *</label>
                     <input
                       type="text"
                       required
-                      placeholder="Enter your full name"
+                      placeholder="Full Name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose"
+                      className="w-full text-xs px-3.5 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Email Address <span className="text-rose-500">*</span>
-                    </label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">Email Address *</label>
                     <input
                       type="email"
                       required
-                      placeholder="yourname@example.com"
+                      placeholder="Email Address"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose bg-stone-50/50"
+                      className="w-full text-xs px-3.5 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-stone-50/50"
                     />
-                    {user && (
-                      <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
-                        <UserCheck className="w-3 h-3" /> Logged in account email
-                      </span>
-                    )}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Mobile Number (+91) <span className="text-rose-500">*</span>
-                    </label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">Mobile Number (+91) *</label>
                     <input
                       type="tel"
                       required
                       maxLength="10"
-                      placeholder="10-digit mobile number"
+                      placeholder="10-digit mobile"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '') })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                      className="w-full text-xs px-3.5 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Pincode <span className="text-rose-500">*</span>
-                    </label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">Indian Pincode *</label>
                     <div className="flex gap-1.5">
                       <input
                         type="text"
@@ -298,148 +410,182 @@ export default function CheckoutModal() {
                         placeholder="e.g. 400050"
                         value={formData.zip}
                         onChange={(e) => handlePincodeChange(e.target.value)}
-                        className="w-full text-xs px-3 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                        className="w-full text-xs px-3.5 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
                       />
                       <button
                         type="button"
                         onClick={handleCheckPincode}
                         disabled={isCheckingPincode}
-                        className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-lg transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
+                        className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
                       >
-                        {isCheckingPincode ? (
-                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        ) : (
-                          <Search className="w-3.5 h-3.5" />
-                        )}
+                        {isCheckingPincode ? <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Search className="w-3.5 h-3.5" />}
                         Check
                       </button>
                     </div>
                   </div>
+                </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Flat / House No. & Building Name <span className="text-rose-500">*</span>
-                    </label>
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">Flat / House No. & Building Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="House no., Apartment, Building name"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full text-xs px-3.5 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">Landmark (Optional)</label>
                     <input
                       type="text"
-                      required
-                      placeholder="House no., Apartment, Building name"
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose"
+                      placeholder="Near park, etc."
+                      value={formData.landmark}
+                      onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+                      className="w-full text-xs px-3 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">City <span className="text-rose-500">*</span></label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">City *</label>
                     <input
                       type="text"
                       required
                       placeholder="City"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose"
+                      className="w-full text-xs px-3 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">State <span className="text-rose-500">*</span></label>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">State *</label>
                     <input
                       type="text"
                       required
                       placeholder="State"
                       value={formData.state}
                       onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose"
+                      className="w-full text-xs px-3 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                     />
                   </div>
                 </div>
 
-                {/* Rate Result Box */}
-                {shippingRateDetails && (
-                  <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-1">
-                    <div className="flex justify-between items-center font-bold text-emerald-900">
-                      <span className="flex items-center gap-1.5">
-                        <Truck className="w-4 h-4 text-emerald-600" /> Pincode {shippingRateDetails.destinationPincode} Serviceable!
-                      </span>
-                      <span className="text-emerald-800 text-[11px] bg-white px-2 py-0.5 rounded border border-emerald-200 font-mono">
-                        {shippingRateDetails.courierName}
-                      </span>
-                    </div>
-                    <p className="text-stone-600 text-[11px]">
-                      Est. Delivery: <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days) • COD Status: <strong className="text-emerald-700">Eligible</strong>
-                    </p>
-                  </div>
-                )}
-
-                {/* Shipping Method Options */}
+                {/* Shipping Speed Options */}
                 <div className="pt-2">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-semibold text-stone-700">Select Shipping Speed</label>
-                    <span className="text-[10px] text-stone-700 font-bold bg-stone-100 px-2 py-0.5 rounded border border-stone-200 flex items-center gap-1">
-                      <Truck className="w-3 h-3 text-stone-600" /> Insured Delivery
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                      formData.shippingMethod === 'standard' ? 'border-brand-rose bg-brand-rose/5 shadow-sm' : 'border-stone-200 hover:border-stone-300'
+                  <label className="block text-xs font-semibold text-stone-700 mb-2">Calculated Shipping Speed Options</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer ${
+                      formData.shippingMethod === 'standard' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                     }`}>
-                      <div className="flex items-start gap-2.5">
+                      <div className="flex items-center gap-2">
                         <input
                           type="radio"
                           name="shipping"
                           checked={formData.shippingMethod === 'standard'}
                           onChange={() => setFormData({ ...formData, shippingMethod: 'standard' })}
-                          className="accent-brand-rose mt-0.5"
+                          className="accent-brand-rose"
                         />
-                        <div>
-                          <p className="text-xs font-bold text-stone-900">
-                            {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
-                          </p>
-                          <p className="text-[11px] text-stone-500 font-medium">
-                            {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Protective gift packaging included'}
-                          </p>
+                        <div className="text-xs">
+                          <p className="font-bold text-stone-900">Standard India Courier</p>
+                          <p className="text-[10px] text-stone-500">2-4 business days</p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
-                        {formatPrice(99)}
-                      </span>
+                      <span className="text-xs font-bold font-mono">{formatPrice(80)}</span>
                     </label>
 
-                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                      formData.shippingMethod === 'express' ? 'border-brand-rose bg-brand-rose/5 shadow-sm' : 'border-stone-200 hover:border-stone-300'
+                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer ${
+                      formData.shippingMethod === 'express' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                     }`}>
-                      <div className="flex items-start gap-2.5">
+                      <div className="flex items-center gap-2">
                         <input
                           type="radio"
                           name="shipping"
                           checked={formData.shippingMethod === 'express'}
                           onChange={() => setFormData({ ...formData, shippingMethod: 'express' })}
-                          className="accent-brand-rose mt-0.5"
+                          className="accent-brand-rose"
                         />
-                        <div>
-                          <p className="text-xs font-bold text-stone-900">
-                            {shippingRateDetails?.options?.express?.courier || 'Priority Air Express'}
-                          </p>
-                          <p className="text-[11px] text-stone-500 font-medium">
-                            {shippingRateDetails?.options?.express ? `Fastest Air: ${shippingRateDetails.options.express.etd} (${shippingRateDetails.options.express.days})` : '1-2 Days Priority Dispatch'}
-                          </p>
+                        <div className="text-xs">
+                          <p className="font-bold text-stone-900">Priority Air Express</p>
+                          <p className="text-[10px] text-stone-500">1-2 business days</p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">{formatPrice(199)}</span>
+                      <span className="text-xs font-bold font-mono">{formatPrice(149)}</span>
                     </label>
                   </div>
                 </div>
               </div>
             ) : (
-              /* Step 2: Payment Options */
-              <div className="space-y-4">
-                <h3 className="font-serif text-base font-bold text-stone-900">2. Payment Gateway & Options</h3>
+              /* Step 2: Payment & Signature Note */
+              <div className="space-y-5">
                 
+                {/* Signature Box & Personal Gift Note */}
+                <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isSignatureBoxEnabled}
+                      onChange={(e) => setIsSignatureBoxEnabled(e.target.checked)}
+                      className="accent-brand-rose w-4 h-4 rounded"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                        <Gift className="w-4 h-4 text-brand-rose" /> Add Signature Gift Box & Personal Note Card
+                      </span>
+                      <span className="text-[10px] text-stone-500 block">
+                        Includes a printed signature card with your personalized message inside protective packaging.
+                      </span>
+                    </div>
+                  </label>
+
+                  {isSignatureBoxEnabled && (
+                    <div className="space-y-3 pt-3 border-t border-brand-gold/20">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-semibold text-stone-700 mb-1">Recipient Name (To)</label>
+                          <input
+                            type="text"
+                            placeholder="Recipient Name"
+                            value={signatureData.recipientName}
+                            onChange={(e) => setSignatureData({ ...signatureData, recipientName: e.target.value })}
+                            className="w-full text-xs px-3 py-1.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-semibold text-stone-700 mb-1">Sender Signature (From)</label>
+                          <input
+                            type="text"
+                            placeholder="Sender Signature"
+                            value={signatureData.senderSignature}
+                            onChange={(e) => setSignatureData({ ...signatureData, senderSignature: e.target.value })}
+                            className="w-full text-xs px-3 py-1.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-semibold text-stone-700 mb-1">Personal Gift Message</label>
+                        <textarea
+                          rows="2"
+                          placeholder="Personal note message to print on card..."
+                          value={signatureData.giftNote}
+                          onChange={(e) => setSignatureData({ ...signatureData, giftNote: e.target.value })}
+                          className="w-full text-xs p-2.5 rounded-lg border border-stone-300 outline-none focus:border-brand-rose bg-white"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Payment Gateway Options */}
                 <div className="space-y-3">
-                  {/* Razorpay Online Payment Option */}
-                  <label className={`p-4 rounded-xl border block cursor-pointer transition-all ${
+                  <label className="block text-xs font-semibold text-stone-700">Select Payment Gateway</label>
+                  
+                  <label className={`p-3.5 rounded-xl border block cursor-pointer ${
                     formData.paymentMethod === 'razorpay' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                   }`}>
                     <div className="flex items-center justify-between">
@@ -451,18 +597,17 @@ export default function CheckoutModal() {
                           onChange={() => setFormData({ ...formData, paymentMethod: 'razorpay' })}
                           className="accent-brand-rose"
                         />
-                        <ShieldCheck className="w-5 h-5 text-brand-rose" />
+                        <ShieldCheck className="w-4 h-4 text-brand-rose" />
                         <div>
-                          <span className="text-xs font-bold text-stone-900 block">Razorpay Payment Gateway (UPI / Credit Card / Debit Card / NetBanking)</span>
-                          <span className="text-[10px] text-stone-500">100% Encrypted & Instant Confirmation</span>
+                          <span className="text-xs font-bold text-stone-900 block">Razorpay Gateway (UPI / Cards / NetBanking)</span>
+                          <span className="text-[10px] text-stone-500">Instant Encrypted Payment</span>
                         </div>
                       </div>
-                      <span className="text-[10px] bg-brand-rose text-white font-bold px-2.5 py-0.5 rounded-full">INSTANT PAY</span>
+                      <span className="text-[9px] bg-brand-rose text-white font-bold px-2 py-0.5 rounded-full">INSTANT PAY</span>
                     </div>
                   </label>
 
-                  {/* COD Option */}
-                  <label className={`p-4 rounded-xl border block cursor-pointer transition-all ${
+                  <label className={`p-3.5 rounded-xl border block cursor-pointer ${
                     formData.paymentMethod === 'cod' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
                   }`}>
                     <div className="flex items-center justify-between">
@@ -474,36 +619,39 @@ export default function CheckoutModal() {
                           onChange={() => setFormData({ ...formData, paymentMethod: 'cod' })}
                           className="accent-brand-rose"
                         />
-                        <Banknote className="w-5 h-5 text-brand-gold" />
+                        <Banknote className="w-4 h-4 text-brand-gold" />
                         <div>
                           <span className="text-xs font-bold text-stone-900 block">Cash on Delivery (COD)</span>
-                          <span className="text-[10px] text-stone-500">Pay cash upon delivery to courier agent</span>
+                          <span className="text-[10px] text-stone-500">Pay cash upon delivery to courier</span>
                         </div>
                       </div>
-                      <span className="text-[10px] bg-stone-100 text-stone-700 font-bold px-2 py-0.5 rounded">PAY AT DOORSTEP</span>
+                      <span className="text-[9px] bg-stone-100 text-stone-700 font-bold px-2 py-0.5 rounded">COD</span>
                     </div>
                   </label>
                 </div>
 
-                {/* Total Summary Bar */}
-                <div className="bg-brand-cream p-4 rounded-2xl border border-brand-gold/30 space-y-1 text-xs">
-                  <div className="flex justify-between text-stone-600">
-                    <span>Order Subtotal:</span>
-                    <span>{formatPrice(safeSubtotal)}</span>
+                {/* Calculations Summary Breakdown: SHOWS PRICE WITHOUT SHIPPING FIRST */}
+                <div className="bg-brand-cream/50 p-4 rounded-2xl border border-brand-gold/30 space-y-2 text-xs">
+                  <div className="flex justify-between text-stone-700 font-medium">
+                    <span>Price without shipping (Items Subtotal):</span>
+                    <span className="font-bold text-stone-900">{formatPrice(safeSubtotal)}</span>
                   </div>
+
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-emerald-600 font-semibold">
                       <span>Discount ({activeCoupon?.code}):</span>
                       <span>-{formatPrice(discountAmount)}</span>
                     </div>
                   )}
+
                   <div className="flex justify-between text-stone-600">
-                    <span>Shipping ({formData.shippingMethod}):</span>
-                    <span>{shippingCost === 0 ? 'FREE' : formatPrice(shippingCost)}</span>
+                    <span>Calculated Shipping Fee ({formData.shippingMethod === 'express' ? 'Air Express' : 'India Courier'}):</span>
+                    <span className="font-bold text-stone-900">{formatPrice(shippingCost)}</span>
                   </div>
+
                   <div className="flex justify-between text-base font-bold text-stone-900 pt-2 border-t border-stone-200">
-                    <span>Total Payable Amount:</span>
-                    <span className="text-brand-rose">{formatPrice(grandTotal)}</span>
+                    <span>Total Amount Payable:</span>
+                    <span className="text-brand-rose font-mono">{formatPrice(grandTotal)}</span>
                   </div>
                 </div>
               </div>
@@ -542,83 +690,31 @@ export default function CheckoutModal() {
           </form>
         ) : (
           /* Step 3: Order Confirmation & Receipt View */
-          <div className="p-6 md:p-8 text-center space-y-6">
+          <div className="p-6 md:p-8 text-center space-y-6 flex-1 overflow-y-auto">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center animate-bounce">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
             <div>
-              <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Thank You For Your Order</span>
-              <h2 className="font-serif text-3xl font-bold text-stone-900 mt-1">Order #{completedOrder?.id} Confirmed!</h2>
-              <p className="text-xs text-stone-500 mt-1">
-                Confirmation invoice sent to <strong>{completedOrder?.customer.email}</strong> & saved to database.
-              </p>
+              <span className="text-xs uppercase font-bold text-brand-gold">Order Confirmed</span>
+              <h2 className="font-serif text-2xl font-bold text-stone-900">Thank You For Your Order!</h2>
+              <p className="text-xs text-stone-500 mt-1">Order #{completedOrder?.id} has been recorded & synced.</p>
             </div>
 
-            {/* Receipt Summary Card */}
-            <div className="bg-brand-card p-6 rounded-2xl border border-brand-gold/30 text-left space-y-4 max-w-lg mx-auto">
-              <div className="flex justify-between items-center border-b border-stone-200 pb-3">
-                <div>
-                  <h4 className="font-serif text-sm font-bold text-stone-900">Ella Creations Official Receipt</h4>
-                  <p className="text-[11px] text-stone-500">Date: {new Date().toLocaleDateString()}</p>
-                </div>
-                <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+            <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 text-left space-y-2 text-xs">
+              <div className="flex justify-between font-semibold border-b border-stone-200 pb-2">
+                <span>Total Amount Paid:</span>
+                <span className="text-brand-rose font-bold font-mono">{formatPrice(completedOrder?.total || 0)}</span>
               </div>
-
-              {/* Items Purchased */}
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-stone-700">Items Ordered:</p>
-                {completedOrder?.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-xs">
-                    <span className="text-stone-800">{item.qty}x {item.title} ({item.finish})</span>
-                    <span className="font-semibold text-stone-900">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Total Paid */}
-              <div className="pt-3 border-t border-stone-200 space-y-1 text-xs">
-                <div className="flex justify-between text-stone-600">
-                  <span>Subtotal:</span>
-                  <span>{formatPrice(completedOrder?.subtotal || 0)}</span>
-                </div>
-                {completedOrder?.discount > 0 && (
-                  <div className="flex justify-between text-emerald-600 font-semibold">
-                    <span>Discount:</span>
-                    <span>-{formatPrice(completedOrder?.discount)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between font-bold text-sm text-stone-900 pt-1">
-                  <span>Total Amount Paid:</span>
-                  <span className="text-brand-rose">{formatPrice(completedOrder?.total || 0)}</span>
-                </div>
-              </div>
-
-              <div className="pt-2 text-[11px] text-stone-500 border-t border-stone-100">
-                <strong>Shipping Address:</strong> {completedOrder?.customer.address}
-              </div>
+              <p className="text-stone-600"><strong>Deliver to:</strong> {completedOrder?.customer.address}</p>
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-center gap-4 pt-2">
-              <button
-                onClick={() => window.print()}
-                className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
-              >
-                <Printer className="w-4 h-4" /> Print Receipt
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsCheckoutOpen(false);
-                  setStep(1);
-                  setCompletedOrder(null);
-                }}
-                className="px-6 py-2 bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold rounded-lg shadow-soft-rose transition-colors"
-              >
-                Back to Storefront
-              </button>
-            </div>
+            <button
+              onClick={() => setIsCheckoutOpen(false)}
+              className="bg-brand-rose text-white text-xs font-semibold px-8 py-3 rounded-xl shadow-soft-rose hover:bg-brand-rose/90 transition-colors"
+            >
+              Close & Done
+            </button>
           </div>
         )}
 

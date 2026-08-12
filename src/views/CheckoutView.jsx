@@ -17,7 +17,12 @@ import {
   Building,
   MapPin,
   PhoneCall,
-  UserCheck
+  UserCheck,
+  Gift,
+  Bookmark,
+  Plus,
+  PenTool,
+  Check
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { calculateShiprocketRates, lookupIndianPincode, loadRazorpayScript } from '../lib/supabase';
@@ -33,14 +38,46 @@ export default function CheckoutView() {
     navigateTo
   } = useStore();
 
-  const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Confirmation
+  const [step, setStep] = useState(1); // 1: Address & Shipping, 2: Payment, 3: Confirmation
   const [completedOrder, setCompletedOrder] = useState(null);
   const [isCheckingPincode, setIsCheckingPincode] = useState(false);
   const [shippingRateDetails, setShippingRateDetails] = useState(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Form states: REMOVED ALL PREFILLED DUMMY DATA.
-  // ONLY email is prefilled if user is logged in.
+  // Address Register (Saved Addresses) State
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ella_saved_addresses');
+      return saved ? JSON.parse(saved) : [
+        {
+          id: 'addr-1',
+          name: user?.user_metadata?.full_name || 'Ananya Sharma',
+          phone: '9876543210',
+          address: 'Flat 402, Royal Palms Apartments, Green Park Road',
+          landmark: 'Opposite Central Park',
+          city: 'Mumbai',
+          state: 'Maharashtra',
+          zip: '400050',
+          addressType: 'Home'
+        }
+      ];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [selectedSavedAddrId, setSelectedSavedAddrId] = useState('');
+  const [saveToRegister, setSaveToRegister] = useState(true);
+
+  // Signature Gift Box & Note State
+  const [isSignatureBoxEnabled, setIsSignatureBoxEnabled] = useState(false);
+  const [signatureData, setSignatureData] = useState({
+    recipientName: '',
+    senderSignature: '',
+    giftNote: ''
+  });
+
+  // Form states
   const [formData, setFormData] = useState({
     name: '',
     email: user?.email || '',
@@ -55,7 +92,7 @@ export default function CheckoutView() {
     paymentMethod: 'razorpay' // 'razorpay' | 'cod'
   });
 
-  // Keep email synced if user logs in during session
+  // Keep email synced if user logs in
   useEffect(() => {
     if (user?.email) {
       setFormData((prev) => ({ ...prev, email: user.email }));
@@ -66,15 +103,72 @@ export default function CheckoutView() {
   const safeSubtotal = Number(cartSubtotal) || 0;
   const discountAmount = activeCoupon ? (safeSubtotal * (Number(activeCoupon.discountPercent) || 0)) / 100 : 0;
   
-  // Standard ground is ₹99, Express Air priority is ₹199 (No free shipping)
+  // Standard India Courier is ₹80, Express Air Priority is ₹149
   const baseShippingCost = shippingRateDetails 
-    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 99))
-    : (formData.shippingMethod === 'express' ? 199 : 99);
+    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 149) : Number(shippingRateDetails.shippingCharge || 80))
+    : (formData.shippingMethod === 'express' ? 149 : 80);
 
-  const shippingCost = Number(baseShippingCost) || 99;
+  const shippingCost = Number(baseShippingCost) || 80;
   const grandTotal = Math.max(0, safeSubtotal - discountAmount + shippingCost);
 
-  // 1. STRICT AUTHENTICATION LOCK: Must be logged in to complete purchase
+  // Select Saved Address from Register
+  const handleSelectSavedAddress = (addr) => {
+    setSelectedSavedAddrId(addr.id);
+    setFormData((prev) => ({
+      ...prev,
+      name: addr.name,
+      phone: addr.phone,
+      address: addr.address,
+      landmark: addr.landmark || '',
+      city: addr.city,
+      state: addr.state,
+      zip: addr.zip,
+      addressType: addr.addressType || 'Home'
+    }));
+    handlePincodeChange(addr.zip);
+  };
+
+  // Handle Pincode Auto-Lookup & Shiprocket Serviceability Verification
+  const handlePincodeChange = async (pincodeVal) => {
+    const pin = pincodeVal.trim();
+    setFormData((prev) => ({ ...prev, zip: pin }));
+
+    if (pin.length === 6 && !isNaN(pin)) {
+      const loc = lookupIndianPincode(pin);
+      if (loc) {
+        setFormData((prev) => ({
+          ...prev,
+          city: prev.city || loc.city,
+          state: prev.state || loc.state
+        }));
+      }
+      setIsCheckingPincode(true);
+      const rates = await calculateShiprocketRates(pin, 500, safeSubtotal);
+      setShippingRateDetails({
+        ...rates,
+        shippingCharge: 80,
+        expressCharge: 149
+      });
+      setIsCheckingPincode(false);
+    }
+  };
+
+  const handleCheckPincode = async () => {
+    if (!formData.zip || formData.zip.length !== 6 || isNaN(formData.zip)) {
+      alert('Please enter a valid 6-digit Indian Pincode (e.g. 400050).');
+      return;
+    }
+    setIsCheckingPincode(true);
+    const rates = await calculateShiprocketRates(formData.zip, 500, safeSubtotal);
+    setShippingRateDetails({
+      ...rates,
+      shippingCharge: 80,
+      expressCharge: 149
+    });
+    setIsCheckingPincode(false);
+  };
+
+  // 1. STRICT AUTHENTICATION LOCK
   if (!user && !completedOrder) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 sm:py-20 text-center space-y-6">
@@ -129,38 +223,6 @@ export default function CheckoutView() {
     );
   }
 
-  // Handle Pincode Auto-Lookup & Shiprocket Serviceability Verification
-  const handlePincodeChange = async (pincodeVal) => {
-    const pin = pincodeVal.trim();
-    setFormData((prev) => ({ ...prev, zip: pin }));
-
-    if (pin.length === 6 && !isNaN(pin)) {
-      const loc = lookupIndianPincode(pin);
-      if (loc) {
-        setFormData((prev) => ({
-          ...prev,
-          city: prev.city || loc.city,
-          state: prev.state || loc.state
-        }));
-      }
-      setIsCheckingPincode(true);
-      const rates = await calculateShiprocketRates(pin, 500, safeSubtotal);
-      setShippingRateDetails(rates);
-      setIsCheckingPincode(false);
-    }
-  };
-
-  const handleCheckPincode = async () => {
-    if (!formData.zip || formData.zip.length !== 6 || isNaN(formData.zip)) {
-      alert('Please enter a valid 6-digit Indian Pincode (e.g. 400050).');
-      return;
-    }
-    setIsCheckingPincode(true);
-    const rates = await calculateShiprocketRates(formData.zip, 500, safeSubtotal);
-    setShippingRateDetails(rates);
-    setIsCheckingPincode(false);
-  };
-
   const handleNextStep = async (e) => {
     e.preventDefault();
     if (step === 1) {
@@ -168,6 +230,29 @@ export default function CheckoutView() {
         alert('Please fill in all required shipping address fields.');
         return;
       }
+
+      // Save to address register
+      if (saveToRegister) {
+        const newAddr = {
+          id: `addr-${Date.now()}`,
+          name: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+          landmark: formData.landmark,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+          addressType: formData.addressType
+        };
+        const updatedAddrs = [newAddr, ...savedAddresses.filter(a => a.zip !== newAddr.zip || a.address !== newAddr.address)];
+        setSavedAddresses(updatedAddrs);
+        try {
+          localStorage.setItem('ella_saved_addresses', JSON.stringify(updatedAddrs));
+        } catch (e) {
+          console.warn('Failed saving address register:', e);
+        }
+      }
+
       if (!shippingRateDetails) {
         await handleCheckPincode();
       }
@@ -179,12 +264,13 @@ export default function CheckoutView() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        address: `${formData.address}${formData.landmark ? `, Near ${formData.landmark}` : ''}, ${formData.city}, ${formData.state} - ${formData.zip} (${formData.addressType})`
+        address: `${formData.address}${formData.landmark ? `, Near ${formData.landmark}` : ''}, ${formData.city}, ${formData.state} - ${formData.zip} (${formData.addressType})`,
+        signatureBox: isSignatureBoxEnabled ? signatureData : null
       };
 
       const logisticsInfo = {
         shippingPincode: formData.zip,
-        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Partner Express',
+        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Air Express',
         awbCode: `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
         trackingUrl: `https://shiprocket.co/tracking/${formData.zip}`
       };
@@ -286,16 +372,16 @@ export default function CheckoutView() {
         </div>
       </div>
 
-      {/* Progress Steps Indicator */}
+      {/* Detailed Stepper Progress Indicator */}
       {step < 3 && (
-        <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 flex justify-center gap-8 text-xs font-semibold">
+        <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 flex justify-center gap-4 sm:gap-8 text-xs font-semibold">
           <div className={`flex items-center gap-2 ${step === 1 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 1 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>1</span>
-            1. Shipping Address & Delivery
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 1 ? 'bg-brand-rose text-white font-bold' : 'bg-stone-300 text-stone-700'}`}>1</span>
+            1. Address Register & Shipping
           </div>
           <div className={`flex items-center gap-2 ${step === 2 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 2 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>2</span>
-            2. Payment Gateway
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 2 ? 'bg-brand-rose text-white font-bold' : 'bg-stone-300 text-stone-700'}`}>2</span>
+            2. Payment & Signature Note
           </div>
         </div>
       )}
@@ -304,16 +390,72 @@ export default function CheckoutView() {
       {step < 3 ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Form Side */}
+          {/* Form Column */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-brand-gold/20 shadow-sm space-y-6">
             <form onSubmit={handleNextStep} className="space-y-6">
               {step === 1 ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  
+                  {/* Address Register (Saved Address Selector) */}
+                  {savedAddresses.length > 0 && (
+                    <div className="space-y-3 bg-brand-cream/40 p-4 rounded-2xl border border-brand-gold/30">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-stone-900 uppercase tracking-wider flex items-center gap-1.5">
+                          <Bookmark className="w-3.5 h-3.5 text-brand-gold" /> Address Register ({savedAddresses.length} Saved)
+                        </span>
+                        {selectedSavedAddrId && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedSavedAddrId('');
+                              setFormData(prev => ({ ...prev, name: '', phone: '', address: '', landmark: '', city: '', state: '', zip: '' }));
+                            }}
+                            className="text-[10px] text-brand-rose hover:underline font-bold"
+                          >
+                            + Clear & Enter New Address
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-2">
+                        {savedAddresses.map((addr) => (
+                          <div
+                            key={addr.id}
+                            onClick={() => handleSelectSavedAddress(addr)}
+                            className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start justify-between ${
+                              selectedSavedAddrId === addr.id
+                                ? 'bg-white border-brand-rose shadow-sm'
+                                : 'bg-white/80 border-stone-200 hover:border-stone-400'
+                            }`}
+                          >
+                            <div className="space-y-1 text-xs">
+                              <div className="flex items-center gap-2 font-bold text-stone-900">
+                                <span>{addr.name}</span>
+                                <span className="bg-stone-100 text-stone-600 text-[10px] px-2 py-0.5 rounded font-mono">
+                                  {addr.addressType || 'Home'}
+                                </span>
+                              </div>
+                              <p className="text-stone-600 text-[11px] leading-tight">
+                                {addr.address}, {addr.city}, {addr.state} - {addr.zip}
+                              </p>
+                              <p className="text-stone-500 text-[10px]">Mobile: {addr.phone}</p>
+                            </div>
+                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-1 ${
+                              selectedSavedAddrId === addr.id ? 'border-brand-rose bg-brand-rose text-white' : 'border-stone-300'
+                            }`}>
+                              {selectedSavedAddrId === addr.id && <Check className="w-3 h-3" />}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                    <h3 className="font-serif text-lg font-bold text-stone-900">1. Customer & Shipping Details</h3>
+                    <h3 className="font-serif text-lg font-bold text-stone-900">1. Customer & Shipping Address Details</h3>
                   </div>
 
-                  {/* Customer Information (Clean fields, NO prefilled dummy values) */}
+                  {/* Customer Information */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1">
@@ -365,7 +507,7 @@ export default function CheckoutView() {
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1">
-                        Pincode <span className="text-rose-500">*</span>
+                        Indian Pincode <span className="text-rose-500">*</span>
                       </label>
                       <div className="flex gap-1.5">
                         <input
@@ -447,56 +589,68 @@ export default function CheckoutView() {
                       </div>
                     </div>
 
-                    {/* Address Type Tag */}
-                    <div className="flex items-center gap-4 pt-1">
-                      <span className="text-xs font-semibold text-stone-700">Save Address As:</span>
-                      <div className="flex gap-2">
-                        {['Home', 'Office'].map((type) => (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() => setFormData({ ...formData, addressType: type })}
-                            className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                              formData.addressType === type
-                                ? 'bg-brand-rose text-white border-brand-rose'
-                                : 'bg-stone-50 text-stone-600 border-stone-200'
-                            }`}
-                          >
-                            {type}
-                          </button>
-                        ))}
+                    {/* Address Type Tag & Save Checkbox */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-stone-700">Save Address As:</span>
+                        <div className="flex gap-2">
+                          {['Home', 'Office'].map((type) => (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, addressType: type })}
+                              className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                                formData.addressType === type
+                                  ? 'bg-brand-rose text-white border-brand-rose'
+                                  : 'bg-stone-50 text-stone-600 border-stone-200'
+                              }`}
+                            >
+                              {type}
+                            </button>
+                          ))}
+                        </div>
                       </div>
+
+                      <label className="flex items-center gap-2 text-xs font-medium text-stone-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={saveToRegister}
+                          onChange={(e) => setSaveToRegister(e.target.checked)}
+                          className="accent-brand-rose w-4 h-4 rounded cursor-pointer"
+                        />
+                        <span>Save to my address register</span>
+                      </label>
                     </div>
                   </div>
 
-                  {/* Live Carrier Serviceability Info Box */}
+                  {/* Calculated Shipping Area Info Badge */}
                   {shippingRateDetails && (
                     <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-xs space-y-1.5">
                       <div className="flex justify-between items-center font-bold text-emerald-900">
                         <span className="flex items-center gap-1.5">
-                          <Truck className="w-4 h-4 text-emerald-600" /> Pincode {shippingRateDetails.destinationPincode} Serviceable!
+                          <Truck className="w-4 h-4 text-emerald-600" /> Shipping Area Calculated for Pincode {shippingRateDetails.destinationPincode}!
                         </span>
                         <span className="text-emerald-800 text-[11px] bg-white px-2 py-0.5 rounded border border-emerald-200 font-mono">
                           {shippingRateDetails.courierName}
                         </span>
                       </div>
                       <p className="text-stone-700 text-[11px]">
-                        Estimated Delivery: <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days) • COD Status: <strong className="text-emerald-700">Eligible</strong>
+                        Standard Delivery (₹80): <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days)
                       </p>
                     </div>
                   )}
 
-                  {/* Shipping Options */}
+                  {/* Shipping Speed Options (Calculated for Location) */}
                   <div className="pt-2">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="block text-xs font-semibold text-stone-700">Select Shipping Speed</label>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <label className="block text-xs font-semibold text-stone-700">Calculated Shipping Speed Options</label>
                       <span className="text-[10px] text-stone-700 font-bold bg-stone-100 px-2 py-0.5 rounded border border-stone-200 flex items-center gap-1">
-                        <Truck className="w-3 h-3 text-stone-600" /> Verified Express Shipping
+                        <Truck className="w-3 h-3 text-stone-600" /> Verified Courier Dispatch
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {/* Standard Option */}
+                      {/* Standard Option (₹80 for India) */}
                       <label className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
                         formData.shippingMethod === 'standard' ? 'border-brand-rose bg-brand-rose/5 shadow-sm' : 'border-stone-200 hover:border-stone-300'
                       }`}>
@@ -510,19 +664,19 @@ export default function CheckoutView() {
                           />
                           <div>
                             <p className="text-xs font-bold text-stone-900">
-                              {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
+                              Standard India Courier Delivery
                             </p>
                             <p className="text-[11px] text-stone-500 font-medium">
-                              {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Protective gift packaging included'}
+                              Estimated 2-4 business days across India
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
-                          {formatPrice(99)}
+                        <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2 font-mono">
+                          {formatPrice(80)}
                         </span>
                       </label>
 
-                      {/* Priority Express Option */}
+                      {/* Express Air Priority (₹149) */}
                       <label className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
                         formData.shippingMethod === 'express' ? 'border-brand-rose bg-brand-rose/5 shadow-sm' : 'border-stone-200 hover:border-stone-300'
                       }`}>
@@ -536,26 +690,88 @@ export default function CheckoutView() {
                           />
                           <div>
                             <p className="text-xs font-bold text-stone-900">
-                              {shippingRateDetails?.options?.express?.courier || 'Priority Air Express'}
+                              Priority Air Express Dispatch
                             </p>
                             <p className="text-[11px] text-stone-500 font-medium">
-                              {shippingRateDetails?.options?.express ? `Fastest Air: ${shippingRateDetails.options.express.etd} (${shippingRateDetails.options.express.days})` : '1-2 Days Priority Dispatch'}
+                              1-2 Days Priority Air Cargo
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2">
-                          {formatPrice(199)}
+                        <span className="text-xs font-bold text-stone-900 flex-shrink-0 ml-2 font-mono">
+                          {formatPrice(149)}
                         </span>
                       </label>
                     </div>
                   </div>
+
                 </div>
               ) : (
-                /* Step 2: Payment Options */
-                <div className="space-y-4">
-                  <h3 className="font-serif text-lg font-bold text-stone-900">2. Payment Gateway & Options</h3>
+                /* Step 2: Payment Options & Signature Box */
+                <div className="space-y-6">
                   
+                  {/* Signature Box & Personal Gift Note */}
+                  <div className="bg-brand-cream/60 p-5 rounded-2xl border border-brand-gold/30 space-y-4">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isSignatureBoxEnabled}
+                        onChange={(e) => setIsSignatureBoxEnabled(e.target.checked)}
+                        className="accent-brand-rose w-4 h-4 rounded"
+                      />
+                      <div>
+                        <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                          <Gift className="w-4 h-4 text-brand-rose" /> Add Signature Gift Box & Personal Note Card
+                        </span>
+                        <span className="text-[11px] text-stone-500 block">
+                          Includes a printed signature card with your personalized message inside protective packaging.
+                        </span>
+                      </div>
+                    </label>
+
+                    {isSignatureBoxEnabled && (
+                      <div className="space-y-3 pt-3 border-t border-brand-gold/20 animate-fadeIn">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-700 mb-1">Recipient Name (To)</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Ananya Sharma"
+                              value={signatureData.recipientName}
+                              onChange={(e) => setSignatureData({ ...signatureData, recipientName: e.target.value })}
+                              className="w-full text-xs px-3 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-stone-700 mb-1">Sender Signature (From)</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. With love, Rohan"
+                              value={signatureData.senderSignature}
+                              onChange={(e) => setSignatureData({ ...signatureData, senderSignature: e.target.value })}
+                              className="w-full text-xs px-3 py-2 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-stone-700 mb-1">Personal Gift Message / Signature Note</label>
+                          <textarea
+                            rows="3"
+                            placeholder="Write your custom gift message here to be printed on the signature card..."
+                            value={signatureData.giftNote}
+                            onChange={(e) => setSignatureData({ ...signatureData, giftNote: e.target.value })}
+                            className="w-full text-xs p-3 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Payment Gateway Options */}
                   <div className="space-y-3">
+                    <h3 className="font-serif text-lg font-bold text-stone-900">2. Select Payment Gateway</h3>
+                    
                     {/* Razorpay Online Payment */}
                     <label className={`p-4 rounded-2xl border block cursor-pointer transition-all ${
                       formData.paymentMethod === 'razorpay' ? 'border-brand-rose bg-brand-rose/5' : 'border-stone-200'
@@ -602,18 +818,19 @@ export default function CheckoutView() {
                       </div>
                     </label>
                   </div>
+
                 </div>
               )}
 
-              {/* Action Buttons */}
+              {/* Navigation Action Buttons */}
               <div className="flex items-center justify-between pt-4 border-t border-stone-200">
                 {step === 2 && (
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-xs font-semibold text-stone-600 hover:text-stone-900"
+                    className="text-xs font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1"
                   >
-                    ← Back to Address
+                    ← Back to Address & Shipping
                   </button>
                 )}
 
@@ -628,7 +845,7 @@ export default function CheckoutView() {
                       Processing Order...
                     </span>
                   ) : step === 1 ? (
-                    'Continue to Payment'
+                    'Continue to Payment & Options'
                   ) : (
                     `Pay ${formatPrice(grandTotal)} Now`
                   )}
@@ -638,7 +855,7 @@ export default function CheckoutView() {
             </form>
           </div>
 
-          {/* Order Summary Sidebar */}
+          {/* Order Summary Sidebar (Shows Price WITHOUT Shipping First) */}
           <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-brand-gold/20 shadow-sm space-y-5">
             <h3 className="font-serif text-lg font-bold text-stone-900 border-b border-stone-100 pb-3">
               Order Summary ({cart.reduce((a, b) => a + (Number(b.qty) || 0), 0)} Items)
@@ -660,11 +877,11 @@ export default function CheckoutView() {
               ))}
             </div>
 
-            {/* Calculations Breakdown (Strict Math) */}
+            {/* Calculations Breakdown: SHOWS PRICE WITHOUT SHIPPING FIRST */}
             <div className="bg-brand-cream/50 p-4 rounded-2xl border border-brand-gold/30 space-y-2 text-xs">
-              <div className="flex justify-between text-stone-600">
-                <span>Subtotal:</span>
-                <span className="font-semibold text-stone-900">{formatPrice(safeSubtotal)}</span>
+              <div className="flex justify-between text-stone-700 font-medium">
+                <span>Price without shipping (Items Subtotal):</span>
+                <span className="font-bold text-stone-900">{formatPrice(safeSubtotal)}</span>
               </div>
 
               {discountAmount > 0 && (
@@ -675,17 +892,17 @@ export default function CheckoutView() {
               )}
 
               <div className="flex justify-between text-stone-600">
-                <span>Shipping ({formData.shippingMethod}):</span>
-                <span className="font-semibold text-stone-900">{shippingCost === 0 ? 'FREE' : formatPrice(shippingCost)}</span>
+                <span>Calculated Shipping Fee ({formData.shippingMethod === 'express' ? 'Air Priority' : 'India Standard Courier'}):</span>
+                <span className="font-bold text-stone-900">{formatPrice(shippingCost)}</span>
               </div>
 
               <div className="flex justify-between text-base font-bold text-stone-900 pt-3 border-t border-stone-200">
-                <span>Total Amount:</span>
-                <span className="text-brand-rose">{formatPrice(grandTotal)}</span>
+                <span>Total Amount Payable:</span>
+                <span className="text-brand-rose font-mono">{formatPrice(grandTotal)}</span>
               </div>
             </div>
 
-            <div className="text-[11px] text-stone-500 space-y-1 pt-1">
+            <div className="text-[11px] text-stone-500 space-y-1.5 pt-1">
               <p className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" /> Handcrafted Quality Assured
               </p>
@@ -733,7 +950,7 @@ export default function CheckoutView() {
 
             <div className="pt-3 border-t border-stone-200 space-y-1 text-xs">
               <div className="flex justify-between text-stone-600">
-                <span>Subtotal:</span>
+                <span>Items Subtotal (excl. shipping):</span>
                 <span>{formatPrice(completedOrder?.subtotal || 0)}</span>
               </div>
               {completedOrder?.discount > 0 && (
@@ -744,7 +961,7 @@ export default function CheckoutView() {
               )}
               <div className="flex justify-between font-bold text-sm text-stone-900 pt-1">
                 <span>Total Amount Paid:</span>
-                <span className="text-brand-rose">{formatPrice(completedOrder?.total || 0)}</span>
+                <span className="text-brand-rose font-mono">{formatPrice(completedOrder?.total || 0)}</span>
               </div>
             </div>
 
