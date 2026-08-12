@@ -17,6 +17,7 @@ import PrivacyView from './views/PrivacyView';
 import BrandGuidelinesView from './views/BrandGuidelinesView';
 import SitemapView from './views/SitemapView';
 import BlogView from './views/BlogView';
+import AccountView from './views/AccountView';
 import { Sparkles, AlertCircle, Info } from 'lucide-react';
 
 function AppContent() {
@@ -37,6 +38,7 @@ function AppContent() {
         {currentView === 'shop' && <ShopView />}
         {currentView === 'product' && <ProductDetailView />}
         {currentView === 'checkout' && <CheckoutView />}
+        {currentView === 'account' && <AccountView />}
         {currentView === 'admin' && <AdminView />}
         {(currentView === 'blog' || currentView === 'blog-detail') && <BlogView />}
         {currentView === 'terms' && <TermsView />}
