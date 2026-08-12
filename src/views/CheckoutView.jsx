@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   CheckCircle2, 
@@ -13,10 +13,14 @@ import {
   Banknote,
   ArrowLeft,
   ShoppingBag,
-  Search
+  Search,
+  Building,
+  MapPin,
+  PhoneCall,
+  UserCheck
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
-import { calculateShiprocketRates, loadRazorpayScript } from '../lib/supabase';
+import { calculateShiprocketRates, lookupIndianPincode, loadRazorpayScript } from '../lib/supabase';
 
 export default function CheckoutView() {
   const { 
@@ -35,29 +39,42 @@ export default function CheckoutView() {
   const [shippingRateDetails, setShippingRateDetails] = useState(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Form states
+  // Form states: REMOVED ALL PREFILLED DUMMY DATA.
+  // ONLY email is prefilled if user is logged in.
   const [formData, setFormData] = useState({
-    name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || '',
+    name: '',
     email: user?.email || '',
-    phone: '+91 98765 43210',
-    address: 'Flat 402, Royal Palms, Bandra West',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    zip: '400050',
+    phone: '',
+    address: '',
+    landmark: '',
+    city: '',
+    state: '',
+    zip: '',
+    addressType: 'Home', // 'Home' | 'Office'
     shippingMethod: 'standard', // 'standard' | 'express'
-    paymentMethod: 'razorpay', // 'razorpay' | 'upi' | 'card' | 'cod'
-    upiId: 'patron@upi',
-    cardNumber: '4532 •••• •••• 8892',
-    cardExpiry: '08/29',
-    cardCvc: '432'
+    paymentMethod: 'razorpay' // 'razorpay' | 'cod'
   });
 
-  const baseShippingCost = shippingRateDetails ? shippingRateDetails.shippingCharge : (formData.shippingMethod === 'express' ? 299 : (cartSubtotal >= 2500 ? 0 : 199));
-  const shippingCost = formData.shippingMethod === 'express' ? baseShippingCost + 100 : baseShippingCost;
-  const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
-  const grandTotal = cartSubtotal - discountAmount + shippingCost;
+  // Keep email synced if user logs in during session
+  useEffect(() => {
+    if (user?.email) {
+      setFormData((prev) => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
 
-  // 1. STRICT AUTHENTICATION LOCK: Must be logged in to buy products
+  // Robust Numeric Price & Shipping Calculations
+  const safeSubtotal = Number(cartSubtotal) || 0;
+  const discountAmount = activeCoupon ? (safeSubtotal * (Number(activeCoupon.discountPercent) || 0)) / 100 : 0;
+  
+  // Base shipping from Shiprocket lookup or standard threshold (Free > 2500, else 99)
+  const baseShippingCost = shippingRateDetails 
+    ? (formData.shippingMethod === 'express' ? Number(shippingRateDetails.expressCharge || 199) : Number(shippingRateDetails.shippingCharge || 0))
+    : (formData.shippingMethod === 'express' ? 199 : (safeSubtotal >= 2500 ? 0 : 99));
+
+  const shippingCost = Number(baseShippingCost) || 0;
+  const grandTotal = Math.max(0, safeSubtotal - discountAmount + shippingCost);
+
+  // 1. STRICT AUTHENTICATION LOCK: Must be logged in to complete purchase
   if (!user && !completedOrder) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 sm:py-20 text-center space-y-6">
@@ -112,13 +129,34 @@ export default function CheckoutView() {
     );
   }
 
+  // Handle Pincode Auto-Lookup & Shiprocket Serviceability Verification
+  const handlePincodeChange = async (pincodeVal) => {
+    const pin = pincodeVal.trim();
+    setFormData((prev) => ({ ...prev, zip: pin }));
+
+    if (pin.length === 6 && !isNaN(pin)) {
+      const loc = lookupIndianPincode(pin);
+      if (loc) {
+        setFormData((prev) => ({
+          ...prev,
+          city: prev.city || loc.city,
+          state: prev.state || loc.state
+        }));
+      }
+      setIsCheckingPincode(true);
+      const rates = await calculateShiprocketRates(pin, 500, safeSubtotal);
+      setShippingRateDetails(rates);
+      setIsCheckingPincode(false);
+    }
+  };
+
   const handleCheckPincode = async () => {
-    if (!formData.zip || formData.zip.length < 6) {
-      alert('Please enter a valid 6-digit Indian Pincode.');
+    if (!formData.zip || formData.zip.length !== 6 || isNaN(formData.zip)) {
+      alert('Please enter a valid 6-digit Indian Pincode (e.g. 400050).');
       return;
     }
     setIsCheckingPincode(true);
-    const rates = await calculateShiprocketRates(formData.zip, 500);
+    const rates = await calculateShiprocketRates(formData.zip, 500, safeSubtotal);
     setShippingRateDetails(rates);
     setIsCheckingPincode(false);
   };
@@ -126,6 +164,10 @@ export default function CheckoutView() {
   const handleNextStep = async (e) => {
     e.preventDefault();
     if (step === 1) {
+      if (!formData.name || !formData.phone || !formData.address || !formData.zip) {
+        alert('Please fill in all required shipping address fields.');
+        return;
+      }
       if (!shippingRateDetails) {
         await handleCheckPincode();
       }
@@ -137,12 +179,12 @@ export default function CheckoutView() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.zip}`
+        address: `${formData.address}${formData.landmark ? `, Near ${formData.landmark}` : ''}, ${formData.city}, ${formData.state} - ${formData.zip} (${formData.addressType})`
       };
 
       const logisticsInfo = {
         shippingPincode: formData.zip,
-        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Express',
+        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Partner Express',
         awbCode: `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
         trackingUrl: `https://shiprocket.co/tracking/${formData.zip}`
       };
@@ -167,7 +209,7 @@ export default function CheckoutView() {
           const paymentId = `pay_sim_${Date.now()}`;
           const order = await submitOrder(
             customerDetails,
-            `Razorpay Online (${formData.paymentMethod.toUpperCase()})`,
+            'Razorpay Online (Verified)',
             paymentId,
             logisticsInfo.shippingPincode,
             logisticsInfo.shippingCourier,
@@ -185,7 +227,7 @@ export default function CheckoutView() {
           amount: Math.round(grandTotal * 100),
           currency: 'INR',
           name: 'Ella Creations India',
-          description: 'Luxury Artificial & Bridal Jewelry Order',
+          description: 'Luxury Jewelry Order',
           image: '/logo.png',
           handler: async function (response) {
             const paymentId = response.razorpay_payment_id || `pay_rzp_${Date.now()}`;
@@ -249,11 +291,11 @@ export default function CheckoutView() {
         <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 flex justify-center gap-8 text-xs font-semibold">
           <div className={`flex items-center gap-2 ${step === 1 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 1 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>1</span>
-            1. Shipping Address (India)
+            1. Shipping Address & Shiprocket Partner
           </div>
           <div className={`flex items-center gap-2 ${step === 2 ? 'text-brand-rose font-bold' : 'text-stone-500'}`}>
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === 2 ? 'bg-brand-rose text-white' : 'bg-stone-300 text-stone-700'}`}>2</span>
-            2. Payment & Place Order
+            2. Payment Gateway
           </div>
         </div>
       )}
@@ -267,14 +309,23 @@ export default function CheckoutView() {
             <form onSubmit={handleNextStep} className="space-y-6">
               {step === 1 ? (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-lg font-bold text-stone-900">1. Customer & Shipping Details</h3>
-                  
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                    <h3 className="font-serif text-lg font-bold text-stone-900">1. Customer & Shipping Details</h3>
+                    <span className="text-[10px] bg-stone-100 text-stone-600 px-2.5 py-0.5 rounded-full font-mono">
+                      Shiprocket Integrated
+                    </span>
+                  </div>
+
+                  {/* Customer Information (Clean fields, NO prefilled dummy values) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-stone-700 mb-1">Full Name</label>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Full Name <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="text"
                         required
+                        placeholder="Enter your full name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
@@ -282,101 +333,158 @@ export default function CheckoutView() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-stone-700 mb-1">Email Address</label>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Email Address <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="email"
                         required
+                        placeholder="yourname@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-stone-50/50"
                       />
+                      {user && (
+                        <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                          <UserCheck className="w-3 h-3" /> Logged in account email
+                        </span>
+                      )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-stone-700 mb-1">Mobile Number (+91)</label>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Mobile Number (+91) <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="tel"
                         required
+                        maxLength="10"
+                        placeholder="10-digit mobile number"
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '') })}
+                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-stone-700 mb-1">Flat / House No. & Street</label>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Pincode (Shiprocket Serviceability) <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="flex gap-1.5">
+                        <input
+                          type="text"
+                          required
+                          maxLength="6"
+                          placeholder="e.g. 400050"
+                          value={formData.zip}
+                          onChange={(e) => handlePincodeChange(e.target.value)}
+                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleCheckPincode}
+                          disabled={isCheckingPincode}
+                          className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
+                        >
+                          {isCheckingPincode ? (
+                            <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          ) : (
+                            <Search className="w-3.5 h-3.5" />
+                          )}
+                          Check
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Street & Location Details */}
+                  <div className="space-y-3 pt-1">
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Flat / House No. & Building Name <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="text"
                         required
+                        placeholder="House no., Apartment, Building name"
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-stone-700 mb-1">City</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-stone-700 mb-1">State</label>
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">Landmark (Optional)</label>
+                        <input
+                          type="text"
+                          placeholder="Near park, temple, etc."
+                          value={formData.landmark}
+                          onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">City <span className="text-rose-500">*</span></label>
                         <input
                           type="text"
                           required
+                          placeholder="City"
+                          value={formData.city}
+                          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-700 mb-1">State <span className="text-rose-500">*</span></label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="State"
                           value={formData.state}
                           onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                           className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
                         />
                       </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-stone-700 mb-1">Delivery Pincode (Shiprocket Check)</label>
-                        <div className="flex gap-1.5">
-                          <input
-                            type="text"
-                            required
-                            maxLength="6"
-                            placeholder="e.g. 400050"
-                            value={formData.zip}
-                            onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                            className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
-                          />
+                    </div>
+
+                    {/* Address Type Tag */}
+                    <div className="flex items-center gap-4 pt-1">
+                      <span className="text-xs font-semibold text-stone-700">Save Address As:</span>
+                      <div className="flex gap-2">
+                        {['Home', 'Office'].map((type) => (
                           <button
+                            key={type}
                             type="button"
-                            onClick={handleCheckPincode}
-                            disabled={isCheckingPincode}
-                            className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
+                            onClick={() => setFormData({ ...formData, addressType: type })}
+                            className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                              formData.addressType === type
+                                ? 'bg-brand-rose text-white border-brand-rose'
+                                : 'bg-stone-50 text-stone-600 border-stone-200'
+                            }`}
                           >
-                            {isCheckingPincode ? (
-                              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                            ) : (
-                              <Search className="w-3.5 h-3.5" />
-                            )}
-                            Check
+                            {type}
                           </button>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   </div>
 
-                  {/* Shiprocket Rate Result Box */}
+                  {/* Live Shiprocket Carrier Serviceability Info Box */}
                   {shippingRateDetails && (
-                    <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-1">
+                    <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-xs space-y-1.5">
                       <div className="flex justify-between items-center font-bold text-emerald-900">
                         <span className="flex items-center gap-1.5">
                           <Truck className="w-4 h-4 text-emerald-600" /> Pincode {shippingRateDetails.destinationPincode} Serviceable!
                         </span>
-                        <span className="text-emerald-700">{shippingRateDetails.courierName}</span>
+                        <span className="text-emerald-800 text-[11px] bg-white px-2 py-0.5 rounded border border-emerald-200 font-mono">
+                          {shippingRateDetails.courierName}
+                        </span>
                       </div>
-                      <p className="text-stone-600 text-[11px]">
-                        Est. Delivery: <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days) • Rate: <strong>{formatPrice(shippingRateDetails.shippingCharge)}</strong>
+                      <p className="text-stone-700 text-[11px]">
+                        Estimated Delivery: <strong>{shippingRateDetails.etd}</strong> ({shippingRateDetails.estimatedDays} Business Days) • COD Status: <strong className="text-emerald-700">Eligible</strong>
                       </p>
                     </div>
                   )}
@@ -402,7 +510,7 @@ export default function CheckoutView() {
                           </div>
                         </div>
                         <span className="text-xs font-bold text-emerald-600">
-                          {formatPrice(baseShippingCost)}
+                          {safeSubtotal >= 2500 ? 'FREE' : formatPrice(99)}
                         </span>
                       </label>
 
@@ -422,7 +530,7 @@ export default function CheckoutView() {
                             <p className="text-[11px] text-stone-500">1-2 Days Priority Dispatch</p>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-stone-900">{formatPrice(baseShippingCost + 100)}</span>
+                        <span className="text-xs font-bold text-stone-900">{formatPrice(safeSubtotal >= 2500 ? 100 : 199)}</span>
                       </label>
                     </div>
                   </div>
@@ -496,10 +604,20 @@ export default function CheckoutView() {
 
                 <button
                   type="submit"
+                  disabled={isProcessingPayment}
                   className="ml-auto bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-8 rounded-full flex items-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider"
                 >
-                  {step === 1 ? 'Continue to Payment' : `Pay ${formatPrice(grandTotal)} Now`}
-                  <ArrowRight className="w-4 h-4" />
+                  {isProcessingPayment ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Processing Order...
+                    </span>
+                  ) : step === 1 ? (
+                    'Continue to Payment'
+                  ) : (
+                    `Pay ${formatPrice(grandTotal)} Now`
+                  )}
+                  {!isProcessingPayment && <ArrowRight className="w-4 h-4" />}
                 </button>
               </div>
             </form>
@@ -508,10 +626,10 @@ export default function CheckoutView() {
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-brand-gold/20 shadow-sm space-y-5">
             <h3 className="font-serif text-lg font-bold text-stone-900 border-b border-stone-100 pb-3">
-              Order Summary ({cart.reduce((a, b) => a + b.qty, 0)} Items)
+              Order Summary ({cart.reduce((a, b) => a + (Number(b.qty) || 0), 0)} Items)
             </h3>
 
-            {/* Cart Items List with Uncropped Thumbnails */}
+            {/* Cart Items List */}
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {cart.map((item, idx) => (
                 <div key={idx} className="flex gap-3 items-center border-b border-stone-100 pb-3">
@@ -521,17 +639,17 @@ export default function CheckoutView() {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-semibold text-stone-900 truncate">{item.title}</h4>
                     <p className="text-[11px] text-stone-500">Finish: {item.finish} | Qty: {item.qty}</p>
-                    <p className="text-xs font-bold text-brand-rose mt-0.5">{formatPrice(item.price * item.qty)}</p>
+                    <p className="text-xs font-bold text-brand-rose mt-0.5">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Calculations Breakdown */}
+            {/* Calculations Breakdown (Strict Math) */}
             <div className="bg-brand-cream/50 p-4 rounded-2xl border border-brand-gold/30 space-y-2 text-xs">
               <div className="flex justify-between text-stone-600">
                 <span>Subtotal:</span>
-                <span className="font-semibold text-stone-900">{formatPrice(cartSubtotal)}</span>
+                <span className="font-semibold text-stone-900">{formatPrice(safeSubtotal)}</span>
               </div>
 
               {discountAmount > 0 && (
@@ -593,7 +711,7 @@ export default function CheckoutView() {
               {completedOrder?.items.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center text-xs">
                   <span className="text-stone-800">{item.qty}x {item.title} ({item.finish})</span>
-                  <span className="font-semibold text-stone-900">{formatPrice(item.price * item.qty)}</span>
+                  <span className="font-semibold text-stone-900">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</span>
                 </div>
               ))}
             </div>

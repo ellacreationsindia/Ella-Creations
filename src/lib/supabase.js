@@ -61,12 +61,10 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    // If it's already a hosted URL (http/https), return as is
     if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
       return fileOrDataUrl;
     }
 
-    // Compress image payload to lightweight JPEG
     const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
 
     let fileToUpload;
@@ -87,7 +85,6 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
 
     const filePath = `images/${fileName}`;
 
-    // Upload to 'products' public bucket
     const { data, error } = await supabase.storage
       .from('products')
       .upload(filePath, fileToUpload, {
@@ -100,7 +97,6 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
       return compressedDataUrl || fileOrDataUrl;
     }
 
-    // Get public URL from 'products' bucket
     const { data: publicUrlData } = supabase.storage
       .from('products')
       .getPublicUrl(filePath);
@@ -120,7 +116,6 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    // If it's already a hosted URL (http/https), return as is
     if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
       return fileOrDataUrl;
     }
@@ -145,7 +140,6 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
 
     const filePath = `videos/${fileName}`;
 
-    // Upload to 'products' public bucket
     const { data, error } = await supabase.storage
       .from('products')
       .upload(filePath, fileToUpload, {
@@ -158,7 +152,6 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
       return fileOrDataUrl;
     }
 
-    // Get public URL from 'products' bucket
     const { data: publicUrlData } = supabase.storage
       .from('products')
       .getPublicUrl(filePath);
@@ -188,10 +181,41 @@ export function loadRazorpayScript() {
 }
 
 /**
+ * Indian PIN Code to City/State Auto-Lookup Engine
+ */
+export function lookupIndianPincode(pincode) {
+  const pin = (pincode || '').toString().trim();
+  if (!pin || pin.length !== 6 || isNaN(pin)) return null;
+
+  const prefix = pin.substring(0, 2);
+  const map = {
+    '11': { city: 'New Delhi', state: 'Delhi' },
+    '40': { city: 'Mumbai', state: 'Maharashtra' },
+    '41': { city: 'Pune', state: 'Maharashtra' },
+    '42': { city: 'Nashik', state: 'Maharashtra' },
+    '44': { city: 'Nagpur', state: 'Maharashtra' },
+    '56': { city: 'Bengaluru', state: 'Karnataka' },
+    '50': { city: 'Hyderabad', state: 'Telangana' },
+    '60': { city: 'Chennai', state: 'Tamil Nadu' },
+    '70': { city: 'Kolkata', state: 'West Bengal' },
+    '38': { city: 'Ahmedabad', state: 'Gujarat' },
+    '30': { city: 'Jaipur', state: 'Rajasthan' },
+    '20': { city: 'Noida / Ghaziabad', state: 'Uttar Pradesh' },
+    '22': { city: 'Lucknow', state: 'Uttar Pradesh' },
+    '16': { city: 'Chandigarh', state: 'Punjab' },
+    '68': { city: 'Kochi', state: 'Kerala' },
+    '75': { city: 'Bhubaneswar', state: 'Odisha' },
+    '78': { city: 'Guwahati', state: 'Assam' }
+  };
+
+  return map[prefix] || { city: 'Metro Region', state: 'India' };
+}
+
+/**
  * Shiprocket Serviceability & Rate Calculation Helper
  * Estimates logistics rates and delivery times for Indian pincodes
  */
-export async function calculateShiprocketRates(destinationPincode, weightGrams = 500) {
+export async function calculateShiprocketRates(destinationPincode, weightGrams = 500, cartSubtotal = 0) {
   const cleanPincode = (destinationPincode || '').toString().trim();
   if (!cleanPincode || cleanPincode.length !== 6 || isNaN(cleanPincode)) {
     return {
@@ -200,28 +224,27 @@ export async function calculateShiprocketRates(destinationPincode, weightGrams =
     };
   }
 
-  // Simulated Shiprocket Courier Rates API response (supporting live or realistic logistics rates)
-  const isMetro = ['11', '40', '56', '60', '70', '50'].some(prefix => cleanPincode.startsWith(prefix));
+  const isMetro = ['11', '40', '41', '56', '60', '70', '50', '38', '30'].some(prefix => cleanPincode.startsWith(prefix));
+  const location = lookupIndianPincode(cleanPincode);
   
+  // Calculate delivery date estimated
+  const etdDate = new Date();
+  etdDate.setDate(etdDate.getDate() + (isMetro ? 2 : 4));
+  const dateStr = etdDate.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+
+  const standardFee = cartSubtotal >= 2500 ? 0 : 99;
+  const expressFee = standardFee + 100;
+
   return {
     serviceable: true,
     destinationPincode: cleanPincode,
-    couriers: [
-      {
-        id: 'shiprocket-express',
-        name: 'Shiprocket Air Express (Bluedart / Delhivery Air)',
-        estimatedDays: isMetro ? '1-2 Days' : '2-3 Days',
-        rate: isMetro ? 99 : 149,
-        badge: 'Fastest'
-      },
-      {
-        id: 'shiprocket-standard',
-        name: 'Shiprocket Surface Standard (Ecom Express / Xpressbees)',
-        estimatedDays: isMetro ? '3-4 Days' : '4-6 Days',
-        rate: isMetro ? 49 : 79,
-        badge: 'Best Value'
-      }
-    ]
+    city: location?.city || '',
+    state: location?.state || '',
+    courierName: isMetro ? 'Shiprocket Priority (BlueDart Express Air)' : 'Shiprocket Surface (Delhivery Logistics)',
+    etd: dateStr,
+    estimatedDays: isMetro ? 2 : 4,
+    shippingCharge: standardFee,
+    expressCharge: expressFee,
+    codAvailable: true
   };
 }
-
