@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase, syncOrderToShiprocket } from '../lib/supabase';
-import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS } from '../data/initialData';
+import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS, INITIAL_BLOGS } from '../data/initialData';
 
 const StoreContext = createContext();
 
@@ -93,6 +93,20 @@ export const StoreProvider = ({ children }) => {
     ];
   });
 
+  const [blogs, setBlogs] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ella_blogs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed parsing saved blogs:', e);
+    }
+    return INITIAL_BLOGS;
+  });
+  const [selectedBlogId, setSelectedBlogId] = useState('');
+
   // UI state
   const [currentView, setCurrentView] = useState('home');
   const [selectedProductId, setSelectedProductId] = useState('');
@@ -109,10 +123,12 @@ export const StoreProvider = ({ children }) => {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const navigateTo = (view, productId = null, category = null) => {
+  const navigateTo = (view, itemId = null, category = null) => {
     setCurrentView(view);
-    if (productId) {
-      setSelectedProductId(productId);
+    if (view === 'blog-detail' && itemId) {
+      setSelectedBlogId(itemId);
+    } else if (itemId) {
+      setSelectedProductId(itemId);
     }
     if (category) {
       setSelectedCategory(category);
@@ -164,12 +180,18 @@ export const StoreProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Sync blogs to localStorage
+  useEffect(() => {
+    localStorage.setItem('ella_blogs', JSON.stringify(blogs));
+  }, [blogs]);
+
   // 3. Fetch data from Supabase DB on mount
   useEffect(() => {
     fetchProductsFromSupabase();
     fetchOrdersFromSupabase();
     fetchReviewsFromSupabase();
     fetchCouponsFromSupabase();
+    fetchBlogsFromSupabase();
   }, []);
 
   const fetchProductsFromSupabase = async () => {
@@ -316,6 +338,101 @@ export const StoreProvider = ({ children }) => {
     } catch (err) {
       console.warn('Supabase DB subscribers fetch notice:', err.message);
     }
+  };
+
+  const fetchBlogsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
+      if (error) {
+        console.warn('Supabase DB blogs fetch notice:', error.message);
+        return;
+      }
+      if (data && Array.isArray(data) && data.length > 0) {
+        const mapped = data.map((b) => ({
+          id: b.id,
+          title: b.title || 'Untitled Article',
+          slug: b.slug || '',
+          excerpt: b.excerpt || '',
+          content: b.content || '',
+          category: b.category || 'Styling Guide',
+          author: b.author || 'Ella Editorial',
+          readTime: b.read_time || b.readTime || '4 min read',
+          coverImage: b.cover_image || b.coverImage || 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1200',
+          publishedAt: b.published_at || b.created_at || new Date().toISOString(),
+          status: b.status || 'Published'
+        }));
+        setBlogs(mapped);
+      }
+    } catch (err) {
+      console.warn('Supabase DB blogs fetch notice:', err.message);
+    }
+  };
+
+  const addBlog = async (blogData) => {
+    const newBlog = {
+      id: `blog-${Math.floor(1000 + Math.random() * 9000)}`,
+      publishedAt: new Date().toISOString(),
+      status: 'Published',
+      readTime: '4 min read',
+      author: 'Ella Editorial Concierge',
+      ...blogData
+    };
+    setBlogs((prev) => [newBlog, ...prev]);
+
+    try {
+      await supabase.from('blogs').insert([{
+        id: newBlog.id,
+        title: newBlog.title,
+        slug: newBlog.slug || newBlog.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        excerpt: newBlog.excerpt,
+        content: newBlog.content,
+        category: newBlog.category,
+        author: newBlog.author,
+        read_time: newBlog.readTime,
+        cover_image: newBlog.coverImage,
+        status: newBlog.status
+      }]);
+    } catch (err) {
+      console.warn('Supabase DB blog insert notice:', err.message);
+    }
+
+    showToast('✨ Article published to Ella Journal!', 'success');
+    return newBlog;
+  };
+
+  const updateBlog = async (updatedBlog) => {
+    setBlogs((prev) => prev.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
+
+    try {
+      await supabase.from('blogs').upsert([{
+        id: updatedBlog.id,
+        title: updatedBlog.title,
+        slug: updatedBlog.slug,
+        excerpt: updatedBlog.excerpt,
+        content: updatedBlog.content,
+        category: updatedBlog.category,
+        author: updatedBlog.author,
+        read_time: updatedBlog.readTime,
+        cover_image: updatedBlog.coverImage,
+        status: updatedBlog.status
+      }]);
+    } catch (err) {
+      console.warn('Supabase DB blog update notice:', err.message);
+    }
+
+    showToast('Blog article updated successfully!');
+  };
+
+  const deleteBlog = async (blogId) => {
+    setBlogs((prev) => prev.filter((b) => b.id !== blogId));
+
+    try {
+      await supabase.from('blogs').delete().eq('id', blogId);
+    } catch (err) {
+      console.warn('Supabase DB blog delete notice:', err.message);
+    }
+
+    showToast('Blog article removed from journal', 'info');
   };
 
   // Sync products, cart, wishlist, coupons, orders, subscribers to localStorage
@@ -1010,9 +1127,12 @@ export const StoreProvider = ({ children }) => {
         deleteSubscriber,
         hasUserPurchasedProduct,
         requireAuthForAction,
-        addProduct,
-        updateProduct,
-        deleteProduct,
+        blogs,
+        selectedBlogId,
+        setSelectedBlogId,
+        addBlog,
+        updateBlog,
+        deleteBlog,
         updateOrderStatus,
         addReview,
         showToast

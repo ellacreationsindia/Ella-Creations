@@ -128,6 +128,12 @@ export default function Header() {
               >
                 Bridal Sets
               </button>
+              <button 
+                onClick={() => navigateTo('blog')} 
+                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'blog' || currentView === 'blog-detail' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+              >
+                Ella Journal
+              </button>
             </nav>
           </div>
 
@@ -301,6 +307,12 @@ export default function Header() {
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"
           >
             Earrings
+          </button>
+          <button
+            onClick={() => { navigateTo('blog'); setIsMobileMenuOpen(false); }}
+            className="block w-full text-left font-semibold text-brand-rose py-2.5 border-b border-stone-100"
+          >
+            📖 Ella Journal & Styling Blogs
           </button>
           <button
             onClick={() => { navigateTo('shop', null, 'Bridal Sets'); setIsMobileMenuOpen(false); }}

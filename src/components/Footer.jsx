@@ -106,8 +106,9 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-3">
             <h5 className="font-serif text-sm font-semibold tracking-wider text-brand-gold uppercase">Customer Care</h5>
             <ul className="space-y-2 text-xs text-stone-400">
+              <li><button onClick={() => navigateTo('blog')} className="hover:text-brand-rose text-white font-semibold transition-colors">📖 Ella Journal & Blogs</button></li>
               <li><button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors">Jewelry Care Guide</button></li>
-              <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Size & Fit Chart</button></li>
+              <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Terms & Conditions</button></li>
               <li><button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors">Sitemap Directory</button></li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}

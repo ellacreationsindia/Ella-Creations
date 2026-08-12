@@ -44,7 +44,9 @@ import {
   ListPlus,
   Ticket,
   Mail,
-  Download
+  Download,
+  BookOpen,
+  FileText
 } from 'lucide-react';
 import { useState } from 'react';
 import { useStore, formatPrice } from '../context/StoreContext';
@@ -88,61 +90,52 @@ function SalesAreaChart({ data }) {
     : '';
 
   return (
-    <div className="w-full relative select-none">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible">
-        <defs>
-          <linearGradient id="svgAreaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#D49AA5" stopOpacity={0.6} />
-            <stop offset="100%" stopColor="#D49AA5" stopOpacity={0.0} />
-          </linearGradient>
-        </defs>
-
-        {/* Horizontal Grid lines */}
-        {[0, 0.33, 0.66, 1].map((ratio, idx) => {
-          const y = paddingTop + chartHeight * (1 - ratio);
-          const val = Math.round(maxVal * ratio);
-          return (
-            <g key={idx}>
-              <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#27272a" strokeDasharray="3 3" />
-              <text x={paddingLeft - 8} y={y + 4} textAnchor="end" fill="#71717a" fontSize="10" fontFamily="monospace">
-                ₹{val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Area fill */}
-        {areaD && <path d={areaD} fill="url(#svgAreaGrad)" />}
-
-        {/* Line stroke */}
-        {pathD && <path d={pathD} fill="none" stroke="#D49AA5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
-
-        {/* Data points & X Labels */}
-        {points.map((pt, idx) => (
-          <g key={idx} className="cursor-pointer group" onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
-            <text x={pt.x} y={height - 8} textAnchor="middle" fill="#9ca3af" fontSize="11" fontWeight="600">
-              {pt.name}
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-64 overflow-visible">
+      {/* Grid Lines */}
+      {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
+        const y = paddingTop + chartHeight * (1 - ratio);
+        const val = Math.round(maxVal * ratio);
+        return (
+          <g key={idx}>
+            <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#27272a" strokeDasharray="3 3" />
+            <text x={paddingLeft - 10} y={y + 4} fill="#a1a1aa" fontSize="10" textAnchor="end" fontFamily="monospace">
+              ₹{val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val}
             </text>
-            <circle cx={pt.x} cy={pt.y} r="4" fill="#1c1917" stroke="#D49AA5" strokeWidth="2" />
-            <circle cx={pt.x} cy={pt.y} r="10" fill="#D49AA5" fillOpacity={0} className="group-hover:fill-opacity-20 transition-all" />
           </g>
-        ))}
-      </svg>
+        );
+      })}
 
-      {/* Floating Tooltip */}
+      {/* Area Gradient */}
+      <defs>
+        <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#D49AA5" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#D49AA5" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+
+      <path d={areaD} fill="url(#salesGrad)" />
+      <path d={pathD} fill="none" stroke="#D49AA5" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Interactive Hover Dots */}
+      {points.map((pt, idx) => (
+        <g key={idx} className="cursor-pointer group" onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
+          <circle cx={pt.x} cy={pt.y} r="5" fill="#18181b" stroke="#D49AA5" strokeWidth="2.5" className="transition-transform group-hover:scale-125" />
+          <text x={pt.x} y={height - 10} fill="#a1a1aa" fontSize="10" textAnchor="middle" fontFamily="sans-serif">
+            {pt.name}
+          </text>
+        </g>
+      ))}
+
+      {/* Hover Tooltip */}
       {hoveredPoint && (
-        <div
-          className="absolute bg-stone-950 border border-brand-gold/40 text-white text-xs px-3 py-1.5 rounded-xl shadow-2xl z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 font-sans"
-          style={{
-            left: `${(hoveredPoint.x / width) * 100}%`,
-            top: `${(hoveredPoint.y / height) * 100}%`
-          }}
-        >
-          <span className="text-[10px] text-stone-400 font-bold block">{hoveredPoint.name} Revenue</span>
-          <span className="font-bold text-brand-gold">{formatPrice(hoveredPoint.sales)}</span>
-        </div>
+        <g transform={`translate(${hoveredPoint.x}, ${hoveredPoint.y - 35})`}>
+          <rect x="-45" y="-18" width="90" height="24" rx="6" fill="#09090b" stroke="#CFA45C" strokeWidth="1" />
+          <text x="0" y="-2" fill="#FFFFFF" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+            {formatPrice(hoveredPoint.sales)}
+          </text>
+        </g>
       )}
-    </div>
+    </svg>
   );
 }
 
@@ -153,6 +146,10 @@ export default function AdminView() {
     reviews, 
     coupons,
     subscribers,
+    blogs,
+    addBlog,
+    updateBlog,
+    deleteBlog,
     user,
     isAdmin,
     ADMIN_EMAIL,
@@ -172,11 +169,26 @@ export default function AdminView() {
     navigateTo 
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews' | 'coupons' | 'subscribers'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews' | 'coupons' | 'subscribers' | 'blogs'
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [subscriberSearch, setSubscriberSearch] = useState('');
+
+  // Blog Management State
+  const [blogModalOpen, setBlogModalOpen] = useState(false);
+  const [editingBlog, setEditingBlog] = useState(null);
+  const [blogPreviewOpen, setBlogPreviewOpen] = useState(false);
+  const [blogForm, setBlogForm] = useState({
+    title: '',
+    category: 'Bridal Trends',
+    excerpt: '',
+    content: '',
+    coverImage: '',
+    author: 'Ella Editorial Concierge',
+    readTime: '4 min read',
+    status: 'Published'
+  });
 
   // Catalog UI Controls
   const [catalogViewMode, setCatalogViewMode] = useState('grid'); // 'grid' | 'table'
@@ -857,6 +869,18 @@ export default function AdminView() {
               <Mail className="w-4 h-4 text-emerald-400" /> VIP Subscribers
             </div>
             <span className="bg-emerald-950 text-emerald-400 font-bold text-[10px] px-2 py-0.5 rounded-full border border-emerald-800">{subscribers?.length || 0}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('blogs'); setIsMobileSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+              activeTab === 'blogs' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <BookOpen className="w-4 h-4 text-brand-gold" /> Blog Journal
+            </div>
+            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{blogs?.length || 0}</span>
           </button>
         </aside>
 
@@ -1735,8 +1759,243 @@ export default function AdminView() {
             </div>
           )}
 
+          {/* TAB 7: BLOG JOURNAL MANAGEMENT */}
+          {activeTab === 'blogs' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+                    <BookOpen className="w-6 h-6 text-brand-gold" /> Blog Journal & Styling Articles
+                  </h1>
+                  <p className="text-xs text-stone-400">Write, format, and publish personalized blogs with photos and media for your website visitors.</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingBlog(null);
+                    setBlogForm({
+                      title: '',
+                      category: 'Bridal Trends',
+                      excerpt: '',
+                      content: '',
+                      coverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1200',
+                      author: 'Ella Editorial Concierge',
+                      readTime: '4 min read',
+                      status: 'Published'
+                    });
+                    setBlogModalOpen(true);
+                  }}
+                  className="bg-brand-rose hover:bg-brand-rose/90 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-soft-rose transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" /> Write New Article
+                </button>
+              </div>
+
+              {/* Blogs Directory Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(blogs || []).map((blog) => (
+                  <div key={blog.id} className="bg-stone-950 rounded-2xl border border-stone-800 overflow-hidden space-y-4 flex flex-col justify-between p-5 hover:border-brand-gold/40 transition-all">
+                    <div className="space-y-3">
+                      {blog.coverImage && (
+                        <div className="aspect-video rounded-xl overflow-hidden bg-stone-900">
+                          <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-[10px] text-stone-400">
+                        <span className="bg-brand-gold/20 text-brand-gold font-bold px-2 py-0.5 rounded-md border border-brand-gold/30 uppercase">
+                          {blog.category}
+                        </span>
+                        <span className="font-mono text-emerald-400 font-semibold">{blog.status}</span>
+                      </div>
+
+                      <h3 className="font-serif text-base font-bold text-white leading-snug line-clamp-2">
+                        {blog.title}
+                      </h3>
+
+                      <p className="text-xs text-stone-400 line-clamp-2">
+                        {blog.excerpt}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-stone-800 flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-stone-500">{blog.readTime || '4 min read'}</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            navigateTo('blog-detail', blog.id);
+                          }}
+                          className="p-1.5 bg-stone-900 hover:bg-stone-800 text-stone-300 rounded-lg transition-colors"
+                          title="Preview Article on Website"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditingBlog(blog);
+                            setBlogForm(blog);
+                            setBlogModalOpen(true);
+                          }}
+                          className="p-1.5 bg-stone-900 hover:bg-stone-800 text-stone-200 rounded-lg transition-colors"
+                          title="Edit Article"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Delete article "${blog.title}"?`)) deleteBlog(blog.id);
+                          }}
+                          className="p-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg transition-colors"
+                          title="Delete Article"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </main>
       </div>
+
+      {/* ADMIN BLOG ARTICLE EDITOR MODAL */}
+      {blogModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-stone-950 border border-stone-800 rounded-3xl max-w-3xl w-full p-6 md:p-8 space-y-6 shadow-2xl text-stone-100 max-h-[90vh] overflow-y-auto">
+            
+            <div className="flex justify-between items-center border-b border-stone-800 pb-4">
+              <h3 className="font-serif text-xl font-bold text-white flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-brand-gold" />
+                {editingBlog ? 'Edit Journal Article' : 'Write & Publish New Blog Article'}
+              </h3>
+              <button onClick={() => setBlogModalOpen(false)} className="text-stone-400 hover:text-white p-1">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (editingBlog) {
+                  updateBlog({ ...editingBlog, ...blogForm });
+                } else {
+                  addBlog(blogForm);
+                }
+                setBlogModalOpen(false);
+              }}
+              className="space-y-5"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-stone-300 mb-1">Article Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. The Ultimate Guide to Styling Kundan Jewelry for Indian Weddings"
+                  value={blogForm.title}
+                  onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white font-semibold outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">Category</label>
+                  <select
+                    value={blogForm.category}
+                    onChange={(e) => setBlogForm({ ...blogForm, category: e.target.value })}
+                    className="w-full text-xs px-3 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                  >
+                    <option value="Bridal Trends">Bridal Trends</option>
+                    <option value="Styling Guide">Styling Guide</option>
+                    <option value="Jewelry Care">Jewelry Care</option>
+                    <option value="Behind The Craft">Behind The Craft</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">Author Name</label>
+                  <input
+                    type="text"
+                    value={blogForm.author}
+                    onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
+                    className="w-full text-xs px-3 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">Estimated Read Time</label>
+                  <input
+                    type="text"
+                    placeholder="4 min read"
+                    value={blogForm.readTime}
+                    onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
+                    className="w-full text-xs px-3 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-300 mb-1">Cover Image URL</label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/photo-..."
+                  value={blogForm.coverImage}
+                  onChange={(e) => setBlogForm({ ...blogForm, coverImage: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-300 mb-1">Short Excerpt / Teaser Summary *</label>
+                <textarea
+                  rows="2"
+                  required
+                  placeholder="Brief 2-line summary describing the blog post..."
+                  value={blogForm.excerpt}
+                  onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                  Full Article Content (Supports formatting, line breaks, bullet points & image URLs) *
+                </label>
+                <textarea
+                  rows="12"
+                  required
+                  placeholder="Write your article here... Formatted line breaks, paragraphs, ### headings, bullet points (-) will be preserved exactly as typed."
+                  value={blogForm.content}
+                  onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white font-mono leading-relaxed outline-none focus:border-brand-rose"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => setBlogModalOpen(false)}
+                  className="px-4 py-2.5 text-xs text-stone-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  {editingBlog ? 'Update Article' : 'Publish to Ella Journal'}
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
 
       {/* EDIT DETAIL JEWELRY SPECIFICATION MODAL (WITH VIDEOS, TAX BRACKET & CUSTOM KEYS) */}
       {productModalOpen && (
