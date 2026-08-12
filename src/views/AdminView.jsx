@@ -12,7 +12,10 @@ import {
   Video, 
   CheckCircle2, 
   Clock, 
-  X, 
+  X,
+  Grid,
+  List,
+  Filter, 
   Eye, 
   ArrowUpRight, 
   Sparkles, 
@@ -174,6 +177,11 @@ export default function AdminView() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [subscriberSearch, setSubscriberSearch] = useState('');
+
+  // Catalog UI Controls
+  const [catalogViewMode, setCatalogViewMode] = useState('grid'); // 'grid' | 'table'
+  const [productCategoryFilter, setProductCategoryFilter] = useState('All');
+  const [productStockFilter, setProductStockFilter] = useState('All');
 
   // Shiprocket Dispatch Modal State
   const [dispatchOrder, setDispatchOrder] = useState(null);
@@ -704,14 +712,40 @@ export default function AdminView() {
     }
   };
 
-  // Filtered lists
-  const filteredProducts = (products || []).filter(p => 
-    p && (
-      (p.title || '').toLowerCase().includes((productSearch || '').toLowerCase()) ||
-      (p.category || '').toLowerCase().includes((productSearch || '').toLowerCase()) ||
-      (p.sku || '').toLowerCase().includes((productSearch || '').toLowerCase())
-    )
-  );
+  // Filtered Product Catalog with Category & Stock Status Controls
+  const filteredProducts = (products || []).filter(p => {
+    if (!p) return false;
+    
+    // Search query filter
+    const searchLower = (productSearch || '').toLowerCase();
+    const matchesSearch = !searchLower || (
+      (p.title || '').toLowerCase().includes(searchLower) ||
+      (p.category || '').toLowerCase().includes(searchLower) ||
+      (p.sku || '').toLowerCase().includes(searchLower) ||
+      (p.stoneType || '').toLowerCase().includes(searchLower)
+    );
+
+    // Category filter
+    const matchesCategory = productCategoryFilter === 'All' || (p.category || '').toLowerCase() === productCategoryFilter.toLowerCase();
+
+    // Stock filter
+    let matchesStock = true;
+    if (productStockFilter === 'In Stock') {
+      matchesStock = Number(p.price) > 0 && Number(p.stock) > 0;
+    } else if (productStockFilter === 'Low Stock') {
+      matchesStock = Number(p.stock) > 0 && Number(p.stock) <= 5;
+    } else if (productStockFilter === 'Out of Stock') {
+      matchesStock = Number(p.price) <= 0 || Number(p.stock) <= 0;
+    }
+
+    return matchesSearch && matchesCategory && matchesStock;
+  });
+
+  // Catalog Telemetry Metrics
+  const totalCatalogCount = (products || []).length;
+  const inStockCatalogCount = (products || []).filter(p => p && Number(p.price) > 0 && Number(p.stock) > 0).length;
+  const lowOrOutStockCatalogCount = (products || []).filter(p => p && (Number(p.price) <= 0 || Number(p.stock) <= 5)).length;
+  const totalInventoryValue = (products || []).reduce((sum, p) => sum + (Number(p?.price) || 0) * (Number(p?.stock) || 0), 0);
 
   const filteredOrders = (orders || []).filter(o => {
     if (!o) return false;
@@ -883,108 +917,434 @@ export default function AdminView() {
             </div>
           )}
 
-          {/* TAB 2: PRODUCTS CATALOG (PRODUCT VIDEOS & CUSTOM KEY-VALUE SPECS) */}
+          {/* TAB 2: PRODUCTS CATALOG (HIGH-END FARFETCH / SHOPIFY PLUS MANAGEMENT SUITE) */}
           {activeTab === 'products' && (
             <div className="space-y-6">
               
+              {/* Header Title & Actions */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-white">Product Catalog & Custom Specs</h1>
-                  <p className="text-xs text-stone-400">Build your store from scratch. Upload photos & product videos, set 18% GST, and custom key-value specifications.</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold bg-brand-gold/10 px-2.5 py-0.5 rounded-full border border-brand-gold/30">
+                      Live Catalog Management
+                    </span>
+                  </div>
+                  <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+                    <Package className="w-6 h-6 text-brand-rose" /> Jewelry Product Catalog
+                  </h1>
+                  <p className="text-xs text-stone-400">Manage authentic inventory, upload high-res showcase photos & product videos, and set key-value custom specifications.</p>
                 </div>
 
                 <button
                   onClick={handleOpenAddModal}
-                  className="bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2"
+                  className="bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-soft-rose transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Plus className="w-4 h-4" /> Add New Jewelry Product
                 </button>
               </div>
 
-              {/* Search Bar */}
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search product title, SKU, or category..."
-                  value={productSearch}
-                  onChange={(e) => setProductSearch(e.target.value)}
-                  className="w-full text-xs bg-stone-950 border border-stone-800 rounded-xl pl-9 pr-4 py-2.5 text-white placeholder:text-stone-500 outline-none focus:border-brand-rose"
-                />
-                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+              {/* KPI Summary Cards Grid for Catalog */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-1">
+                  <div className="text-stone-400 text-[11px] font-medium flex items-center justify-between">
+                    <span>Total Products</span>
+                    <Package className="w-3.5 h-3.5 text-stone-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-white font-serif">{totalCatalogCount}</div>
+                  <div className="text-[10px] text-stone-500">Live products in DB</div>
+                </div>
+
+                <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-1">
+                  <div className="text-stone-400 text-[11px] font-medium flex items-center justify-between">
+                    <span>Active In-Stock</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-emerald-400 font-serif">{inStockCatalogCount}</div>
+                  <div className="text-[10px] text-stone-500">Ready for order</div>
+                </div>
+
+                <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-1">
+                  <div className="text-stone-400 text-[11px] font-medium flex items-center justify-between">
+                    <span>Low / Out Stock</span>
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-amber-400 font-serif">{lowOrOutStockCatalogCount}</div>
+                  <div className="text-[10px] text-stone-500">Needs restock or unpriced</div>
+                </div>
+
+                <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-1">
+                  <div className="text-stone-400 text-[11px] font-medium flex items-center justify-between">
+                    <span>Inventory Value</span>
+                    <DollarSign className="w-3.5 h-3.5 text-brand-gold" />
+                  </div>
+                  <div className="text-xl sm:text-2xl font-bold text-brand-gold font-serif">{formatPrice(totalInventoryValue)}</div>
+                  <div className="text-[10px] text-stone-500">Total catalog worth</div>
+                </div>
               </div>
 
-              {/* Products Table (Wrapped in overflow-x-auto for Mobile) */}
+              {/* Filter Toolbar & Search Control */}
+              <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-3">
+                <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+                  
+                  {/* Search Bar */}
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      placeholder="Search title, SKU, stone type, category..."
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      className="w-full text-xs bg-stone-900 border border-stone-800 rounded-xl pl-9 pr-8 py-2.5 text-white placeholder:text-stone-500 outline-none focus:border-brand-rose transition-colors"
+                    />
+                    <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+                    {productSearch && (
+                      <button
+                        onClick={() => setProductSearch('')}
+                        className="absolute right-3 top-3 text-stone-500 hover:text-white"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Stock Filter & View Switcher */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    
+                    {/* Stock Status Selector */}
+                    <div className="flex items-center gap-1 bg-stone-900 border border-stone-800 p-1 rounded-xl text-xs">
+                      {['All', 'In Stock', 'Low Stock', 'Out of Stock'].map((st) => (
+                        <button
+                          key={st}
+                          onClick={() => setProductStockFilter(st)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                            productStockFilter === st
+                              ? 'bg-stone-800 text-white shadow'
+                              : 'text-stone-400 hover:text-stone-200'
+                          }`}
+                        >
+                          {st}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Grid vs Table Layout Toggle */}
+                    <div className="flex items-center bg-stone-900 border border-stone-800 p-1 rounded-xl">
+                      <button
+                        onClick={() => setCatalogViewMode('grid')}
+                        className={`p-1.5 rounded-lg text-xs transition-colors ${
+                          catalogViewMode === 'grid' ? 'bg-brand-rose text-white shadow' : 'text-stone-400 hover:text-white'
+                        }`}
+                        title="Showcase Cards Grid View"
+                      >
+                        <Grid className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setCatalogViewMode('table')}
+                        className={`p-1.5 rounded-lg text-xs transition-colors ${
+                          catalogViewMode === 'table' ? 'bg-brand-rose text-white shadow' : 'text-stone-400 hover:text-white'
+                        }`}
+                        title="Data Table View"
+                      >
+                        <List className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* Category Pills Bar */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 text-xs no-scrollbar">
+                  <span className="text-[10px] text-stone-500 font-bold uppercase tracking-wider pr-1 flex items-center gap-1 flex-shrink-0">
+                    <Filter className="w-3 h-3 text-stone-400" /> Category:
+                  </span>
+                  {['All', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Bangles', 'Bridal Sets', 'Pendants'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setProductCategoryFilter(cat)}
+                      className={`px-3 py-1 rounded-xl text-[11px] font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                        productCategoryFilter === cat
+                          ? 'bg-brand-gold text-stone-950 font-bold'
+                          : 'bg-stone-900 text-stone-400 hover:bg-stone-800 hover:text-white border border-stone-800'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Result Summary Bar */}
+              <div className="flex items-center justify-between text-xs text-stone-400 px-1">
+                <span>
+                  Showing <strong className="text-white font-semibold">{filteredProducts.length}</strong> of <strong className="text-stone-300">{products.length}</strong> catalog items
+                </span>
+                {(productSearch || productCategoryFilter !== 'All' || productStockFilter !== 'All') && (
+                  <button
+                    onClick={() => {
+                      setProductSearch('');
+                      setProductCategoryFilter('All');
+                      setProductStockFilter('All');
+                    }}
+                    className="text-brand-rose hover:underline text-[11px] font-semibold"
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+
+              {/* Catalog Rendering: Empty State vs Grid View vs Table View */}
               {filteredProducts.length === 0 ? (
                 <div className="bg-stone-950 p-12 text-center rounded-2xl border border-stone-800 space-y-4">
-                  <Package className="w-12 h-12 text-stone-600 mx-auto" />
-                  <h3 className="font-serif text-lg font-bold text-white">No products in catalog</h3>
-                  <p className="text-xs text-stone-400">Your store is clean and ready. Click "Add New Jewelry Product" to add your authentic products!</p>
+                  <Package className="w-12 h-12 text-stone-600 mx-auto animate-bounce" />
+                  <h3 className="font-serif text-lg font-bold text-white">No products match your current filter</h3>
+                  <p className="text-xs text-stone-400 max-w-sm mx-auto">
+                    Try adjusting your search criteria or category selection, or add a brand new jewelry product to your store catalog.
+                  </p>
+                  <button
+                    onClick={handleOpenAddModal}
+                    className="bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors inline-flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" /> Add Jewelry Product
+                  </button>
                 </div>
-              ) : (
-                <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
-                  <table className="w-full text-left text-xs text-stone-300 min-w-[650px]">
-                    <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
-                      <tr>
-                        <th className="p-4">Product</th>
-                        <th className="p-4">Category</th>
-                        <th className="p-4">SKU</th>
-                        <th className="p-4">Price (₹)</th>
-                        <th className="p-4">Tax Bracket</th>
-                        <th className="p-4">Stock</th>
-                        <th className="p-4 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-800">
-                      {filteredProducts.map((p) => (
-                        <tr key={p.id || p.sku || Math.random()} className="hover:bg-stone-900/50 transition-colors">
-                          <td className="p-4 flex items-center gap-3">
-                            <img src={(p.images && p.images[0]) || '/logo.png'} alt={p.title || 'Product'} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
-                            <div>
-                              <span className="font-semibold text-white block">{p.title || 'Untitled Product'}</span>
-                              <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType || 'Cubic Zirconia (CZ)'}</span>
-                              {p.videos && Array.isArray(p.videos) && p.videos.length > 0 && (
-                                <span className="text-[9px] font-bold bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded ml-1">
-                                  🎬 Has Video
+              ) : catalogViewMode === 'grid' ? (
+                
+                /* LAYOUT 1: SHOWCASE CARDS GRID VIEW */
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredProducts.map((p) => {
+                    const isOutOfStock = Number(p.price) <= 0 || Number(p.stock) <= 0;
+                    const isLowStock = !isOutOfStock && Number(p.stock) <= 5;
+                    const primaryImage = (Array.isArray(p.images) && p.images[0]) || '/logo.png';
+                    const videoCount = Array.isArray(p.videos) ? p.videos.length : 0;
+                    const photoCount = Array.isArray(p.images) ? p.images.length : 0;
+
+                    return (
+                      <div 
+                        key={p.id || p.sku || Math.random()}
+                        className="bg-stone-950 border border-stone-800 hover:border-brand-gold/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col group"
+                      >
+                        {/* Top Media Container */}
+                        <div className="relative aspect-square bg-stone-900 overflow-hidden">
+                          <img
+                            src={primaryImage}
+                            alt={p.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-black/30 pointer-events-none" />
+
+                          {/* Top Badges */}
+                          <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 z-10">
+                            <span className="bg-stone-950/80 backdrop-blur-md text-stone-200 text-[10px] font-bold px-2 py-0.5 rounded-full border border-stone-700/60">
+                              {p.category || 'Jewelry'}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] backdrop-blur-md border ${
+                              isOutOfStock 
+                                ? 'bg-rose-950/90 text-rose-300 border-rose-800' 
+                                : isLowStock 
+                                ? 'bg-amber-950/90 text-amber-300 border-amber-800' 
+                                : 'bg-emerald-950/90 text-emerald-300 border-emerald-800'
+                            }`}>
+                              {isOutOfStock ? 'OUT OF STOCK' : isLowStock ? `LOW (${p.stock})` : `${p.stock} Units`}
+                            </span>
+                          </div>
+
+                          {/* Bottom Asset Counters (Photos & Videos) */}
+                          <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                            <span className="bg-black/70 backdrop-blur-md text-stone-300 text-[9px] font-semibold px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
+                              🖼️ {photoCount} Photo{photoCount !== 1 ? 's' : ''}
+                            </span>
+                            {videoCount > 0 && (
+                              <span className="bg-purple-950/90 backdrop-blur-md text-purple-300 text-[9px] font-bold px-2 py-0.5 rounded-md border border-purple-800 flex items-center gap-1 animate-pulse">
+                                <Video className="w-3 h-3 text-purple-400" /> {videoCount} Video
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Card Body */}
+                        <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                          <div>
+                            <div className="flex items-center justify-between text-[10px] text-stone-400 mb-1">
+                              <span className="font-mono">{p.sku || 'NO-SKU'}</span>
+                              <span className="text-brand-gold font-semibold truncate max-w-[120px]">
+                                {p.stoneType || 'CZ Crystals'}
+                              </span>
+                            </div>
+                            <h3 className="font-semibold text-white text-sm line-clamp-2 leading-snug group-hover:text-brand-rose transition-colors">
+                              {p.title}
+                            </h3>
+                          </div>
+
+                          {/* Pricing Row */}
+                          <div className="space-y-1 pt-2 border-t border-stone-800/80">
+                            <div className="flex items-baseline gap-2 flex-wrap">
+                              <span className="font-bold text-white text-base">
+                                {isOutOfStock ? (
+                                  <span className="text-rose-500 text-xs font-semibold">Unpriced / Out of Stock</span>
+                                ) : (
+                                  formatPrice(p.price)
+                                )}
+                              </span>
+                              {p.comparePrice && Number(p.comparePrice) > Number(p.price) && (
+                                <span className="text-xs text-stone-500 line-through">
+                                  {formatPrice(p.comparePrice)}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-stone-500 font-mono ml-auto">
+                                {p.taxPercent || 18}% GST
+                              </span>
+                            </div>
+
+                            {/* Custom Specs Indicator Pill */}
+                            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                              <span className="text-[9px] bg-stone-900 text-stone-400 px-2 py-0.5 rounded-md border border-stone-800">
+                                {p.metalPurity || '22K Gold Plated'}
+                              </span>
+                              {Array.isArray(p.customSpecs) && p.customSpecs.length > 0 && (
+                                <span className="text-[9px] bg-brand-gold/10 text-brand-gold px-2 py-0.5 rounded-md border border-brand-gold/30 font-semibold">
+                                  {p.customSpecs.length} Custom Specs
                                 </span>
                               )}
                             </div>
-                          </td>
-                          <td className="p-4 font-medium">{p.category || 'Jewelry'}</td>
-                          <td className="p-4 font-mono text-stone-400">{p.sku || 'N/A'}</td>
-                          <td className="p-4 font-bold text-white">{Number(p.price) <= 0 ? <span className="text-rose-500">Unpriced (Out of Stock)</span> : formatPrice(p.price)}</td>
-                          <td className="p-4 text-stone-400">{p.taxPercent || 18}% GST</td>
-                          <td className="p-4">
-                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                              Number(p.price) <= 0 || Number(p.stock) <= 0 ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400'
-                            }`}>
-                              {Number(p.price) <= 0 || Number(p.stock) <= 0 ? 'OUT OF STOCK' : `${p.stock} units`}
-                            </span>
-                          </td>
-                          <td className="p-4 text-right space-x-2">
+                          </div>
+
+                          {/* Action Footer Buttons */}
+                          <div className="flex items-center gap-2 pt-2 border-t border-stone-800/80">
                             <button
                               onClick={() => handleOpenEditModal(p)}
-                              className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-lg transition-colors"
-                              title="Edit Product, Videos & Custom Specs"
+                              className="flex-1 bg-stone-900 hover:bg-stone-800 text-stone-200 hover:text-white font-semibold text-xs py-2 px-3 rounded-xl border border-stone-800 transition-colors flex items-center justify-center gap-1.5"
+                              title="Edit Details, Videos & Specifications"
                             >
-                              <Edit className="w-4 h-4" />
+                              <Edit className="w-3.5 h-3.5 text-brand-gold" /> Edit
                             </button>
+
+                            <button
+                              onClick={() => navigateTo('product', p.id)}
+                              className="p-2 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white rounded-xl border border-stone-800 transition-colors"
+                              title="Preview on Storefront"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+
                             <button
                               onClick={() => {
                                 if (confirm(`Are you sure you want to delete "${p.title}"?`)) {
                                   deleteProduct(p.id);
                                 }
                               }}
-                              className="p-2 bg-rose-950 hover:bg-rose-900 text-rose-300 hover:text-white rounded-lg transition-colors"
+                              className="p-2 bg-rose-950/80 hover:bg-rose-900 text-rose-400 hover:text-rose-200 rounded-xl border border-rose-900 transition-colors"
                               title="Delete Product"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
-                          </td>
-                        </tr>
-                      ))}
+                          </div>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+              ) : (
+
+                /* LAYOUT 2: STRUCTURED DATA TABLE VIEW */
+                <div className="bg-stone-950 border border-stone-800 rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs text-stone-300 min-w-[750px]">
+                    <thead className="bg-stone-900 text-stone-400 uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="p-4">Product & Media</th>
+                        <th className="p-4">Category</th>
+                        <th className="p-4">SKU</th>
+                        <th className="p-4">Price (₹)</th>
+                        <th className="p-4">Tax Rate</th>
+                        <th className="p-4">Inventory Status</th>
+                        <th className="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-800">
+                      {filteredProducts.map((p) => {
+                        const isOutOfStock = Number(p.price) <= 0 || Number(p.stock) <= 0;
+                        const isLowStock = !isOutOfStock && Number(p.stock) <= 5;
+                        const videoCount = Array.isArray(p.videos) ? p.videos.length : 0;
+                        const photoCount = Array.isArray(p.images) ? p.images.length : 0;
+
+                        return (
+                          <tr key={p.id || p.sku || Math.random()} className="hover:bg-stone-900/50 transition-colors group">
+                            <td className="p-4 flex items-center gap-3">
+                              <img
+                                src={(Array.isArray(p.images) && p.images[0]) || '/logo.png'}
+                                alt={p.title || 'Product'}
+                                className="w-12 h-12 object-cover rounded-xl border border-stone-800 flex-shrink-0"
+                              />
+                              <div>
+                                <span className="font-semibold text-white block group-hover:text-brand-rose transition-colors">{p.title || 'Untitled Product'}</span>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[10px] text-brand-gold">{p.stoneType || 'CZ Crystals'}</span>
+                                  <span className="text-[9px] text-stone-500">• {photoCount} Photos</span>
+                                  {videoCount > 0 && (
+                                    <span className="text-[9px] font-bold bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded">
+                                      🎬 {videoCount} Video
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4 font-medium text-stone-300">{p.category || 'Jewelry'}</td>
+                            <td className="p-4 font-mono text-stone-400 text-[11px]">{p.sku || 'N/A'}</td>
+                            <td className="p-4 font-bold text-white">
+                              {isOutOfStock ? (
+                                <span className="text-rose-500 text-xs">Unpriced</span>
+                              ) : (
+                                formatPrice(p.price)
+                              )}
+                            </td>
+                            <td className="p-4 text-stone-400">{p.taxPercent || 18}% GST</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] inline-block ${
+                                isOutOfStock
+                                  ? 'bg-rose-950 text-rose-400 border border-rose-800'
+                                  : isLowStock
+                                  ? 'bg-amber-950 text-amber-400 border border-amber-800'
+                                  : 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                              }`}>
+                                {isOutOfStock ? 'OUT OF STOCK' : isLowStock ? `LOW (${p.stock})` : `${p.stock} units`}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right space-x-2">
+                              <button
+                                onClick={() => handleOpenEditModal(p)}
+                                className="p-2 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white rounded-lg border border-stone-800 transition-colors"
+                                title="Edit Product, Videos & Custom Specs"
+                              >
+                                <Edit className="w-4 h-4 text-brand-gold" />
+                              </button>
+                              <button
+                                onClick={() => navigateTo('product', p.id)}
+                                className="p-2 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white rounded-lg border border-stone-800 transition-colors"
+                                title="Preview on Storefront"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${p.title}"?`)) {
+                                    deleteProduct(p.id);
+                                  }
+                                }}
+                                className="p-2 bg-rose-950 hover:bg-rose-900 text-rose-300 hover:text-white rounded-lg border border-rose-900 transition-colors"
+                                title="Delete Product"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
+
               )}
 
             </div>
