@@ -270,9 +270,9 @@ export default function CheckoutView() {
 
       const logisticsInfo = {
         shippingPincode: formData.zip,
-        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Air Express',
-        awbCode: `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
-        trackingUrl: `https://shiprocket.co/tracking/${formData.zip}`
+        shippingCourier: shippingRateDetails?.courierName || 'Shiprocket Standard India Courier',
+        awbCode: null,
+        trackingUrl: null
       };
 
       if (formData.paymentMethod === 'cod') {

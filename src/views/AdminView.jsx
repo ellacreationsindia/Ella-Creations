@@ -607,23 +607,25 @@ export default function AdminView() {
 
   // Shiprocket Order Dispatch Handler
   const handleOpenDispatchModal = (order) => {
-    const defaultAwb = order.awb_code || `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`;
+    const defaultAwb = order.awb_code && !order.awb_code.startsWith('AWB-') ? order.awb_code : '';
     setDispatchOrder(order);
     setDispatchForm({
       courierName: order.shipping_courier || 'Shiprocket Air Express (Bluedart)',
       awbCode: defaultAwb,
-      trackingUrl: `https://shiprocket.co/tracking/${defaultAwb}`
+      trackingUrl: defaultAwb ? `https://shiprocket.co/tracking/${defaultAwb}` : ''
     });
   };
 
   const handleSaveDispatch = async (e) => {
     e.preventDefault();
     if (!dispatchOrder) return;
+    const cleanAwb = (dispatchForm.awbCode || '').trim();
+    const finalUrl = cleanAwb ? `https://shiprocket.co/tracking/${cleanAwb}` : null;
     await updateOrderShipment(
       dispatchOrder.id,
       dispatchForm.courierName,
-      dispatchForm.awbCode,
-      dispatchForm.trackingUrl
+      cleanAwb || null,
+      finalUrl
     );
     setDispatchOrder(null);
   };

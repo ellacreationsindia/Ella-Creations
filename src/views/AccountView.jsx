@@ -391,21 +391,24 @@ export default function AccountView() {
                         </div>
 
                         {/* AWB & Live Details */}
-                        {order.awb_code && (
-                          <div className="bg-white p-3 rounded-xl border border-stone-200 flex flex-wrap items-center justify-between text-xs gap-2">
-                            <span className="text-stone-600 font-medium">
-                              AWB Tracking Code: <strong className="font-mono text-stone-900">{order.awb_code}</strong>
+                        {order.awb_code && order.tracking_url ? (
+                          <div className="bg-white p-3 rounded-xl border border-stone-200 flex flex-wrap items-center justify-between text-xs gap-2 shadow-sm">
+                            <span className="text-stone-700 font-medium">
+                              Courier AWB Tracking Number: <strong className="font-mono text-stone-900 bg-stone-100 px-2 py-0.5 rounded border border-stone-200">{order.awb_code}</strong>
                             </span>
-                            {order.tracking_url && (
-                              <a 
-                                href={order.tracking_url} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="text-brand-rose hover:underline font-bold text-[11px] flex items-center gap-1"
-                              >
-                                View Shiprocket Live Updates <ExternalLink className="w-3 h-3" />
-                              </a>
-                            )}
+                            <a 
+                              href={order.tracking_url} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 shadow-soft-rose"
+                            >
+                              <Truck className="w-3.5 h-3.5" /> Track Live on Shiprocket <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="bg-amber-50/80 p-3 rounded-xl border border-amber-200/80 text-xs text-amber-900 flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <span>Your jewelry order is being prepared & packed. Live AWB courier tracking link will activate automatically upon dispatch.</span>
                           </div>
                         )}
                       </div>
