@@ -237,7 +237,7 @@ export default function AdminView() {
     taxPercent: '18',
     stock: '',
     sku: '',
-    stoneType: 'Cubic Zirconia (CZ)',
+    stoneType: '',
     description: '',
     occasionTagsStr: '',
     images: [],
@@ -638,15 +638,12 @@ export default function AdminView() {
       taxPercent: '18',
       stock: '10',
       sku: `EC-${Math.floor(1000 + Math.random() * 9000)}`,
-      stoneType: 'Cubic Zirconia (CZ)',
+      stoneType: '',
       description: '',
       occasionTagsStr: '',
       images: [],
       videos: [],
-      variants: [
-        { id: `v-1`, name: 'Rose Gold', sku: `EC-VAR-1`, price: 4999, stock: 10, swatchColor: '#B76E79' },
-        { id: `v-2`, name: 'Yellow Gold', sku: `EC-VAR-2`, price: 4999, stock: 10, swatchColor: '#D4AF37' }
-      ],
+      variants: [],
       customSections: [
         {
           title: 'Specifications & Materials',
@@ -670,12 +667,12 @@ export default function AdminView() {
       taxPercent: (p.taxPercent || 18).toString(),
       stock: p.stock ? p.stock.toString() : '0',
       sku: p.sku || '',
-      stoneType: p.stoneType || 'Cubic Zirconia (CZ)',
+      stoneType: p.stoneType || '',
       description: p.description || '',
       occasionTagsStr: (p.occasionTags || []).join(', '),
       images: [...(p.images || [])],
       videos: [...(p.videos || [])],
-      variants: p.variants || (p.finishOptions ? p.finishOptions.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
+      variants: Array.isArray(p.variants) ? [...p.variants] : (p.finishOptions ? p.finishOptions.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
       customSections: p.customSections || p.customSpecs || []
     });
     setProductModalOpen(true);
@@ -683,7 +680,14 @@ export default function AdminView() {
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
-    if (!productForm.title || productForm.images.length === 0) return;
+    if (!productForm.title) {
+      showToast('Please enter a product title.', 'error');
+      return;
+    }
+    if (!productForm.images || productForm.images.length === 0) {
+      showToast('Please upload at least one image before saving.', 'error');
+      return;
+    }
     if (isPublishing) return;
 
     setIsPublishing(true);
@@ -697,16 +701,16 @@ export default function AdminView() {
         taxPercent: parseFloat(productForm.taxPercent || 18),
         stock: parseInt(productForm.stock, 10) || 0,
         sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
-        stoneType: productForm.stoneType,
-        description: productForm.description,
-        occasionTags: productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean),
-        images: productForm.images,
-        videos: productForm.videos,
-        variants: productForm.variants,
-        customSections: productForm.customSections,
+        stoneType: productForm.stoneType || '',
+        description: productForm.description || '',
+        occasionTags: productForm.occasionTagsStr ? productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean) : [],
+        images: productForm.images || [],
+        videos: productForm.videos || [],
+        variants: Array.isArray(productForm.variants) ? productForm.variants : [],
+        customSections: Array.isArray(productForm.customSections) ? productForm.customSections : [],
         details: [
-          "Handcrafted Kundan glass crystals",
-          "Includes protective gift box"
+          "Handcrafted luxury design",
+          "Includes protective gift packaging"
         ]
       };
 
@@ -719,6 +723,7 @@ export default function AdminView() {
       setProductModalOpen(false);
     } catch (err) {
       console.error('Error publishing product:', err);
+      showToast('Failed saving product: ' + (err.message || 'Unknown error'), 'error');
     } finally {
       setIsPublishing(false);
     }
@@ -2108,11 +2113,12 @@ export default function AdminView() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-stone-300 mb-1">Gemstone / Crystal Type</label>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    Gemstone / Crystal Type <span className="text-stone-500 font-normal">(Optional - Leave blank if none)</span>
+                  </label>
                   <input
                     type="text"
-                    required
-                    placeholder="e.g. Hand-cut Polki Kundan Glass & AAA+ CZ"
+                    placeholder="e.g. Hand-cut Polki Kundan Glass & AAA+ CZ (Optional)"
                     value={productForm.stoneType}
                     onChange={(e) => setProductForm({ ...productForm, stoneType: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"

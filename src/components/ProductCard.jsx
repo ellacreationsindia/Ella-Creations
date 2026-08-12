@@ -125,7 +125,7 @@ export default function ProductCard({ product }) {
           {/* Category & Stone */}
           <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium mb-1">
             <span className="uppercase tracking-wider text-brand-gold font-semibold">{product.category}</span>
-            <span>{product.stoneType}</span>
+            {product.stoneType ? <span>{product.stoneType}</span> : null}
           </div>
 
           {/* Title */}

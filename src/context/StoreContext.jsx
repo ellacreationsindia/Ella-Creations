@@ -220,7 +220,7 @@ export const StoreProvider = ({ children }) => {
             : (Array.isArray(p.finish_options)
                 ? p.finish_options.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` }))
                 : []),
-          stoneType: p.stone_type || 'Cubic Zirconia (CZ)',
+          stoneType: p.stone_type || '',
           images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []),
           videos: Array.isArray(p.videos) ? p.videos : [],
           description: p.description || '',

@@ -67,7 +67,7 @@ export default function ProductQuickView() {
           <div>
             <div className="flex items-center justify-between text-xs text-brand-gold font-semibold uppercase tracking-wider mb-1">
               <span>{quickViewProduct.category}</span>
-              <span>{quickViewProduct.stoneType}</span>
+              {quickViewProduct.stoneType ? <span>{quickViewProduct.stoneType}</span> : null}
             </div>
 
             <h2 className="font-serif text-2xl font-bold text-stone-900">{quickViewProduct.title}</h2>
