@@ -149,7 +149,7 @@ export default function CheckoutModal() {
         }
 
         const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_EllaCreationsDemoKey',
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TOxtdoQzcxKY7x',
           amount: Math.round(grandTotal * 100),
           currency: 'INR',
           name: 'Ella Creations India',
