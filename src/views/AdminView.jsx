@@ -661,18 +661,22 @@ export default function AdminView() {
 
   const handleOpenEditModal = (p) => {
     setEditingProduct(p);
+    const existingImages = Array.isArray(p.images) && p.images.length > 0
+      ? [...p.images]
+      : (p.image ? [p.image] : (p.coverImage ? [p.coverImage] : []));
+
     setProductForm({
       title: p.title || '',
       category: p.category || 'Necklaces',
-      price: p.price ? p.price.toString() : '0',
+      price: p.price !== undefined && p.price !== null ? p.price.toString() : '0',
       comparePrice: p.comparePrice ? p.comparePrice.toString() : '',
       taxPercent: (p.taxPercent || 18).toString(),
-      stock: p.stock ? p.stock.toString() : '0',
+      stock: p.stock !== undefined && p.stock !== null ? p.stock.toString() : '10',
       sku: p.sku || '',
       stoneType: p.stoneType || '',
       description: p.description || '',
       occasionTagsStr: (p.occasionTags || []).join(', '),
-      images: [...(p.images || [])],
+      images: existingImages,
       videos: [...(p.videos || [])],
       variants: Array.isArray(p.variants) ? [...p.variants] : (p.finishOptions ? p.finishOptions.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
       customSections: p.customSections || p.customSpecs || []
@@ -681,13 +685,9 @@ export default function AdminView() {
   };
 
   const handleSaveProduct = async (e) => {
-    e.preventDefault();
-    if (!productForm.title) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!productForm.title || !productForm.title.trim()) {
       showToast('Please enter a product title.', 'error');
-      return;
-    }
-    if (!productForm.images || productForm.images.length === 0) {
-      showToast('Please upload at least one image before saving.', 'error');
       return;
     }
     if (isPublishing) return;
@@ -695,18 +695,27 @@ export default function AdminView() {
     setIsPublishing(true);
 
     try {
+      let finalImages = [...(productForm.images || [])];
+      if (finalImages.length === 0 && editingProduct) {
+        if (editingProduct.image) finalImages.push(editingProduct.image);
+        if (editingProduct.coverImage) finalImages.push(editingProduct.coverImage);
+      }
+      if (finalImages.length === 0) {
+        finalImages.push('/logo.png');
+      }
+
       const payload = {
-        title: productForm.title,
-        category: productForm.category,
+        title: productForm.title.trim(),
+        category: productForm.category || 'Necklaces',
         price: parseFloat(productForm.price || 0),
         comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
         taxPercent: parseFloat(productForm.taxPercent || 18),
-        stock: parseInt(productForm.stock, 10) || 0,
+        stock: parseInt(productForm.stock, 10) >= 0 ? parseInt(productForm.stock, 10) : 10,
         sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
         stoneType: productForm.stoneType || '',
         description: productForm.description || '',
         occasionTags: productForm.occasionTagsStr ? productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean) : [],
-        images: productForm.images || [],
+        images: finalImages,
         videos: productForm.videos || [],
         variants: Array.isArray(productForm.variants) ? productForm.variants : [],
         customSections: Array.isArray(productForm.customSections) ? productForm.customSections : [],
