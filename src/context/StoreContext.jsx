@@ -179,35 +179,39 @@ export const StoreProvider = ({ children }) => {
         console.warn('Supabase DB products fetch notice:', error.message);
         return;
       }
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         const mapped = data.map((p) => ({
           id: p.id,
-          title: p.title,
-          category: p.category,
+          title: p.title || 'Untitled Product',
+          category: p.category || 'Jewelry',
           price: Number(p.price || 0),
           comparePrice: p.compare_price ? Number(p.compare_price) : null,
           taxPercent: Number(p.tax_percent || 18),
           rating: Number(p.rating || 5.0),
           reviewsCount: p.reviews_count || 0,
-          stock: p.price <= 0 ? 0 : (p.stock ?? 0),
-          sku: p.sku,
-          isFeatured: p.is_featured,
-          isNew: p.is_new,
-          variants: p.variants || (p.finish_options ? p.finish_options.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
+          stock: p.price <= 0 ? 0 : Number(p.stock ?? 0),
+          sku: p.sku || `EC-${p.id}`,
+          isFeatured: Boolean(p.is_featured),
+          isNew: Boolean(p.is_new),
+          variants: Array.isArray(p.variants)
+            ? p.variants
+            : (Array.isArray(p.finish_options)
+                ? p.finish_options.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` }))
+                : []),
           stoneType: p.stone_type || 'Cubic Zirconia (CZ)',
-          images: p.images || [],
-          videos: p.videos || [],
-          description: p.description,
-          details: p.details || [],
-          care: p.care,
-          weightGrams: p.weight_grams,
-          dimensions: p.dimensions,
-          metalPurity: p.metal_purity,
-          gemstoneClarity: p.gemstone_clarity,
-          platingThickness: p.plating_thickness,
-          occasionTags: p.occasion_tags || [],
-          warrantyInfo: p.warranty_info,
-          customSections: p.custom_sections || p.custom_specs || []
+          images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []),
+          videos: Array.isArray(p.videos) ? p.videos : [],
+          description: p.description || '',
+          details: Array.isArray(p.details) ? p.details : [],
+          care: p.care || '',
+          weightGrams: p.weight_grams || '',
+          dimensions: p.dimensions || '',
+          metalPurity: p.metal_purity || '',
+          gemstoneClarity: p.gemstone_clarity || '',
+          platingThickness: p.plating_thickness || '',
+          occasionTags: Array.isArray(p.occasion_tags) ? p.occasion_tags : [],
+          warrantyInfo: p.warranty_info || '',
+          customSections: Array.isArray(p.custom_sections) ? p.custom_sections : (Array.isArray(p.custom_specs) ? p.custom_specs : [])
         }));
         setProducts(mapped);
         if (mapped.length > 0 && !selectedProductId) {
@@ -223,8 +227,28 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
       if (error) throw error;
-      if (data) {
-        setOrders(data);
+      if (data && Array.isArray(data)) {
+        const mappedOrders = data.map(o => {
+          let customerObj = o.customer;
+          if (typeof customerObj === 'string') {
+            try { customerObj = JSON.parse(customerObj); } catch(e) { customerObj = { name: o.customer }; }
+          }
+          let itemsArr = o.items;
+          if (typeof itemsArr === 'string') {
+            try { const p = JSON.parse(itemsArr); itemsArr = Array.isArray(p) ? p : []; } catch(e) { itemsArr = []; }
+          }
+          return {
+            ...o,
+            id: o.id,
+            total: Number(o.total || 0),
+            status: o.status || 'Processing',
+            customer: customerObj || {},
+            items: Array.isArray(itemsArr) ? itemsArr : [],
+            payment_method: o.payment_method || o.paymentMethod || 'Prepaid',
+            created_at: o.created_at || o.date || new Date().toISOString()
+          };
+        });
+        setOrders(mappedOrders);
       }
     } catch (err) {
       console.warn('Supabase DB orders fetch notice:', err.message);
@@ -235,17 +259,17 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
       if (error) throw error;
-      if (data) {
+      if (data && Array.isArray(data)) {
         const mapped = data.map((r) => ({
           id: r.id,
           productId: r.product_id,
-          author: r.author,
-          rating: r.rating,
-          title: r.title,
-          comment: r.comment,
-          photo: r.photo,
-          date: r.date,
-          verified: r.verified
+          author: r.author || 'Customer',
+          rating: Number(r.rating || 5),
+          title: r.title || '',
+          comment: r.comment || '',
+          photo: r.photo || null,
+          date: r.date || r.created_at || new Date().toISOString(),
+          verified: r.verified !== false
         }));
         setReviews(mapped);
       }
@@ -261,14 +285,14 @@ export const StoreProvider = ({ children }) => {
         console.warn('Supabase DB coupons fetch notice:', error.message);
         return;
       }
-      if (data) {
+      if (data && Array.isArray(data)) {
         const mapped = data.map(c => ({
-          code: c.code,
-          discountPercent: c.discount_percent,
+          code: c.code || '',
+          discountPercent: Number(c.discount_percent || 0),
           minSpend: Number(c.min_spend || 0),
-          description: c.description,
+          description: c.description || '',
           active: c.active !== false
-        }));
+        })).filter(c => Boolean(c.code));
         setCoupons(mapped);
       }
     } catch (err) {
@@ -280,13 +304,13 @@ export const StoreProvider = ({ children }) => {
     try {
       const { data, error } = await supabase.from('newsletter_subscribers').select('*').order('created_at', { ascending: false });
       if (error) return;
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         const mapped = data.map(s => ({
           id: s.id,
-          email: s.email,
+          email: s.email || '',
           source: s.source || 'VIP Sparkle Club',
-          createdAt: s.created_at
-        }));
+          createdAt: s.created_at || new Date().toISOString()
+        })).filter(s => Boolean(s.email));
         setSubscribers(mapped);
       }
     } catch (err) {

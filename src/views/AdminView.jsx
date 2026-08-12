@@ -250,14 +250,17 @@ export default function AdminView() {
   }
 
   // Calculate REAL Legitimate Telemetry from database ONLY
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const totalOrdersCount = orders.length;
+  const totalRevenue = (orders || []).reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
+  const totalOrdersCount = (orders || []).length;
   const avgOrderValue = totalOrdersCount > 0 ? totalRevenue / totalOrdersCount : 0;
 
   // Build Real Sales Chart from DB Orders
-  const realSalesByDay = orders.reduce((acc, order) => {
-    const day = new Date(order.date || order.created_at).toLocaleDateString('en-US', { weekday: 'short' });
-    acc[day] = (acc[day] || 0) + (order.total || 0);
+  const realSalesByDay = (orders || []).reduce((acc, order) => {
+    if (!order) return acc;
+    const dateVal = order.date || order.created_at;
+    const dateObj = dateVal ? new Date(dateVal) : null;
+    const day = (dateObj && !isNaN(dateObj.getTime())) ? dateObj.toLocaleDateString('en-US', { weekday: 'short' }) : 'Mon';
+    acc[day] = (acc[day] || 0) + (Number(order.total) || 0);
     return acc;
   }, {});
 
@@ -266,7 +269,7 @@ export default function AdminView() {
     sales: realSalesByDay[day] || 0
   }));
 
-  const lowStockProducts = products.filter((p) => p.stock <= 5);
+  const lowStockProducts = (products || []).filter((p) => p && Number(p.stock) <= 5);
 
   // Handle Photo & Video Uploads
   const handleLocalImageUpload = async (e) => {
@@ -606,15 +609,19 @@ export default function AdminView() {
   };
 
   // Filtered lists
-  const filteredProducts = products.filter(p => 
-    p.title.toLowerCase().includes(productSearch.toLowerCase()) ||
-    p.category.toLowerCase().includes(productSearch.toLowerCase()) ||
-    p.sku.toLowerCase().includes(productSearch.toLowerCase())
+  const filteredProducts = (products || []).filter(p => 
+    p && (
+      (p.title || '').toLowerCase().includes((productSearch || '').toLowerCase()) ||
+      (p.category || '').toLowerCase().includes((productSearch || '').toLowerCase()) ||
+      (p.sku || '').toLowerCase().includes((productSearch || '').toLowerCase())
+    )
   );
 
-  const filteredOrders = orderStatusFilter === 'All'
-    ? orders
-    : orders.filter(o => o.status.toLowerCase() === orderStatusFilter.toLowerCase());
+  const filteredOrders = (orders || []).filter(o => {
+    if (!o) return false;
+    if (orderStatusFilter === 'All') return true;
+    return (o.status || '').toLowerCase() === (orderStatusFilter || '').toLowerCase();
+  });
 
   return (
     <div className="min-h-screen bg-stone-900 text-stone-100 flex flex-col font-sans">
@@ -847,28 +854,28 @@ export default function AdminView() {
                     </thead>
                     <tbody className="divide-y divide-stone-800">
                       {filteredProducts.map((p) => (
-                        <tr key={p.id} className="hover:bg-stone-900/50 transition-colors">
+                        <tr key={p.id || p.sku || Math.random()} className="hover:bg-stone-900/50 transition-colors">
                           <td className="p-4 flex items-center gap-3">
-                            <img src={p.images[0] || '/logo.png'} alt={p.title} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
+                            <img src={(p.images && p.images[0]) || '/logo.png'} alt={p.title || 'Product'} className="w-12 h-12 object-cover rounded-lg border border-stone-700 flex-shrink-0" />
                             <div>
-                              <span className="font-semibold text-white block">{p.title}</span>
-                              <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType}</span>
-                              {p.videos && p.videos.length > 0 && (
+                              <span className="font-semibold text-white block">{p.title || 'Untitled Product'}</span>
+                              <span className="text-[10px] text-brand-gold">{p.metalPurity || p.stoneType || 'Cubic Zirconia (CZ)'}</span>
+                              {p.videos && Array.isArray(p.videos) && p.videos.length > 0 && (
                                 <span className="text-[9px] font-bold bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded ml-1">
                                   🎬 Has Video
                                 </span>
                               )}
                             </div>
                           </td>
-                          <td className="p-4 font-medium">{p.category}</td>
-                          <td className="p-4 font-mono text-stone-400">{p.sku}</td>
-                          <td className="p-4 font-bold text-white">{p.price <= 0 ? <span className="text-rose-500">Unpriced (Out of Stock)</span> : formatPrice(p.price)}</td>
+                          <td className="p-4 font-medium">{p.category || 'Jewelry'}</td>
+                          <td className="p-4 font-mono text-stone-400">{p.sku || 'N/A'}</td>
+                          <td className="p-4 font-bold text-white">{Number(p.price) <= 0 ? <span className="text-rose-500">Unpriced (Out of Stock)</span> : formatPrice(p.price)}</td>
                           <td className="p-4 text-stone-400">{p.taxPercent || 18}% GST</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                              p.price <= 0 || p.stock <= 0 ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400'
+                              Number(p.price) <= 0 || Number(p.stock) <= 0 ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400'
                             }`}>
-                              {p.price <= 0 || p.stock <= 0 ? 'OUT OF STOCK' : `${p.stock} units`}
+                              {Number(p.price) <= 0 || Number(p.stock) <= 0 ? 'OUT OF STOCK' : `${p.stock} units`}
                             </span>
                           </td>
                           <td className="p-4 text-right space-x-2">
@@ -948,18 +955,22 @@ export default function AdminView() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-800">
-                      {filteredOrders.map((o) => (
+                      {filteredOrders.map((o) => {
+                        const itemCount = Array.isArray(o.items)
+                          ? o.items.length
+                          : (typeof o.items === 'string' ? (() => { try { const p = JSON.parse(o.items); return Array.isArray(p) ? p.length : 0; } catch(e) { return 0; } })() : 0);
+                        return (
                         <tr key={o.id} className="hover:bg-stone-900/50 transition-colors">
                           <td className="p-4 font-bold text-white font-mono">#{o.id}</td>
                           <td className="p-4">
-                            <span className="font-semibold text-white block">{o.customer?.name}</span>
-                            <span className="text-[10px] text-stone-400 block">{o.customer?.email}</span>
+                            <span className="font-semibold text-white block">{o.customer?.name || 'Customer'}</span>
+                            <span className="text-[10px] text-stone-400 block">{o.customer?.email || 'No email'}</span>
                             <span className="text-[10px] text-stone-500 font-mono">PIN: {o.shipping_pincode || o.customer?.zip || 'N/A'}</span>
                           </td>
-                          <td className="p-4">{o.items.length} item(s)</td>
+                          <td className="p-4">{itemCount} item(s)</td>
                           <td className="p-4 font-bold text-emerald-400">{formatPrice(o.total)}</td>
                           <td className="p-4">
-                            <span className="text-stone-300 font-semibold block">{o.payment_method || o.paymentMethod}</span>
+                            <span className="text-stone-300 font-semibold block">{o.payment_method || o.paymentMethod || 'Prepaid'}</span>
                             {o.payment_id && <span className="text-[9px] text-stone-500 font-mono block">ID: {o.payment_id}</span>}
                           </td>
                           <td className="p-4">
@@ -981,7 +992,7 @@ export default function AdminView() {
                               o.status === 'Shipped' ? 'bg-blue-950 text-blue-400 border border-blue-800' :
                               'bg-amber-950 text-amber-400 border border-amber-800'
                             }`}>
-                              {o.status}
+                              {o.status || 'Processing'}
                             </span>
                           </td>
                           <td className="p-4 text-right space-x-2">
@@ -993,7 +1004,7 @@ export default function AdminView() {
                               <Truck className="w-3 h-3" /> Shiprocket AWB
                             </button>
                             <select
-                              value={o.status}
+                              value={o.status || 'Processing'}
                               onChange={(e) => updateOrderStatus(o.id, e.target.value)}
                               className="bg-stone-900 text-white text-xs px-2 py-1 rounded-lg border border-stone-700 outline-none focus:border-brand-rose"
                             >
@@ -1014,7 +1025,8 @@ export default function AdminView() {
                             </button>
                           </td>
                         </tr>
-                      ))}
+                      );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -1250,8 +1262,8 @@ export default function AdminView() {
                         </td>
                       </tr>
                     ) : (
-                      subscribers
-                        .filter(s => s.email.toLowerCase().includes(subscriberSearch.toLowerCase()))
+                      (subscribers || [])
+                        .filter(s => s && (s.email || '').toLowerCase().includes((subscriberSearch || '').toLowerCase()))
                         .map((s) => (
                           <tr key={s.id || s.email} className="hover:bg-stone-900/50 transition-colors">
                             <td className="p-4 font-mono font-bold text-white">{s.email}</td>
@@ -1260,7 +1272,7 @@ export default function AdminView() {
                                 {s.source || 'VIP Sparkle Club'}
                               </span>
                             </td>
-                            <td className="p-4 text-stone-400">{new Date(s.createdAt).toLocaleDateString()}</td>
+                            <td className="p-4 text-stone-400">{s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'N/A'}</td>
                             <td className="p-4 text-right">
                               <button
                                 onClick={() => {
