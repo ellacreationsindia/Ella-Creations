@@ -513,7 +513,7 @@ export default function CheckoutView() {
                               {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
                             </p>
                             <p className="text-[11px] text-stone-500 font-medium">
-                              {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Velvet gift box included'}
+                              {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Protective gift packaging included'}
                             </p>
                           </div>
                         </div>
@@ -687,10 +687,10 @@ export default function CheckoutView() {
 
             <div className="text-[11px] text-stone-500 space-y-1 pt-1">
               <p className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" /> Includes 100% Anti-Tarnish Warranty
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" /> Handcrafted Quality Assured
               </p>
               <p className="flex items-center gap-1.5">
-                <Truck className="w-3.5 h-3.5 text-brand-rose" /> Signature Velvet Box Included
+                <Truck className="w-3.5 h-3.5 text-brand-rose" /> Signature Protective Packaging Included
               </p>
             </div>
           </div>

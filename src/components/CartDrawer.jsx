@@ -65,7 +65,7 @@ export default function CartDrawer() {
           {/* Insured Delivery Banner */}
           <div className="px-6 py-2.5 bg-brand-sand/50 border-b border-brand-gold/20 flex items-center justify-between text-xs font-semibold text-stone-700">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> Anti-tarnish velvet gift box & insured shipping
+              <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> Insured courier packaging & fast delivery
             </span>
           </div>
 

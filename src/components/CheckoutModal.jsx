@@ -398,7 +398,7 @@ export default function CheckoutModal() {
                             {shippingRateDetails?.options?.standard?.courier || 'Standard Surface Delivery'}
                           </p>
                           <p className="text-[11px] text-stone-500 font-medium">
-                            {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Includes anti-tarnish velvet gift box'}
+                            {shippingRateDetails?.options?.standard ? `Est. Delivery: ${shippingRateDetails.options.standard.etd} (${shippingRateDetails.options.standard.days})` : 'Protective gift packaging included'}
                           </p>
                         </div>
                       </div>

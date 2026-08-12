@@ -266,9 +266,9 @@ export default function HomeView() {
               <div className="w-10 h-10 rounded-xl bg-brand-rose/10 text-brand-rose flex items-center justify-center">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-stone-900 text-base">100% Anti-Tarnish</h3>
+              <h3 className="font-serif font-bold text-stone-900 text-base">Handcrafted Quality</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Coated with 2.5 micron protective lacquer and 22k gold electroplating to prevent dulling and oxidation.
+                Handcrafted with 22k gold electroplated finish and premium grade Kundan & CZ stones.
               </p>
             </div>
 
@@ -276,9 +276,9 @@ export default function HomeView() {
               <div className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center">
                 <Gift className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-stone-900 text-base">Velvet Box Packaging</h3>
+              <h3 className="font-serif font-bold text-stone-900 text-base">Protective Packaging</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Every purchase arrives in our signature velvet luxury box, perfect for unboxing memories and gifting.
+                Every purchase arrives carefully wrapped in signature protective gift packaging.
               </p>
             </div>
 
@@ -286,9 +286,9 @@ export default function HomeView() {
               <div className="w-10 h-10 rounded-xl bg-brand-rose/10 text-brand-rose flex items-center justify-center">
                 <Truck className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-stone-900 text-base">Insured Express Shipping</h3>
+              <h3 className="font-serif font-bold text-stone-900 text-base">Insured Courier Shipping</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Free priority dispatch across all Indian pincodes on orders above {formatPrice(2500)}.
+                Fast insured courier delivery across all Indian pincodes.
               </p>
             </div>
 
@@ -296,9 +296,9 @@ export default function HomeView() {
               <div className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center">
                 <RefreshCw className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-stone-900 text-base">7-Day Easy Guarantee</h3>
+              <h3 className="font-serif font-bold text-stone-900 text-base">Dedicated Concierge</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Easy hassle-free replacements and 1-year polish warranty on all handcrafted pieces.
+                Dedicated assistance for styling guidance, sizing, and order tracking.
               </p>
             </div>
           </div>

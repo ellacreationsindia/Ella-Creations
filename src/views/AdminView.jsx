@@ -694,7 +694,7 @@ export default function AdminView() {
         customSections: productForm.customSections,
         details: [
           "Handcrafted Kundan glass crystals",
-          "Includes luxury velvet gift box"
+          "Includes protective gift box"
         ]
       };
 

@@ -36,7 +36,7 @@ export default function BrandGuidelinesView() {
         <span className="text-xs uppercase font-bold tracking-widest text-brand-rose">Our Essence</span>
         <h2 className="font-serif text-2xl font-bold text-stone-900">The Ella Creations Story</h2>
         <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-          Ella Creations was founded with a singular vision: to democratize royal Indian luxury. We blend centuries-old Kundan and Meenakari metalwork with state-of-the-art 3.5 Micron Anti-Tarnish E-Coating and AAA+ Cubic Zirconia crystals.
+          Ella Creations was founded with a singular vision: to democratize royal Indian luxury. We blend centuries-old Kundan and Meenakari metalwork with state-of-the-art 22k gold electroplated finish and AAA+ Cubic Zirconia crystals.
         </p>
         <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
           Every piece is designed for the modern woman who demands the regal grandeur of bridal heritage without the vulnerability of un-insured high-carat gold.
@@ -58,7 +58,7 @@ export default function BrandGuidelinesView() {
             </div>
             <div>
               <h4 className="font-serif font-bold text-stone-900">Royal Rose (Primary)</h4>
-              <p className="text-stone-500 text-[11px]">Symbolizes regal passion, Indian bridal velvet, and elegance.</p>
+              <p className="text-stone-500 text-[11px]">Symbolizes regal passion, Indian bridal heritage, and elegance.</p>
             </div>
           </div>
 
