@@ -13,6 +13,7 @@ export default function CartDrawer() {
     activeCoupon, 
     applyCoupon, 
     removeCoupon,
+    coupons,
     setIsCheckoutOpen,
     user,
     requireAuthForAction,
@@ -192,20 +193,28 @@ export default function CartDrawer() {
                     </button>
                   </form>
                 )}
-                <div className="flex gap-2 mt-1.5">
-                  <button 
-                    onClick={() => applyCoupon('ELLA10')}
-                    className="text-[10px] bg-brand-pink/30 text-stone-700 font-semibold px-2 py-0.5 rounded border border-brand-rose/30 hover:bg-brand-pink"
-                  >
-                    Use ELLA10 (10% OFF)
-                  </button>
-                  <button 
-                    onClick={() => applyCoupon('SPARKLE20')}
-                    className="text-[10px] bg-brand-gold/20 text-stone-800 font-semibold px-2 py-0.5 rounded border border-brand-gold/40 hover:bg-brand-gold hover:text-white"
-                  >
-                    Use SPARKLE20 (20% OFF over ₹15k)
-                  </button>
-                </div>
+                {/* Dynamically Filtered Eligible Coupons (Only rendered if coupon active AND order meets minSpend) */}
+                {coupons && coupons.length > 0 && !activeCoupon && (
+                  (() => {
+                    const eligible = coupons.filter(c => c.active !== false && (Number(c.minSpend) || 0) <= cartSubtotal);
+                    if (eligible.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {eligible.map((c) => (
+                          <button
+                            key={c.code}
+                            type="button"
+                            onClick={() => applyCoupon(c.code)}
+                            className="text-[10px] bg-brand-pink/30 text-stone-800 font-semibold px-2.5 py-1 rounded-lg border border-brand-rose/30 hover:bg-brand-rose hover:text-white transition-all flex items-center gap-1"
+                          >
+                            <Tag className="w-3 h-3 text-brand-rose" />
+                            Use {c.code} ({c.discountPercent}% OFF{c.minSpend > 0 ? ` over ${formatPrice(c.minSpend)}` : ''})
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()
+                )}
               </div>
 
               {/* Summary Breakdown */}
