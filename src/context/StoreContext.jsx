@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase } from '../lib/supabase';
+import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase, syncOrderToShiprocket } from '../lib/supabase';
 import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS } from '../data/initialData';
 
 const StoreContext = createContext();
@@ -618,6 +618,13 @@ export const StoreProvider = ({ children }) => {
       await supabase.from('orders').insert([newOrder]);
     } catch (err) {
       console.warn('Supabase DB order insert notice:', err.message);
+    }
+
+    // Sync in real-time to Shiprocket Account
+    try {
+      syncOrderToShiprocket(newOrder);
+    } catch (sErr) {
+      console.warn('Shiprocket API sync notice:', sErr.message);
     }
 
     setOrders((prev) => [newOrder, ...prev]);

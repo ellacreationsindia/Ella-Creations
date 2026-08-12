@@ -5,6 +5,117 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishabl
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Shiprocket API Credentials
+const SHIPROCKET_EMAIL = import.meta.env.VITE_SHIPROCKET_EMAIL || 'ilasehdev82@gmail.com';
+const SHIPROCKET_PASSWORD = import.meta.env.VITE_SHIPROCKET_PASSWORD || '&0u$^lQma%hTgj87osQZykVG6X0Le&*Q';
+
+let shiprocketToken = null;
+let shiprocketTokenExpiry = 0;
+
+/**
+ * Authenticates with Shiprocket API to retrieve a 10-day JWT Bearer Token
+ */
+export async function getShiprocketToken() {
+  try {
+    if (shiprocketToken && Date.now() < shiprocketTokenExpiry) {
+      return shiprocketToken;
+    }
+
+    const res = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: SHIPROCKET_EMAIL,
+        password: SHIPROCKET_PASSWORD
+      })
+    });
+
+    const data = await res.json();
+    if (data && data.token) {
+      shiprocketToken = data.token;
+      shiprocketTokenExpiry = Date.now() + 9 * 24 * 60 * 60 * 1000; // Cache for 9 days
+      return shiprocketToken;
+    } else {
+      console.warn('Shiprocket Auth Notice:', data?.message || 'Could not fetch token');
+      return null;
+    }
+  } catch (err) {
+    console.error('Shiprocket Auth Error:', err);
+    return null;
+  }
+}
+
+/**
+ * Automatically creates an order directly in Shiprocket account in real-time
+ */
+export async function syncOrderToShiprocket(order) {
+  try {
+    const token = await getShiprocketToken();
+    if (!token) {
+      console.warn('Shiprocket Token unavailable. Order saved to database.');
+      return null;
+    }
+
+    const customer = order.customer || {};
+    const items = order.items || [];
+
+    const orderItems = items.map((item) => ({
+      name: item.title || 'Jewelry Product',
+      sku: item.sku || `EC-SKU-${Math.floor(100 + Math.random() * 900)}`,
+      units: Number(item.qty) || 1,
+      selling_price: (Number(item.price) || 0).toString(),
+      discount: '0',
+      tax: '18'
+    }));
+
+    const dateFormatted = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    const payload = {
+      order_id: order.id,
+      order_date: dateFormatted,
+      pickup_location: 'Primary',
+      billing_customer_name: customer.name || 'Customer',
+      billing_last_name: '',
+      billing_address: customer.address || 'Address',
+      billing_city: customer.city || 'Mumbai',
+      billing_pincode: order.shipping_pincode || '400050',
+      billing_state: customer.state || 'Maharashtra',
+      billing_country: 'India',
+      billing_email: customer.email || 'customer@example.com',
+      billing_phone: (customer.phone || '9876543210').replace(/\D/g, '').slice(-10),
+      shipping_is_billing: true,
+      order_items: orderItems,
+      payment_method: order.payment_method?.includes('COD') ? 'COD' : 'Prepaid',
+      sub_total: Number(order.subtotal) || 0,
+      length: 15,
+      width: 12,
+      height: 8,
+      weight: 0.5
+    };
+
+    const res = await fetch('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+    if (result && result.order_id) {
+      console.log('Shiprocket Real-Time Order Created:', result.order_id, result.shipment_id);
+      return result;
+    } else {
+      console.warn('Shiprocket Order Sync Notice:', result?.message || result);
+      return null;
+    }
+  } catch (err) {
+    console.error('Error syncing order to Shiprocket:', err);
+    return null;
+  }
+}
+
 /**
  * Compresses/resizes a Data URL or image File to ensure lightweight payload (<200KB)
  */
@@ -227,7 +338,6 @@ export async function calculateShiprocketRates(destinationPincode, weightGrams =
   const isMetro = ['11', '40', '41', '56', '60', '70', '50', '38', '30'].some(prefix => cleanPincode.startsWith(prefix));
   const location = lookupIndianPincode(cleanPincode);
   
-  // Calculate delivery date estimated
   const etdDate = new Date();
   etdDate.setDate(etdDate.getDate() + (isMetro ? 2 : 4));
   const dateStr = etdDate.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
