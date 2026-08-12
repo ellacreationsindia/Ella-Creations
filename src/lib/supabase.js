@@ -7,10 +7,31 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Shiprocket API Credentials
 const SHIPROCKET_EMAIL = import.meta.env.VITE_SHIPROCKET_EMAIL || 'ilasehdev82@gmail.com';
-const SHIPROCKET_PASSWORD = import.meta.env.VITE_SHIPROCKET_PASSWORD || '&0u$^lQma%hTgj87osQZykVG6X0Le&*Q';
+const SHIPROCKET_PASSWORD = import.meta.env.VITE_SHIPROCKET_PASSWORD || '';
 
 let shiprocketToken = null;
 let shiprocketTokenExpiry = 0;
+
+/**
+ * Helper: Converts base64 Data URL to Blob without fetch()
+ */
+function dataURLtoBlob(dataurl) {
+  try {
+    const arr = dataurl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  } catch (e) {
+    console.warn('DataURL to Blob conversion error:', e);
+    return null;
+  }
+}
 
 /**
  * Authenticates with Shiprocket API to retrieve a 10-day JWT Bearer Token
@@ -182,10 +203,13 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
     let fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
 
     if (compressedDataUrl && compressedDataUrl.startsWith('data:')) {
-      const response = await fetch(compressedDataUrl);
-      const blob = await response.blob();
-      fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
-      fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
+      const blob = dataURLtoBlob(compressedDataUrl);
+      if (blob) {
+        fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
+        fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
+      } else {
+        return compressedDataUrl;
+      }
     } else if (fileOrDataUrl instanceof File) {
       fileToUpload = fileOrDataUrl;
       const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -235,12 +259,15 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
     let fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.mp4`;
 
     if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
-      const response = await fetch(fileOrDataUrl);
-      const blob = await response.blob();
-      const mimeType = blob.type || 'video/mp4';
-      const ext = mimeType.split('/')[1] || 'mp4';
-      fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
-      fileToUpload = new File([blob], fileName, { type: mimeType });
+      const blob = dataURLtoBlob(fileOrDataUrl);
+      if (blob) {
+        const mimeType = blob.type || 'video/mp4';
+        const ext = mimeType.split('/')[1] || 'mp4';
+        fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+        fileToUpload = new File([blob], fileName, { type: mimeType });
+      } else {
+        return fileOrDataUrl;
+      }
     } else if (fileOrDataUrl instanceof File) {
       fileToUpload = fileOrDataUrl;
       const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
