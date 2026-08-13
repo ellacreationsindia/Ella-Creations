@@ -690,6 +690,10 @@ export default function AdminView() {
       showToast('Please enter a product title.', 'error');
       return;
     }
+    if (productForm.price === '' || productForm.price === null || productForm.price === undefined || isNaN(parseFloat(productForm.price))) {
+      showToast('Please enter a valid selling price.', 'error');
+      return;
+    }
     if (isPublishing) return;
 
     setIsPublishing(true);
@@ -2036,7 +2040,6 @@ export default function AdminView() {
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Product Title</label>
                   <input
                     type="text"
-                    required
                     placeholder="e.g. Royal Kundan & Pearl Choker Set"
                     value={productForm.title}
                     onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
@@ -2077,7 +2080,6 @@ export default function AdminView() {
                   <input
                     type="number"
                     step="1"
-                    required
                     placeholder="12999 (Enter 0 for Out of Stock)"
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
@@ -2104,7 +2106,6 @@ export default function AdminView() {
                   <input
                     type="number"
                     step="0.5"
-                    required
                     placeholder="18"
                     value={productForm.taxPercent}
                     onChange={(e) => setProductForm({ ...productForm, taxPercent: e.target.value })}
@@ -2116,7 +2117,6 @@ export default function AdminView() {
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Inventory Units (Stock)</label>
                   <input
                     type="number"
-                    required
                     placeholder="10"
                     value={productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
@@ -2322,7 +2322,6 @@ export default function AdminView() {
                 <label className="block text-xs font-semibold text-stone-300 mb-1">Product Description</label>
                 <textarea
                   rows="3"
-                  required
                   placeholder="Describe the jewelry design, metal finish, plating, and fit..."
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
@@ -2505,8 +2504,9 @@ export default function AdminView() {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
                   disabled={isPublishing}
+                  onClick={handleSaveProduct}
                   className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   {isPublishing ? (

@@ -140,48 +140,61 @@ export async function syncOrderToShiprocket(order) {
 /**
  * Compresses/resizes a Data URL or image File to ensure lightweight payload (<200KB)
  */
-export async function compressImageDataUrl(fileOrDataUrl, maxWidth = 1200, quality = 0.82) {
-  if (!fileOrDataUrl) return '';
-  if (typeof window === 'undefined') return fileOrDataUrl;
-  if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
-    return fileOrDataUrl;
+export function compressImageDataUrl(fileOrDataUrl, maxWidth = 1200, quality = 0.82) {
+  if (typeof window === 'undefined') return Promise.resolve(fileOrDataUrl);
+  if (!fileOrDataUrl) return Promise.resolve('');
+
+  // If already a string (URL or base64 data URI), do not compress again to avoid canvas CORS / hang bugs
+  if (typeof fileOrDataUrl === 'string') {
+    return Promise.resolve(fileOrDataUrl);
   }
 
   return new Promise((resolve) => {
-    let srcUrl = '';
-    if (fileOrDataUrl instanceof File) {
-      srcUrl = URL.createObjectURL(fileOrDataUrl);
-    } else if (typeof fileOrDataUrl === 'string') {
-      srcUrl = fileOrDataUrl;
-    } else {
-      return resolve(fileOrDataUrl);
+    try {
+      let srcUrl = '';
+      if (fileOrDataUrl instanceof File || fileOrDataUrl instanceof Blob) {
+        srcUrl = URL.createObjectURL(fileOrDataUrl);
+      } else {
+        return resolve(fileOrDataUrl);
+      }
+
+      const img = new Image();
+      const timeout = setTimeout(() => {
+        if (srcUrl.startsWith('blob:')) URL.revokeObjectURL(srcUrl);
+        resolve('');
+      }, 5000);
+
+      img.onload = () => {
+        clearTimeout(timeout);
+        let width = img.width || maxWidth;
+        let height = img.height || maxWidth;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        if (srcUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(srcUrl);
+        }
+        resolve(compressed);
+      };
+
+      img.onerror = () => {
+        clearTimeout(timeout);
+        if (srcUrl.startsWith('blob:')) URL.revokeObjectURL(srcUrl);
+        resolve('');
+      };
+
+      img.src = srcUrl;
+    } catch (e) {
+      resolve('');
     }
-
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = srcUrl;
-    img.onload = () => {
-      let width = img.width;
-      let height = img.height;
-      if (width > maxWidth) {
-        height = Math.round((height * maxWidth) / width);
-        width = maxWidth;
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const compressed = canvas.toDataURL('image/jpeg', quality);
-      if (fileOrDataUrl instanceof File && srcUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(srcUrl);
-      }
-      resolve(compressed);
-    };
-    img.onerror = () => {
-      resolve(typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '');
-    };
   });
 }
 
@@ -198,30 +211,33 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
       return fileOrDataUrl;
     }
 
-    const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
-
     let fileToUpload;
     let fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
 
-    if (compressedDataUrl && compressedDataUrl.startsWith('data:')) {
-      const blob = dataURLtoBlob(compressedDataUrl);
+    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
+      const blob = dataURLtoBlob(fileOrDataUrl);
       if (blob) {
-        fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
         fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
       } else {
-        return compressedDataUrl;
+        return fileOrDataUrl;
       }
     } else if (fileOrDataUrl instanceof File) {
-      fileToUpload = fileOrDataUrl;
-      const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      fileName = `image_${Date.now()}_${cleanName}`;
+      const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
+      const blob = compressedDataUrl ? dataURLtoBlob(compressedDataUrl) : null;
+      if (blob) {
+        fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
+      } else {
+        fileToUpload = fileOrDataUrl;
+        const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        fileName = `image_${Date.now()}_${cleanName}`;
+      }
     } else {
       return fileOrDataUrl;
     }
 
     const filePath = `images/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('products')
       .upload(filePath, fileToUpload, {
         cacheControl: '3600',
@@ -230,14 +246,14 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
 
     if (error) {
       console.warn('Supabase photo storage notice (bucket "products"):', error.message);
-      return compressedDataUrl || fileOrDataUrl;
+      return fileOrDataUrl;
     }
 
     const { data: publicUrlData } = supabase.storage
       .from('products')
       .getPublicUrl(filePath);
 
-    return publicUrlData?.publicUrl || compressedDataUrl || fileOrDataUrl;
+    return publicUrlData?.publicUrl || fileOrDataUrl;
   } catch (err) {
     console.error('Error uploading photo to Supabase storage:', err);
     return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
@@ -252,7 +268,6 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    // If already a URL (starts with http, https, / or asset path), return as-is
     if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:')) {
       return fileOrDataUrl;
     }
@@ -280,7 +295,7 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
 
     const filePath = `videos/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('products')
       .upload(filePath, fileToUpload, {
         cacheControl: '3600',
@@ -299,7 +314,7 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
     return publicUrlData?.publicUrl || fileOrDataUrl;
   } catch (err) {
     console.error('Error uploading video to Supabase storage:', err);
-    return fileOrDataUrl;
+    return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
   }
 }
 
