@@ -910,7 +910,7 @@ export const StoreProvider = ({ children }) => {
         title: created.title,
         category: created.category,
         price: created.price,
-        compare_price: created.comparePrice,
+        compare_price: created.comparePrice ? Number(created.comparePrice) : null,
         tax_percent: created.taxPercent,
         rating: created.rating,
         reviews_count: created.reviewsCount,
@@ -935,19 +935,23 @@ export const StoreProvider = ({ children }) => {
         custom_sections: created.customSections
       }]);
       if (dbError) {
-        console.warn('Supabase DB product insert notice:', dbError.message);
+        console.error('Supabase DB product insert error:', dbError.message);
+        showToast(`Database Notice: ${dbError.message}`, 'error');
+        throw new Error(dbError.message);
       }
     } catch (err) {
-      console.warn('Supabase DB product insert notice:', err.message);
+      console.error('Supabase DB product insert exception:', err);
+      showToast(`Database Save Error: ${err.message || 'Failed inserting product'}`, 'error');
+      throw err;
     }
 
     setProducts((prev) => [created, ...prev]);
-    showToast(`Product "${created.title}" published & saved!`);
+    showToast(`Product "${created.title}" published & saved to database!`, 'success');
   };
 
   // Admin Update Product
   const updateProduct = async (updatedProduct) => {
-    showToast('Uploading updated images & videos to Supabase bucket "products"...', 'info');
+    showToast('Uploading images & saving to Supabase database...', 'info');
 
     const uploadedImages = await Promise.all(
       (updatedProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
@@ -967,37 +971,52 @@ export const StoreProvider = ({ children }) => {
       customSections: updatedProduct.customSections || []
     };
 
+    const dbRecord = {
+      id: String(payload.id),
+      title: payload.title,
+      category: payload.category,
+      price: payload.price,
+      compare_price: payload.comparePrice ? Number(payload.comparePrice) : null,
+      tax_percent: payload.taxPercent || 18,
+      stock: payload.stock,
+      sku: payload.sku || `EC-${payload.id}`,
+      rating: payload.rating || 5.0,
+      reviews_count: payload.reviewsCount || 0,
+      is_featured: payload.isFeatured ?? false,
+      is_new: payload.isNew ?? false,
+      variants: payload.variants,
+      stone_type: payload.stoneType || '',
+      images: payload.images,
+      videos: payload.videos,
+      description: payload.description || '',
+      details: payload.details || [],
+      care: payload.care || '',
+      weight_grams: payload.weightGrams || '',
+      dimensions: payload.dimensions || '',
+      metal_purity: payload.metalPurity || '',
+      gemstone_clarity: payload.gemstoneClarity || '',
+      plating_thickness: payload.platingThickness || '',
+      occasion_tags: payload.occasionTags || [],
+      warranty_info: payload.warrantyInfo || '',
+      custom_sections: payload.customSections || []
+    };
+
     try {
-      const { error: dbError } = await supabase.from('products').update({
-        title: payload.title,
-        category: payload.category,
-        price: payload.price,
-        compare_price: payload.comparePrice,
-        tax_percent: payload.taxPercent || 18,
-        stock: payload.stock,
-        stone_type: payload.stoneType,
-        variants: payload.variants,
-        images: payload.images,
-        videos: payload.videos,
-        description: payload.description,
-        weight_grams: payload.weightGrams,
-        dimensions: payload.dimensions,
-        metal_purity: payload.metalPurity,
-        gemstone_clarity: payload.gemstoneClarity,
-        plating_thickness: payload.platingThickness,
-        occasion_tags: payload.occasionTags,
-        warranty_info: payload.warrantyInfo,
-        custom_sections: payload.customSections
-      }).eq('id', payload.id);
+      // Upsert handles updating existing rows and inserting missing fallback rows in Supabase
+      const { error: dbError } = await supabase.from('products').upsert(dbRecord, { onConflict: 'id' });
       if (dbError) {
-        console.warn('Supabase DB product update notice:', dbError.message);
+        console.error('Supabase DB product update error:', dbError.message);
+        showToast(`Database Sync Warning: ${dbError.message}`, 'error');
+        throw new Error(dbError.message);
       }
     } catch (err) {
-      console.warn('Supabase DB product update notice:', err.message);
+      console.error('Supabase DB product update exception:', err);
+      showToast(`Database Save Error: ${err.message || 'Failed saving product'}`, 'error');
+      throw err;
     }
 
     setProducts((prev) => prev.map((p) => (String(p.id) === String(payload.id) ? payload : p)));
-    showToast(`Product "${payload.title}" updated successfully!`);
+    showToast(`Product "${payload.title}" updated & saved to database!`, 'success');
   };
 
   // Admin Delete Product
@@ -1005,13 +1024,14 @@ export const StoreProvider = ({ children }) => {
     try {
       const { error: dbError } = await supabase.from('products').delete().eq('id', productId);
       if (dbError) {
-        console.warn('Supabase DB product delete notice:', dbError.message);
+        console.error('Supabase DB product delete error:', dbError.message);
+        showToast(`Delete Notice: ${dbError.message}`, 'error');
       }
     } catch (err) {
-      console.warn('Supabase DB product delete notice:', err.message);
+      console.error('Supabase DB product delete notice:', err.message);
     }
 
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    setProducts((prev) => prev.filter((p) => String(p.id) !== String(productId)));
     showToast('Product deleted from database', 'info');
   };
 
