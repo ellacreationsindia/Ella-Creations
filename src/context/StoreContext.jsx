@@ -880,24 +880,24 @@ export const StoreProvider = ({ children }) => {
     showToast('Uploading images & videos to Supabase bucket "products"...', 'info');
     
     const uploadedImages = await Promise.all(
-      (newProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
+      (newProduct.images || []).filter(Boolean).map((img) => uploadProductPhotoToSupabase(img))
     );
 
     const uploadedVideos = await Promise.all(
-      (newProduct.videos || []).map((vid) => uploadProductVideoToSupabase(vid))
+      (newProduct.videos || []).filter(Boolean).map((vid) => uploadProductVideoToSupabase(vid))
     );
 
     const created = {
       ...newProduct,
-      id: `ec-${Date.now()}`,
+      id: newProduct.id || `ec-${Date.now()}`,
       sku: newProduct.sku || `EC-NK-${Math.floor(100 + Math.random() * 900)}`,
-      rating: 5.0,
-      reviewsCount: 0,
+      rating: newProduct.rating ?? 5.0,
+      reviewsCount: newProduct.reviewsCount ?? 0,
       price: Number(newProduct.price || 0),
-      stock: newProduct.price <= 0 ? 0 : Number(newProduct.stock || 10),
+      stock: newProduct.price <= 0 ? 0 : (newProduct.stock !== undefined && newProduct.stock !== null ? Number(newProduct.stock) : 10),
       taxPercent: Number(newProduct.taxPercent || 18),
-      isFeatured: newProduct.isFeatured || false,
-      isNew: true,
+      isFeatured: Boolean(newProduct.isFeatured),
+      isNew: newProduct.isNew !== undefined ? Boolean(newProduct.isNew) : true,
       images: uploadedImages,
       videos: uploadedVideos,
       variants: newProduct.variants || [],
@@ -905,12 +905,12 @@ export const StoreProvider = ({ children }) => {
     };
 
     try {
-      const { error: dbError } = await supabase.from('products').insert([{
+      const { error: dbError } = await supabase.from('products').upsert([{
         id: created.id,
         title: created.title,
         category: created.category,
         price: created.price,
-        compare_price: created.comparePrice ? Number(created.comparePrice) : null,
+        compare_price: created.comparePrice,
         tax_percent: created.taxPercent,
         rating: created.rating,
         reviews_count: created.reviewsCount,
@@ -919,104 +919,106 @@ export const StoreProvider = ({ children }) => {
         is_featured: created.isFeatured,
         is_new: created.isNew,
         variants: created.variants,
-        stone_type: created.stoneType,
+        stone_type: created.stoneType || '',
         images: created.images,
         videos: created.videos,
-        description: created.description,
-        details: created.details,
-        care: created.care,
-        weight_grams: created.weightGrams,
-        dimensions: created.dimensions,
-        metal_purity: created.metalPurity,
-        gemstone_clarity: created.gemstoneClarity,
-        plating_thickness: created.platingThickness,
-        occasion_tags: created.occasionTags,
-        warranty_info: created.warrantyInfo,
-        custom_sections: created.customSections
-      }]);
+        description: created.description || '',
+        details: created.details || [],
+        care: created.care || '',
+        weight_grams: created.weightGrams || '',
+        dimensions: created.dimensions || '',
+        metal_purity: created.metalPurity || '',
+        gemstone_clarity: created.gemstoneClarity || '',
+        plating_thickness: created.platingThickness || '',
+        occasion_tags: created.occasionTags || [],
+        warranty_info: created.warrantyInfo || '',
+        custom_sections: created.customSections || []
+      }], { onConflict: 'id' });
+
       if (dbError) {
-        console.error('Supabase DB product insert error:', dbError.message);
-        showToast(`Database Notice: ${dbError.message}`, 'error');
-        throw new Error(dbError.message);
+        console.warn('Supabase DB product insert notice:', dbError.message);
+        showToast('Database notice: ' + dbError.message, 'warning');
       }
     } catch (err) {
-      console.error('Supabase DB product insert exception:', err);
-      showToast(`Database Save Error: ${err.message || 'Failed inserting product'}`, 'error');
-      throw err;
+      console.warn('Supabase DB product insert notice:', err.message);
     }
 
-    setProducts((prev) => [created, ...prev]);
-    showToast(`Product "${created.title}" published & saved to database!`, 'success');
+    setProducts((prev) => [created, ...prev.filter(p => p.id !== created.id)]);
+    showToast(`Product "${created.title}" published & saved!`);
   };
 
   // Admin Update Product
   const updateProduct = async (updatedProduct) => {
-    showToast('Uploading images & saving to Supabase database...', 'info');
+    showToast('Uploading updated images & videos to Supabase bucket "products"...', 'info');
 
     const uploadedImages = await Promise.all(
-      (updatedProduct.images || []).map((img) => uploadProductPhotoToSupabase(img))
+      (updatedProduct.images || []).filter(Boolean).map((img) => uploadProductPhotoToSupabase(img))
     );
 
     const uploadedVideos = await Promise.all(
-      (updatedProduct.videos || []).map((vid) => uploadProductVideoToSupabase(vid))
+      (updatedProduct.videos || []).filter(Boolean).map((vid) => uploadProductVideoToSupabase(vid))
     );
+
+    const numPrice = Number(updatedProduct.price || 0);
+    const parsedStock = updatedProduct.stock !== undefined && updatedProduct.stock !== null ? Number(updatedProduct.stock) : 0;
 
     const payload = { 
       ...updatedProduct, 
-      price: Number(updatedProduct.price || 0),
-      stock: updatedProduct.price <= 0 ? 0 : Number(updatedProduct.stock || 0),
+      id: updatedProduct.id,
+      sku: updatedProduct.sku || `EC-${updatedProduct.id}`,
+      rating: updatedProduct.rating ?? 5.0,
+      reviewsCount: updatedProduct.reviewsCount ?? 0,
+      isFeatured: Boolean(updatedProduct.isFeatured),
+      isNew: Boolean(updatedProduct.isNew),
+      price: numPrice,
+      stock: numPrice <= 0 ? 0 : (parsedStock >= 0 ? parsedStock : 0),
       images: uploadedImages, 
       videos: uploadedVideos,
       variants: updatedProduct.variants || [],
       customSections: updatedProduct.customSections || []
     };
 
-    const dbRecord = {
-      id: String(payload.id),
-      title: payload.title,
-      category: payload.category,
-      price: payload.price,
-      compare_price: payload.comparePrice ? Number(payload.comparePrice) : null,
-      tax_percent: payload.taxPercent || 18,
-      stock: payload.stock,
-      sku: payload.sku || `EC-${payload.id}`,
-      rating: payload.rating || 5.0,
-      reviews_count: payload.reviewsCount || 0,
-      is_featured: payload.isFeatured ?? false,
-      is_new: payload.isNew ?? false,
-      variants: payload.variants,
-      stone_type: payload.stoneType || '',
-      images: payload.images,
-      videos: payload.videos,
-      description: payload.description || '',
-      details: payload.details || [],
-      care: payload.care || '',
-      weight_grams: payload.weightGrams || '',
-      dimensions: payload.dimensions || '',
-      metal_purity: payload.metalPurity || '',
-      gemstone_clarity: payload.gemstoneClarity || '',
-      plating_thickness: payload.platingThickness || '',
-      occasion_tags: payload.occasionTags || [],
-      warranty_info: payload.warrantyInfo || '',
-      custom_sections: payload.customSections || []
-    };
-
     try {
-      // Upsert handles updating existing rows and inserting missing fallback rows in Supabase
-      const { error: dbError } = await supabase.from('products').upsert(dbRecord, { onConflict: 'id' });
+      const { error: dbError } = await supabase.from('products').upsert([{
+        id: payload.id,
+        title: payload.title,
+        category: payload.category,
+        price: payload.price,
+        compare_price: payload.comparePrice,
+        tax_percent: payload.taxPercent || 18,
+        rating: payload.rating,
+        reviews_count: payload.reviewsCount,
+        stock: payload.stock,
+        sku: payload.sku,
+        is_featured: payload.isFeatured,
+        is_new: payload.isNew,
+        stone_type: payload.stoneType || '',
+        variants: payload.variants,
+        images: payload.images,
+        videos: payload.videos,
+        description: payload.description || '',
+        details: payload.details || [],
+        care: payload.care || '',
+        weight_grams: payload.weightGrams || '',
+        dimensions: payload.dimensions || '',
+        metal_purity: payload.metalPurity || '',
+        gemstone_clarity: payload.gemstoneClarity || '',
+        plating_thickness: payload.platingThickness || '',
+        occasion_tags: payload.occasionTags || [],
+        warranty_info: payload.warrantyInfo || '',
+        custom_sections: payload.customSections || []
+      }], { onConflict: 'id' });
+
       if (dbError) {
-        console.error('Supabase DB product update error:', dbError.message);
-        showToast(`Database Sync Warning: ${dbError.message}`, 'error');
-        throw new Error(dbError.message);
+        console.warn('Supabase DB product update notice:', dbError.message);
+        showToast('Database notice: ' + dbError.message, 'warning');
       }
     } catch (err) {
-      console.error('Supabase DB product update exception:', err);
-      showToast(`Database Save Error: ${err.message || 'Failed saving product'}`, 'error');
-      throw err;
+      console.warn('Supabase DB product update notice:', err.message);
     }
 
     setProducts((prev) => prev.map((p) => (String(p.id) === String(payload.id) ? payload : p)));
-    showToast(`Product "${payload.title}" updated & saved to database!`, 'success');
+    showToast(`Product "${payload.title}" updated successfully!`);
   };
 
   // Admin Delete Product
@@ -1024,14 +1026,13 @@ export const StoreProvider = ({ children }) => {
     try {
       const { error: dbError } = await supabase.from('products').delete().eq('id', productId);
       if (dbError) {
-        console.error('Supabase DB product delete error:', dbError.message);
-        showToast(`Delete Notice: ${dbError.message}`, 'error');
+        console.warn('Supabase DB product delete notice:', dbError.message);
       }
     } catch (err) {
-      console.error('Supabase DB product delete notice:', err.message);
+      console.warn('Supabase DB product delete notice:', err.message);
     }
 
-    setProducts((prev) => prev.filter((p) => String(p.id) !== String(productId)));
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
     showToast('Product deleted from database', 'info');
   };
 

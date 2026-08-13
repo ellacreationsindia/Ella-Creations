@@ -711,7 +711,7 @@ export default function AdminView() {
         comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
         taxPercent: parseFloat(productForm.taxPercent || 18),
         stock: parseInt(productForm.stock, 10) >= 0 ? parseInt(productForm.stock, 10) : 10,
-        sku: productForm.sku || `EC-${Math.floor(1000 + Math.random() * 9000)}`,
+        sku: productForm.sku || (editingProduct?.sku ? editingProduct.sku : `EC-${Math.floor(1000 + Math.random() * 9000)}`),
         stoneType: productForm.stoneType || '',
         description: productForm.description || '',
         occasionTags: productForm.occasionTagsStr ? productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean) : [],
@@ -719,10 +719,11 @@ export default function AdminView() {
         videos: productForm.videos || [],
         variants: Array.isArray(productForm.variants) ? productForm.variants : [],
         customSections: Array.isArray(productForm.customSections) ? productForm.customSections : [],
-        details: [
+        details: editingProduct?.details || [
           "Handcrafted luxury design",
           "Includes protective gift packaging"
-        ]
+        ],
+        care: editingProduct?.care || "Avoid direct contact with moisture, perfumes and hairspray."
       };
 
       if (editingProduct) {
@@ -2504,9 +2505,8 @@ export default function AdminView() {
                   Cancel
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   disabled={isPublishing}
-                  onClick={handleSaveProduct}
                   className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-soft-rose transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   {isPublishing ? (

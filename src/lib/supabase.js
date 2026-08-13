@@ -193,42 +193,30 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    // If already a public URL (starts with http/https or relative path) and NOT a blob: or data: URL, return as-is
-    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:') && !fileOrDataUrl.startsWith('blob:')) {
+    // If already a URL (starts with http, https, / or asset path), return as-is
+    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:')) {
       return fileOrDataUrl;
     }
+
+    const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
 
     let fileToUpload;
     let fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
 
-    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('blob:')) {
-      try {
-        const res = await fetch(fileOrDataUrl);
-        const blob = await res.blob();
-        fileToUpload = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
-      } catch (bErr) {
-        console.warn('Failed fetching blob URL for upload:', bErr);
-      }
-    }
-
-    if (!fileToUpload) {
-      const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
-
-      if (compressedDataUrl && compressedDataUrl.startsWith('data:')) {
-        const blob = dataURLtoBlob(compressedDataUrl);
-        if (blob) {
-          fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
-          fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
-        } else {
-          return compressedDataUrl;
-        }
-      } else if (fileOrDataUrl instanceof File) {
-        fileToUpload = fileOrDataUrl;
-        const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        fileName = `image_${Date.now()}_${cleanName}`;
+    if (compressedDataUrl && compressedDataUrl.startsWith('data:')) {
+      const blob = dataURLtoBlob(compressedDataUrl);
+      if (blob) {
+        fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
+        fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
       } else {
-        return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
+        return compressedDataUrl;
       }
+    } else if (fileOrDataUrl instanceof File) {
+      fileToUpload = fileOrDataUrl;
+      const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      fileName = `image_${Date.now()}_${cleanName}`;
+    } else {
+      return fileOrDataUrl;
     }
 
     const filePath = `images/${fileName}`;
@@ -242,14 +230,14 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
 
     if (error) {
       console.warn('Supabase photo storage notice (bucket "products"):', error.message);
-      return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
+      return compressedDataUrl || fileOrDataUrl;
     }
 
     const { data: publicUrlData } = supabase.storage
       .from('products')
       .getPublicUrl(filePath);
 
-    return publicUrlData?.publicUrl || (typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '');
+    return publicUrlData?.publicUrl || compressedDataUrl || fileOrDataUrl;
   } catch (err) {
     console.error('Error uploading photo to Supabase storage:', err);
     return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
@@ -264,45 +252,30 @@ export async function uploadProductVideoToSupabase(fileOrDataUrl) {
   try {
     if (!fileOrDataUrl) return '';
 
-    // If already a public URL (starts with http/https or relative path) and NOT a blob: or data: URL, return as-is
-    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:') && !fileOrDataUrl.startsWith('blob:')) {
+    // If already a URL (starts with http, https, / or asset path), return as-is
+    if (typeof fileOrDataUrl === 'string' && !fileOrDataUrl.startsWith('data:')) {
       return fileOrDataUrl;
     }
 
     let fileToUpload;
     let fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.mp4`;
 
-    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('blob:')) {
-      try {
-        const res = await fetch(fileOrDataUrl);
-        const blob = await res.blob();
+    if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
+      const blob = dataURLtoBlob(fileOrDataUrl);
+      if (blob) {
         const mimeType = blob.type || 'video/mp4';
         const ext = mimeType.split('/')[1] || 'mp4';
         fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
         fileToUpload = new File([blob], fileName, { type: mimeType });
-      } catch (vErr) {
-        console.warn('Failed fetching video blob URL:', vErr);
-      }
-    }
-
-    if (!fileToUpload) {
-      if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
-        const blob = dataURLtoBlob(fileOrDataUrl);
-        if (blob) {
-          const mimeType = blob.type || 'video/mp4';
-          const ext = mimeType.split('/')[1] || 'mp4';
-          fileName = `video_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
-          fileToUpload = new File([blob], fileName, { type: mimeType });
-        } else {
-          return fileOrDataUrl;
-        }
-      } else if (fileOrDataUrl instanceof File) {
-        fileToUpload = fileOrDataUrl;
-        const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        fileName = `video_${Date.now()}_${cleanName}`;
       } else {
         return fileOrDataUrl;
       }
+    } else if (fileOrDataUrl instanceof File) {
+      fileToUpload = fileOrDataUrl;
+      const cleanName = fileOrDataUrl.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      fileName = `video_${Date.now()}_${cleanName}`;
+    } else {
+      return fileOrDataUrl;
     }
 
     const filePath = `videos/${fileName}`;

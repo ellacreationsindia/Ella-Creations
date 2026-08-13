@@ -91,14 +91,10 @@ ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow public read products" ON public.products;
 DROP POLICY IF EXISTS "Allow admin all products" ON public.products;
 DROP POLICY IF EXISTS "Allow public insert products" ON public.products;
-DROP POLICY IF EXISTS "Allow public update products" ON public.products;
-DROP POLICY IF EXISTS "Allow public delete products" ON public.products;
 
 CREATE POLICY "Allow public read products" ON public.products FOR SELECT USING (true);
-CREATE POLICY "Allow admin all products" ON public.products FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow admin all products" ON public.products FOR ALL USING (true);
 CREATE POLICY "Allow public insert products" ON public.products FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update products" ON public.products FOR UPDATE USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public delete products" ON public.products FOR DELETE USING (true);
 
 DROP POLICY IF EXISTS "Allow public read reviews" ON public.reviews;
 DROP POLICY IF EXISTS "Allow public insert reviews" ON public.reviews;
