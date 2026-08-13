@@ -166,6 +166,7 @@ export default function AdminView() {
     toggleCouponStatus,
     updateOrderShipment,
     deleteSubscriber,
+    showToast,
     navigateTo 
   } = useStore();
 
@@ -691,7 +692,7 @@ export default function AdminView() {
       return;
     }
     if (productForm.price === '' || productForm.price === null || productForm.price === undefined || isNaN(parseFloat(productForm.price))) {
-      showToast('Please enter a valid selling price.', 'error');
+      showToast('Please enter a valid selling price (e.g. 12999 or 0).', 'error');
       return;
     }
     if (isPublishing) return;
@@ -2040,6 +2041,7 @@ export default function AdminView() {
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Product Title</label>
                   <input
                     type="text"
+                    required
                     placeholder="e.g. Royal Kundan & Pearl Choker Set"
                     value={productForm.title}
                     onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
@@ -2080,6 +2082,7 @@ export default function AdminView() {
                   <input
                     type="number"
                     step="1"
+                    required
                     placeholder="12999 (Enter 0 for Out of Stock)"
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
@@ -2106,6 +2109,7 @@ export default function AdminView() {
                   <input
                     type="number"
                     step="0.5"
+                    required
                     placeholder="18"
                     value={productForm.taxPercent}
                     onChange={(e) => setProductForm({ ...productForm, taxPercent: e.target.value })}
@@ -2117,6 +2121,7 @@ export default function AdminView() {
                   <label className="block text-xs font-semibold text-stone-300 mb-1">Inventory Units (Stock)</label>
                   <input
                     type="number"
+                    required
                     placeholder="10"
                     value={productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
@@ -2322,6 +2327,7 @@ export default function AdminView() {
                 <label className="block text-xs font-semibold text-stone-300 mb-1">Product Description</label>
                 <textarea
                   rows="3"
+                  required
                   placeholder="Describe the jewelry design, metal finish, plating, and fit..."
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}

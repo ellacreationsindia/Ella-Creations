@@ -1154,6 +1154,9 @@ export const StoreProvider = ({ children }) => {
         addBlog,
         updateBlog,
         deleteBlog,
+        addProduct,
+        updateProduct,
+        deleteProduct,
         updateOrderStatus,
         addReview,
         showToast
