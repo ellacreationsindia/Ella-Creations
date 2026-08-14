@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   category TEXT NOT NULL,
   price NUMERIC NOT NULL DEFAULT 0,
   compare_price NUMERIC,
-  tax_percent NUMERIC DEFAULT 18,
+  tax_percent NUMERIC DEFAULT 0,
   rating NUMERIC DEFAULT 5.0,
   reviews_count INTEGER DEFAULT 0,
   stock INTEGER DEFAULT 10,

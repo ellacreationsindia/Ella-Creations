@@ -208,7 +208,7 @@ export const StoreProvider = ({ children }) => {
           category: p.category || 'Jewelry',
           price: Number(p.price || 0),
           comparePrice: p.compare_price ? Number(p.compare_price) : null,
-          taxPercent: Number(p.tax_percent || 18),
+          taxPercent: Number(p.tax_percent ?? 0),
           rating: Number(p.rating || 5.0),
           reviewsCount: p.reviews_count || 0,
           stock: p.price <= 0 ? 0 : Number(p.stock ?? 0),
@@ -694,7 +694,7 @@ export const StoreProvider = ({ children }) => {
   // Submit Order (With Razorpay Payment ID & Shiprocket Logistics details)
   const submitOrder = async (customerDetails, paymentMethod, paymentId = null, logisticsDetails = {}) => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const taxAmount = (subtotal * 18) / 100;
+    const taxAmount = 0;
     const discountAmount = activeCoupon ? (subtotal * activeCoupon.discountPercent) / 100 : 0;
     const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : 99;
     const total = subtotal - discountAmount + shipping;
@@ -895,7 +895,7 @@ export const StoreProvider = ({ children }) => {
       reviewsCount: newProduct.reviewsCount ?? 0,
       price: Number(newProduct.price || 0),
       stock: newProduct.price <= 0 ? 0 : (newProduct.stock !== undefined && newProduct.stock !== null ? Number(newProduct.stock) : 10),
-      taxPercent: Number(newProduct.taxPercent || 18),
+      taxPercent: Number(newProduct.taxPercent ?? 0),
       isFeatured: Boolean(newProduct.isFeatured),
       isNew: newProduct.isNew !== undefined ? Boolean(newProduct.isNew) : true,
       images: uploadedImages,
@@ -985,7 +985,7 @@ export const StoreProvider = ({ children }) => {
         category: payload.category,
         price: payload.price,
         compare_price: payload.comparePrice,
-        tax_percent: payload.taxPercent || 18,
+        tax_percent: payload.taxPercent ?? 0,
         rating: payload.rating,
         reviews_count: payload.reviewsCount,
         stock: payload.stock,

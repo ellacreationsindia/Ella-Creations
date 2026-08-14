@@ -80,9 +80,7 @@ export default function ProductDetailView() {
   const relatedProducts = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   // Tax calculations
-  const taxRate = product.taxPercent || 18;
-  const basePrice = product.price > 0 ? product.price / (1 + taxRate / 100) : 0;
-  const gstAmount = product.price - basePrice;
+  const taxRate = product.taxPercent !== undefined && product.taxPercent !== null ? product.taxPercent : 0;
 
   // Media items combined
   const mediaList = [
@@ -256,11 +254,6 @@ export default function ProductDetailView() {
                     SAVE {formatPrice(product.comparePrice - product.price)}
                   </span>
                 )}
-              </div>
-              <div className="text-[11px] sm:text-xs text-stone-500 flex flex-wrap items-center gap-2 sm:gap-3 pt-1 border-t border-brand-gold/20">
-                <span>Inclusive of <strong>{taxRate}% GST Tax</strong> ({formatPrice(gstAmount)})</span>
-                <span className="hidden sm:inline">•</span>
-                <span>Base Price: {formatPrice(basePrice)}</span>
               </div>
             </div>
           )}

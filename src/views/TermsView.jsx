@@ -49,7 +49,7 @@ export default function TermsView() {
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-stone-700">
             <li>
-              <strong>Artificial & Imitation Nature:</strong> All items listed under Ella Creations are fashion and artificial jewelry electroplated in 22K/18K Yellow Gold, Rose Gold, or Rhodium over high-grade brass/copper alloys unless explicitly stated otherwise.
+              <strong>Artificial & Imitation Nature:</strong> All items listed under Ella Creations are fashion and artificial jewelry electroplated in Yellow Gold, Rose Gold, or Rhodium finishes over high-grade brass/copper alloys unless explicitly stated otherwise.
             </li>
             <li>
               <strong>Gemstones & Crystals:</strong> We utilize AAA+ Cubic Zirconia, glass Polki, synthetic pearls, and lab-created gemstones. They do not carry certified diamond or natural mined gemstone appraisals.
@@ -63,10 +63,10 @@ export default function TermsView() {
         {/* Section 3 */}
         <section className="space-y-3">
           <h2 className="font-serif text-lg font-bold text-stone-900 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-brand-rose" /> 3. Pricing, GST Taxes & Payment Processing
+            <FileText className="w-4 h-4 text-brand-rose" /> 3. Pricing & Payment Processing
           </h2>
           <p>
-            All prices displayed on Ella Creations are in <strong>Indian Rupees (₹ INR)</strong> and include applicable Goods and Services Tax (GST Tax - standard 18%).
+            All prices displayed on Ella Creations are in <strong>Indian Rupees (₹ INR)</strong> and are final inclusive prices.
           </p>
           <div className="bg-brand-cream/60 p-4 rounded-2xl border border-brand-gold/30 space-y-2 text-xs">
             <span className="font-bold text-stone-900 block">Accepted Payment Channels:</span>

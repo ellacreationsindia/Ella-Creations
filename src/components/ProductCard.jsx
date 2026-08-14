@@ -169,7 +169,6 @@ export default function ProductCard({ product }) {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] text-stone-400 block font-medium">Incl. {product.taxPercent || 18}% GST</span>
               </div>
             )}
           </div>

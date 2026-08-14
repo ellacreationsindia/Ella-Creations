@@ -235,10 +235,11 @@ export default function AdminView() {
     category: 'Necklaces',
     price: '',
     comparePrice: '',
-    taxPercent: '18',
+    taxPercent: '0',
     stock: '',
     sku: '',
     stoneType: '',
+    metalPurity: '',
     description: '',
     occasionTagsStr: '',
     images: [],
@@ -638,10 +639,11 @@ export default function AdminView() {
       category: 'Necklaces',
       price: '',
       comparePrice: '',
-      taxPercent: '18',
+      taxPercent: '0',
       stock: '10',
       sku: `EC-${Math.floor(1000 + Math.random() * 9000)}`,
       stoneType: '',
+      metalPurity: '',
       description: '',
       occasionTagsStr: '',
       images: [],
@@ -652,7 +654,7 @@ export default function AdminView() {
           title: 'Specifications & Materials',
           items: [
             { label: 'Base Metal', value: 'Brass Base Alloy' },
-            { label: 'Plating', value: '22K Gold Electroplated' }
+            { label: 'Plating', value: 'Gold Electroplated Finish' }
           ]
         }
       ]
@@ -671,10 +673,11 @@ export default function AdminView() {
       category: p.category || 'Necklaces',
       price: p.price !== undefined && p.price !== null ? p.price.toString() : '0',
       comparePrice: p.comparePrice ? p.comparePrice.toString() : '',
-      taxPercent: (p.taxPercent || 18).toString(),
+      taxPercent: (p.taxPercent !== undefined && p.taxPercent !== null ? p.taxPercent : 0).toString(),
       stock: p.stock !== undefined && p.stock !== null ? p.stock.toString() : '10',
       sku: p.sku || '',
       stoneType: p.stoneType || '',
+      metalPurity: p.metalPurity || '',
       description: p.description || '',
       occasionTagsStr: (p.occasionTags || []).join(', '),
       images: existingImages,
@@ -714,10 +717,11 @@ export default function AdminView() {
         category: productForm.category || 'Necklaces',
         price: parseFloat(productForm.price || 0),
         comparePrice: productForm.comparePrice ? parseFloat(productForm.comparePrice) : null,
-        taxPercent: parseFloat(productForm.taxPercent || 18),
+        taxPercent: parseFloat(productForm.taxPercent || 0),
         stock: parseInt(productForm.stock, 10) >= 0 ? parseInt(productForm.stock, 10) : 10,
         sku: productForm.sku || (editingProduct?.sku ? editingProduct.sku : `EC-${Math.floor(1000 + Math.random() * 9000)}`),
         stoneType: productForm.stoneType || '',
+        metalPurity: productForm.metalPurity || '',
         description: productForm.description || '',
         occasionTags: productForm.occasionTagsStr ? productForm.occasionTagsStr.split(',').map((s) => s.trim()).filter(Boolean) : [],
         images: finalImages,
@@ -1238,14 +1242,14 @@ export default function AdminView() {
                                 </span>
                               )}
                               <span className="text-[10px] text-stone-500 font-mono ml-auto">
-                                {p.taxPercent || 18}% GST
+                                {p.taxPercent !== undefined && p.taxPercent !== null ? p.taxPercent : 0}% Tax
                               </span>
                             </div>
 
                             {/* Custom Specs Indicator Pill */}
                             <div className="flex items-center gap-1.5 flex-wrap pt-1">
                               <span className="text-[9px] bg-stone-900 text-stone-400 px-2 py-0.5 rounded-md border border-stone-800">
-                                {p.metalPurity || '22K Gold Plated'}
+                                {p.metalPurity || 'Gold Finish'}
                               </span>
                               {Array.isArray(p.customSpecs) && p.customSpecs.length > 0 && (
                                 <span className="text-[9px] bg-brand-gold/10 text-brand-gold px-2 py-0.5 rounded-md border border-brand-gold/30 font-semibold">
@@ -1345,7 +1349,7 @@ export default function AdminView() {
                                 formatPrice(p.price)
                               )}
                             </td>
-                            <td className="p-4 text-stone-400">{p.taxPercent || 18}% GST</td>
+                            <td className="p-4 text-stone-400">{p.taxPercent !== undefined && p.taxPercent !== null ? p.taxPercent : 0}% Tax</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] inline-block ${
                                 isOutOfStock
@@ -2104,13 +2108,12 @@ export default function AdminView() {
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-300 mb-1">
-                    GST Tax Bracket (%)
+                    Tax Rate (%) <span className="text-stone-500 font-normal">(Default: 0%)</span>
                   </label>
                   <input
                     type="number"
                     step="0.5"
-                    required
-                    placeholder="18"
+                    placeholder="0"
                     value={productForm.taxPercent}
                     onChange={(e) => setProductForm({ ...productForm, taxPercent: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose font-semibold text-brand-gold"
@@ -2129,15 +2132,28 @@ export default function AdminView() {
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                <div>
                   <label className="block text-xs font-semibold text-stone-300 mb-1">
-                    Gemstone / Crystal Type <span className="text-stone-500 font-normal">(Optional - Leave blank if none)</span>
+                    Gemstone / Crystal Type <span className="text-stone-500 font-normal">(Optional)</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Hand-cut Polki Kundan Glass & AAA+ CZ (Optional)"
+                    placeholder="e.g. Hand-cut Polki Kundan & AAA+ CZ"
                     value={productForm.stoneType}
                     onChange={(e) => setProductForm({ ...productForm, stoneType: e.target.value })}
+                    className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-300 mb-1">
+                    Metal Purity / Plating Finish <span className="text-stone-500 font-normal">(Editable/Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Gold Polish, Rose Gold Finish, Silver Polish"
+                    value={productForm.metalPurity}
+                    onChange={(e) => setProductForm({ ...productForm, metalPurity: e.target.value })}
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"
                   />
                 </div>
@@ -2294,7 +2310,7 @@ export default function AdminView() {
                               />
                               <input
                                 type="text"
-                                placeholder="Value (e.g. 22K Gold Plated Brass)"
+                                placeholder="Value (e.g. Gold Polish Brass)"
                                 value={item.value}
                                 onChange={(e) => updateCustomSectionItem(secIdx, itemIdx, 'value', e.target.value)}
                                 className="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-white outline-none focus:border-brand-rose"

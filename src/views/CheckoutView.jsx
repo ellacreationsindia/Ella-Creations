@@ -211,7 +211,7 @@ export default function CheckoutView() {
         </div>
         <h2 className="font-serif text-3xl font-bold text-stone-900">Your Cart is Currently Empty</h2>
         <p className="text-sm text-stone-600 max-w-md mx-auto">
-          Explore our handcrafted Kundan, Cubic Zirconia, and 22k gold plated jewelry collections to start shopping.
+          Explore our handcrafted Kundan, Cubic Zirconia, and designer artificial jewelry collections to start shopping.
         </p>
         <button
           onClick={() => navigateTo('shop')}
@@ -975,7 +975,7 @@ export default function CheckoutView() {
               onClick={() => window.print()}
               className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors"
             >
-              <Printer className="w-4 h-4" /> Print Tax Receipt
+              <Printer className="w-4 h-4" /> Print Order Receipt
             </button>
 
             <button

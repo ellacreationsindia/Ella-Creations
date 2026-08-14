@@ -34,7 +34,7 @@ export default function SitemapView() {
       icon: FileText,
       color: 'text-emerald-600',
       links: [
-        { label: 'Terms & Conditions', view: 'terms', desc: 'Store guidelines, GST pricing & Indian jurisdiction' },
+        { label: 'Terms & Conditions', view: 'terms', desc: 'Store guidelines, pricing & Indian jurisdiction' },
         { label: 'Privacy Policy', view: 'privacy', desc: 'DPDP Act compliance & Razorpay payment security' },
         { label: 'Brand Guidelines & Heritage', view: 'brand-guidelines', desc: 'Brand story, colors, fonts & craftsmanship' },
         { label: 'XML Sitemap (Search Engines)', url: '/sitemap.xml', external: true, desc: 'Machine-readable XML sitemap for SEO crawlers' }

@@ -84,7 +84,7 @@ export default function HomeView() {
               </h1>
 
               <p className="text-stone-600 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
-                Ella Creations is designed for the modern, confident, and elegant woman. Discover our handcrafted Kundan, Cubic Zirconia crystal drops, and 22k gold-plated statement pieces.
+                Ella Creations is designed for the modern, confident, and elegant woman. Discover our handcrafted Kundan, Cubic Zirconia crystal drops, and gold-polished statement pieces.
               </p>
 
               {/* Gold Divider Motif */}
@@ -254,7 +254,7 @@ export default function HomeView() {
             {[
               {
                 title: "Bridal & Reception",
-                desc: "Heavy 22k gold-plated Kundan chokers, multi-layer Rani Haars, and forehead Maang Tikkas.",
+                desc: "Heavy gold-plated Kundan chokers, multi-layer Rani Haars, and forehead Maang Tikkas.",
                 tag: "Royal Grandeur",
                 icon: Crown
               },
@@ -385,7 +385,7 @@ export default function HomeView() {
                 Handcrafted Artificial & Bridal Fine Jewelry
               </h2>
               <p className="text-stone-300 text-xs sm:text-sm leading-relaxed max-w-lg">
-                Explore statement Kundan chokers, AAA+ Cubic Zirconia crystal drops, and 22k gold-plated statement pieces handcrafted for every occasion.
+                Explore statement Kundan chokers, AAA+ Cubic Zirconia crystal drops, and gold-polished statement pieces handcrafted for every occasion.
               </p>
             </div>
 
@@ -416,7 +416,7 @@ export default function HomeView() {
               </div>
               <h3 className="font-serif font-bold text-stone-900 text-base">Handcrafted Quality</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Handcrafted with 22k gold electroplated finish and premium grade Kundan & CZ stones.
+                Handcrafted with premium gold-polished finish and high-grade Kundan & CZ stones.
               </p>
             </div>
 

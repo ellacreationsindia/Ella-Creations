@@ -116,7 +116,7 @@ export default function BlogView() {
               </span>
               <h3 className="font-serif text-xl font-bold text-brand-cream">Elevate Your Royal Jewelry Wardrobe</h3>
               <p className="text-xs text-stone-300 max-w-md">
-                Explore our handcrafted 22k gold plated Kundan chokers, AAA+ Cubic Zirconia crystals, and bridal fine sets.
+                Explore our handcrafted gold-plated Kundan chokers, AAA+ Cubic Zirconia crystals, and bridal fine sets.
               </p>
             </div>
             <button

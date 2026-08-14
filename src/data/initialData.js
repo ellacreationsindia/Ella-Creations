@@ -6,7 +6,7 @@ export const INITIAL_PRODUCTS = [
     category: "Sets",
     price: 4999,
     comparePrice: 7999,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.9,
     reviewsCount: 38,
     stock: 12,
@@ -14,7 +14,7 @@ export const INITIAL_PRODUCTS = [
     isFeatured: true,
     isNew: true,
     variants: [
-      { id: "v-101-1", name: "22k Gold Polish", sku: "EC-SET-101-GLD", price: 4999, stock: 8, swatchColor: "#D4AF37" },
+      { id: "v-101-1", name: "Gold Polish", sku: "EC-SET-101-GLD", price: 4999, stock: 8, swatchColor: "#D4AF37" },
       { id: "v-101-2", name: "Antique Gold Finish", sku: "EC-SET-101-ANT", price: 5299, stock: 4, swatchColor: "#B8860B" }
     ],
     stoneType: "Uncut Kundan & Fresh Pearls",
@@ -24,13 +24,13 @@ export const INITIAL_PRODUCTS = [
       "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000"
     ],
     videos: [],
-    description: "An opulent 22k gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and festive celebrations.",
+    description: "An opulent gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and festive celebrations.",
     customSections: [
       {
         title: "Craftsmanship & Materials",
         items: [
           { label: "Base Alloy", value: "Premium Brass (100% Lead & Nickel Free)" },
-          { label: "Plating", value: "22k Yellow Gold Electroplated Finish" },
+          { label: "Plating", value: "Gold Electroplated Finish" },
           { label: "Stones", value: "Hand-set AAA+ Grade Kundan & Fresh Water Pearls" }
         ]
       },
@@ -58,7 +58,7 @@ export const INITIAL_PRODUCTS = [
     category: "Earrings",
     price: 1899,
     comparePrice: 2999,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.8,
     reviewsCount: 52,
     stock: 25,
@@ -66,7 +66,7 @@ export const INITIAL_PRODUCTS = [
     isFeatured: true,
     isNew: true,
     variants: [
-      { id: "v-102-1", name: "18k Rose Gold", sku: "EC-ER-102-RG", price: 1899, stock: 15, swatchColor: "#B76E79" },
+      { id: "v-102-1", name: "Rose Gold Finish", sku: "EC-ER-102-RG", price: 1899, stock: 15, swatchColor: "#B76E79" },
       { id: "v-102-2", name: "Pure Silver Polish", sku: "EC-ER-102-SLV", price: 1899, stock: 10, swatchColor: "#C0C0C0" }
     ],
     stoneType: "AAA+ Cubic Zirconia (CZ)",
@@ -75,12 +75,12 @@ export const INITIAL_PRODUCTS = [
       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=1000"
     ],
     videos: [],
-    description: "Dazzling solitaire drop earrings with diamond-cut AAA+ cubic zirconia crystals set in 18k rose gold plating. Lightweight and hypoallergenic for effortless evening wear.",
+    description: "Dazzling solitaire drop earrings with diamond-cut AAA+ cubic zirconia crystals set in rose gold plating. Lightweight and hypoallergenic for effortless evening wear.",
     customSections: [
       {
         title: "Specifications",
         items: [
-          { label: "Metal", value: "18k Rose Gold / Rhodium Plated Silver" },
+          { label: "Metal", value: "Rose Gold / Rhodium Plated Alloy" },
           { label: "Posts", value: "Hypoallergenic 925 Sterling Silver" },
           { label: "Stone Cut", value: "Hearts & Arrows Precision CZ" }
         ]
@@ -94,7 +94,7 @@ export const INITIAL_PRODUCTS = [
     category: "Rings",
     price: 1299,
     comparePrice: 1999,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.9,
     reviewsCount: 29,
     stock: 18,
@@ -111,7 +111,7 @@ export const INITIAL_PRODUCTS = [
       "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000"
     ],
     videos: [],
-    description: "An adjustable statement ring adorned with shimmering floral petals crafted with brilliant micro-pave CZ stones in dual tone 18k rose gold.",
+    description: "An adjustable statement ring adorned with shimmering floral petals crafted with brilliant micro-pave CZ stones in dual tone rose gold.",
     customSections: [
       {
         title: "Sizing & Fit",
@@ -129,7 +129,7 @@ export const INITIAL_PRODUCTS = [
     category: "Bracelets",
     price: 2499,
     comparePrice: 3499,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.9,
     reviewsCount: 41,
     stock: 15,
@@ -146,12 +146,12 @@ export const INITIAL_PRODUCTS = [
       "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000"
     ],
     videos: [],
-    description: "Exquisite hand-painted Meenakari enamel bangles with 22k gold electroplating. Elaborately detailed with traditional royal motifs for festive attire.",
+    description: "Exquisite hand-painted Meenakari enamel bangles with gold electroplating. Elaborately detailed with traditional royal motifs for festive attire.",
     customSections: [
       {
         title: "Craftsmanship & Finish",
         items: [
-          { label: "Material", value: "Brass Alloy with 22k Gold Electroplating" },
+          { label: "Material", value: "Brass Alloy with Gold Electroplating" },
           { label: "Enamel Work", value: "Hand-painted Royal Meenakari Work" }
         ]
       }
@@ -164,7 +164,7 @@ export const INITIAL_PRODUCTS = [
     category: "Sets",
     price: 5999,
     comparePrice: 8999,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 5.0,
     reviewsCount: 64,
     stock: 9,
@@ -200,7 +200,7 @@ export const INITIAL_PRODUCTS = [
     category: "Rings",
     price: 1599,
     comparePrice: 2299,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.8,
     reviewsCount: 33,
     stock: 20,
@@ -235,7 +235,7 @@ export const INITIAL_PRODUCTS = [
     category: "Earrings",
     price: 2199,
     comparePrice: 3199,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 4.9,
     reviewsCount: 57,
     stock: 14,
@@ -270,7 +270,7 @@ export const INITIAL_PRODUCTS = [
     category: "Necklaces",
     price: 6499,
     comparePrice: 9499,
-    taxPercent: 18,
+    taxPercent: 0,
     rating: 5.0,
     reviewsCount: 48,
     stock: 7,
@@ -278,7 +278,7 @@ export const INITIAL_PRODUCTS = [
     isFeatured: true,
     isNew: true,
     variants: [
-      { id: "v-108-1", name: "22k Gold Polish", sku: "EC-NCK-108-GLD", price: 6499, stock: 7, swatchColor: "#D4AF37" }
+      { id: "v-108-1", name: "Gold Polish", sku: "EC-NCK-108-GLD", price: 6499, stock: 7, swatchColor: "#D4AF37" }
     ],
     stoneType: "Polki Glass & Natural Shell Pearls",
     images: [
@@ -348,7 +348,7 @@ export const INITIAL_BLOGS = [
 While clear glass Kundan is universally versatile, adding subtle gemstone drops in **Emerald Green**, **Ruby Red**, or **Pastel Pink** creates contrast against zari embroidery on crimson, blush, or ivory bridal wear.
 
 ### 3. Layering Short Chokers with Long Rani Haars
-For a grand royal look, combine a short 22k gold-plated choker close to the neck with a 5-layer Rani Haar hanging lower. Ensure both pieces share matching pearl or Kundan detailing so the look feels harmonious.`
+For a grand royal look, combine a short gold-plated choker close to the neck with a 5-layer Rani Haar hanging lower. Ensure both pieces share matching pearl or Kundan detailing so the look feels harmonious.`
   },
   {
     id: "blog-102",
@@ -379,7 +379,7 @@ When stepping out for cocktail dinners or evening celebrations:
     id: "blog-103",
     title: "5 Essential Tips to Care for & Store Your Artificial Jewelry",
     slug: "essential-tips-care-store-artificial-jewelry",
-    excerpt: "Keep your 22k gold plated Kundan and CZ jewelry shining bright for years with these simple, practical jewelry care rules.",
+    excerpt: "Keep your gold-plated Kundan and CZ jewelry shining bright for years with these simple, practical jewelry care rules.",
     category: "Jewelry Care",
     author: "Ella Craftsman Guild",
     readTime: "3 min read",

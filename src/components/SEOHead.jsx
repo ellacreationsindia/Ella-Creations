@@ -26,7 +26,7 @@ export default function SEOHead() {
       canonicalUrl = `${domain}/#shop`;
     } else if (currentView === 'product' && activeProduct) {
       title = `${activeProduct.title} - Buy Online ${formatPrice(activeProduct.price)} | Ella Creations`;
-      description = activeProduct.description || `Buy ${activeProduct.title} online at Ella Creations. Plated in 22K Gold / Rose Gold with protective coating.`;
+      description = activeProduct.description || `Buy ${activeProduct.title} online at Ella Creations. Premium finish with protective coating.`;
       keywords = `${activeProduct.title}, ${activeProduct.category}, ${activeProduct.stoneType}, artificial jewelry, Ella Creations`;
       canonicalUrl = `${domain}/#product-${activeProduct.id}`;
       if (activeProduct.images && activeProduct.images.length > 0) {

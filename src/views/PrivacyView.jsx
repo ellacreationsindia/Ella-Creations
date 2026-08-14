@@ -51,7 +51,7 @@ export default function PrivacyView() {
             </div>
             <div className="bg-brand-cream/50 p-3.5 rounded-2xl border border-brand-gold/20 space-y-1">
               <span className="font-bold text-stone-900 block">Transaction & Order Details:</span>
-              <p className="text-stone-600">Items purchased, selected variants, GST tax breakdowns, invoice history, payment IDs.</p>
+              <p className="text-stone-600">Items purchased, selected variants, invoice history, payment IDs.</p>
             </div>
             <div className="bg-brand-cream/50 p-3.5 rounded-2xl border border-brand-gold/20 space-y-1">
               <span className="font-bold text-stone-900 block">VIP Sparkle Club Data:</span>
