@@ -1410,7 +1410,7 @@ export default function AdminView() {
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
-                  {['All', 'Processing', 'Shipped', 'Delivered'].map((st) => (
+                  {['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map((st) => (
                     <button
                       key={st}
                       onClick={() => setOrderStatusFilter(st)}

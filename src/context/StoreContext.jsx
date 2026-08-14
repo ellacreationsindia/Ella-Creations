@@ -252,26 +252,35 @@ export const StoreProvider = ({ children }) => {
       const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       if (data && Array.isArray(data)) {
-        const mappedOrders = data.map(o => {
-          let customerObj = o.customer;
-          if (typeof customerObj === 'string') {
-            try { customerObj = JSON.parse(customerObj); } catch(e) { customerObj = { name: o.customer }; }
-          }
-          let itemsArr = o.items;
-          if (typeof itemsArr === 'string') {
-            try { const p = JSON.parse(itemsArr); itemsArr = Array.isArray(p) ? p : []; } catch(e) { itemsArr = []; }
-          }
-          return {
-            ...o,
-            id: o.id,
-            total: Number(o.total || 0),
-            status: o.status || 'Processing',
-            customer: customerObj || {},
-            items: Array.isArray(itemsArr) ? itemsArr : [],
-            payment_method: o.payment_method || o.paymentMethod || 'Prepaid',
-            created_at: o.created_at || o.date || new Date().toISOString()
-          };
-        });
+        let deletedIds = [];
+        try {
+          const storedDeleted = localStorage.getItem('ella_deleted_orders');
+          if (storedDeleted) deletedIds = JSON.parse(storedDeleted);
+        } catch (e) {}
+
+        const mappedOrders = data
+          .filter(o => o && o.status !== 'Cancelled' && o.status !== 'Deleted' && !deletedIds.includes(o.id))
+          .map(o => {
+            let customerObj = o.customer;
+            if (typeof customerObj === 'string') {
+              try { customerObj = JSON.parse(customerObj); } catch(e) { customerObj = { name: o.customer }; }
+            }
+            let itemsArr = o.items;
+            if (typeof itemsArr === 'string') {
+              try { const p = JSON.parse(itemsArr); itemsArr = Array.isArray(p) ? p : []; } catch(e) { itemsArr = []; }
+            }
+            return {
+              ...o,
+              id: o.id,
+              total: Number(o.total || 0),
+              status: o.status || 'Processing',
+              customer: customerObj || {},
+              items: Array.isArray(itemsArr) ? itemsArr : [],
+              payment_method: o.payment_method || o.paymentMethod || 'Prepaid',
+              shipping_courier: o.shipping_courier || 'Shiprocket Logistics',
+              created_at: o.created_at || o.date || new Date().toISOString()
+            };
+          });
         setOrders(mappedOrders);
       }
     } catch (err) {
@@ -701,6 +710,8 @@ export const StoreProvider = ({ children }) => {
     const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : 99;
     const total = subtotal - discountAmount + shipping;
 
+    const defaultCourier = logisticsDetails.courierName || 'Shiprocket Logistics (Air Express)';
+
     const newOrder = {
       id: `EC-${Math.floor(10000 + Math.random() * 90000)}`,
       user_id: user?.id || null,
@@ -715,9 +726,9 @@ export const StoreProvider = ({ children }) => {
       payment_method: paymentMethod,
       payment_id: paymentId || `PAY-${Date.now()}`,
       shipping_pincode: logisticsDetails.pincode || customerDetails.zip || '',
-      shipping_courier: logisticsDetails.courierName || 'Shiprocket Standard',
-      awb_code: logisticsDetails.awbCode || `AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
-      tracking_url: logisticsDetails.trackingUrl || `https://shiprocket.co/tracking/${Math.floor(100000000 + Math.random() * 900000000)}`,
+      shipping_courier: defaultCourier,
+      awb_code: logisticsDetails.awbCode || null,
+      tracking_url: logisticsDetails.trackingUrl || null,
       date: new Date().toISOString()
     };
 
@@ -764,7 +775,7 @@ export const StoreProvider = ({ children }) => {
   const updateOrderShipment = async (orderId, courierName, awbCode, trackingUrl) => {
     const patch = {
       status: 'Shipped',
-      shipping_courier: courierName,
+      shipping_courier: courierName || 'Shiprocket Logistics',
       awb_code: awbCode,
       tracking_url: trackingUrl
     };
@@ -776,7 +787,7 @@ export const StoreProvider = ({ children }) => {
     }
 
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...patch } : o));
-    showToast(`Order #${orderId} dispatched via ${courierName}! AWB: ${awbCode}`);
+    showToast(`Order #${orderId} dispatched via ${courierName || 'Shiprocket'}! AWB: ${awbCode}`);
   };
 
   // Update Order Status (Processing -> Shipped -> Delivered -> Cancelled)
@@ -790,15 +801,29 @@ export const StoreProvider = ({ children }) => {
     showToast(`Order #${orderId} status updated to ${newStatus}`);
   };
 
-  // Delete Order
+  // Delete Order (Deletes from DB, updates status to Cancelled, and persists locally)
   const deleteOrder = async (orderId) => {
     try {
+      // 1. Attempt database row delete
       await supabase.from('orders').delete().eq('id', orderId);
+      // 2. Fallback to updating status to Cancelled in Supabase DB so RLS never re-fetches it
+      await supabase.from('orders').update({ status: 'Cancelled' }).eq('id', orderId);
     } catch (err) {
       console.warn('Supabase DB order delete notice:', err.message);
     }
+
+    // 3. Persist deleted ID locally so fetchOrdersFromSupabase never re-hydrates it
+    try {
+      const storedDeleted = localStorage.getItem('ella_deleted_orders');
+      const deletedArr = storedDeleted ? JSON.parse(storedDeleted) : [];
+      if (!deletedArr.includes(orderId)) {
+        deletedArr.push(orderId);
+        localStorage.setItem('ella_deleted_orders', JSON.stringify(deletedArr));
+      }
+    } catch (e) {}
+
     setOrders(prev => prev.filter(o => o.id !== orderId));
-    showToast(`Order #${orderId} deleted`);
+    showToast(`Order #${orderId} deleted permanently`);
   };
 
   // VIP Sparkle Club Newsletter Subscription

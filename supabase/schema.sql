@@ -105,10 +105,12 @@ CREATE POLICY "Allow public insert reviews" ON public.reviews FOR INSERT WITH CH
 DROP POLICY IF EXISTS "Allow public insert orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow public read orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow admin update orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow admin delete orders" ON public.orders;
 
 CREATE POLICY "Allow public insert orders" ON public.orders FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public read orders" ON public.orders FOR SELECT USING (true);
 CREATE POLICY "Allow admin update orders" ON public.orders FOR UPDATE USING (true);
+CREATE POLICY "Allow admin delete orders" ON public.orders FOR DELETE USING (true);
 
 DROP POLICY IF EXISTS "Allow public read coupons" ON public.coupons;
 DROP POLICY IF EXISTS "Allow admin manage coupons" ON public.coupons;
