@@ -215,10 +215,10 @@ export const StoreProvider = ({ children }) => {
           sku: p.sku || `EC-${p.id}`,
           isFeatured: Boolean(p.is_featured),
           isNew: Boolean(p.is_new),
-          variants: Array.isArray(p.variants)
+          variants: Array.isArray(p.variants) && p.variants.length > 0
             ? p.variants
             : (Array.isArray(p.finish_options)
-                ? p.finish_options.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` }))
+                ? p.finish_options.map((opt, i) => (typeof opt === 'object' && opt !== null ? opt : { id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` }))
                 : []),
           stoneType: p.stone_type || '',
           images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []),
@@ -233,7 +233,9 @@ export const StoreProvider = ({ children }) => {
           platingThickness: p.plating_thickness || '',
           occasionTags: Array.isArray(p.occasion_tags) ? p.occasion_tags : [],
           warrantyInfo: p.warranty_info || '',
-          customSections: Array.isArray(p.custom_sections) ? p.custom_sections : (Array.isArray(p.custom_specs) ? p.custom_specs : [])
+          customSections: Array.isArray(p.custom_sections) && p.custom_sections.length > 0
+            ? p.custom_sections
+            : (Array.isArray(p.custom_specs) ? p.custom_specs : [])
         }));
         setProducts(mapped);
         if (mapped.length > 0 && !selectedProductId) {
@@ -901,7 +903,7 @@ export const StoreProvider = ({ children }) => {
       images: uploadedImages,
       videos: uploadedVideos,
       variants: newProduct.variants || [],
-      customSections: newProduct.customSections || []
+      customSections: newProduct.customSections || newProduct.customSpecs || []
     };
 
     try {
@@ -918,7 +920,7 @@ export const StoreProvider = ({ children }) => {
         sku: created.sku,
         is_featured: created.isFeatured,
         is_new: created.isNew,
-        variants: created.variants,
+        finish_options: created.variants || [],
         stone_type: created.stoneType || '',
         images: created.images,
         videos: created.videos,
@@ -932,15 +934,16 @@ export const StoreProvider = ({ children }) => {
         plating_thickness: created.platingThickness || '',
         occasion_tags: created.occasionTags || [],
         warranty_info: created.warrantyInfo || '',
-        custom_sections: created.customSections || []
+        custom_specs: created.customSections || []
       }], { onConflict: 'id' });
 
       if (dbError) {
-        console.warn('Supabase DB product insert notice:', dbError.message);
-        showToast('Database notice: ' + dbError.message, 'warning');
+        console.error('Supabase DB product insert error:', dbError.message);
+        showToast('Database error saving product: ' + dbError.message, 'error');
       }
     } catch (err) {
-      console.warn('Supabase DB product insert notice:', err.message);
+      console.error('Supabase DB product insert error:', err.message);
+      showToast('Database error: ' + err.message, 'error');
     }
 
     setProducts((prev) => [created, ...prev.filter(p => p.id !== created.id)]);
@@ -975,7 +978,7 @@ export const StoreProvider = ({ children }) => {
       images: uploadedImages, 
       videos: uploadedVideos,
       variants: updatedProduct.variants || [],
-      customSections: updatedProduct.customSections || []
+      customSections: updatedProduct.customSections || updatedProduct.customSpecs || []
     };
 
     try {
@@ -992,8 +995,8 @@ export const StoreProvider = ({ children }) => {
         sku: payload.sku,
         is_featured: payload.isFeatured,
         is_new: payload.isNew,
+        finish_options: payload.variants || [],
         stone_type: payload.stoneType || '',
-        variants: payload.variants,
         images: payload.images,
         videos: payload.videos,
         description: payload.description || '',
@@ -1006,15 +1009,16 @@ export const StoreProvider = ({ children }) => {
         plating_thickness: payload.platingThickness || '',
         occasion_tags: payload.occasionTags || [],
         warranty_info: payload.warrantyInfo || '',
-        custom_sections: payload.customSections || []
+        custom_specs: payload.customSections || []
       }], { onConflict: 'id' });
 
       if (dbError) {
-        console.warn('Supabase DB product update notice:', dbError.message);
-        showToast('Database notice: ' + dbError.message, 'warning');
+        console.error('Supabase DB product update error:', dbError.message);
+        showToast('Database error updating product: ' + dbError.message, 'error');
       }
     } catch (err) {
-      console.warn('Supabase DB product update notice:', err.message);
+      console.error('Supabase DB product update error:', err.message);
+      showToast('Database error: ' + err.message, 'error');
     }
 
     setProducts((prev) => prev.map((p) => (String(p.id) === String(payload.id) ? payload : p)));
