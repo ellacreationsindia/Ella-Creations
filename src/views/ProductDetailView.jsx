@@ -156,7 +156,8 @@ export default function ProductDetailView() {
             ) : (
               <img
                 src={currentMedia.url || product.images[0]}
-                alt={product.title}
+                alt={`${product.title} - Handcrafted ${product.category} in India | Ella Creations`}
+                title={`${product.title} - Handcrafted Artificial Jewelry`}
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
               />
             )}

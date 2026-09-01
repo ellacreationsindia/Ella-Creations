@@ -1,71 +1,241 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+
+  <!-- 1. Homepage -->
   <url>
     <loc>https://ellacreations.co/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
+    <image:image>
+      <image:loc>https://ellacreations.co/logo.png</image:loc>
+      <image:title>Ella Creations - Handcrafted Artificial Jewelry India</image:title>
+      <image:caption>Contemporary luxury artificial jewelry brand in India</image:caption>
+    </image:image>
   </url>
+
+  <!-- 2. Main Shop Catalog -->
   <url>
     <loc>https://ellacreations.co/#shop</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
+
+  <!-- 3. Category Landing Pages -->
   <url>
     <loc>https://ellacreations.co/#necklaces</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Handcrafted Necklaces &amp; Kundan Chokers</image:title>
+      <image:caption>Royal Kundan chokers and Rani Haars by Ella Creations</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://ellacreations.co/#earrings</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Cubic Zirconia Drop Earrings &amp; Jhumkas</image:title>
+      <image:caption>AAA+ CZ crystal drop earrings and traditional peacock Jhumkas</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://ellacreations.co/#rings</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Solitaire &amp; Floral Statement Rings</image:title>
+      <image:caption>Adjustable rose gold and silver CZ cocktail rings</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://ellacreations.co/#bracelets</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Imperial Meenakari Bangles &amp; Cuffs</image:title>
+      <image:caption>Handcrafted enamel bangles with gold electroplating</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://ellacreations.co/#bridal-sets</loc>
-    <lastmod>2026-08-10</lastmod>
+    <loc>https://ellacreations.co/#sets</loc>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>https://ellacreations.co/#bridal-sets</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- 4. Individual Product Deep-Links with Google Image Sitemap Tags -->
+  <url>
+    <loc>https://ellacreations.co/#product-ec-101</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Royal Kundan &amp; Pearl Choker Set</image:title>
+      <image:caption>Gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-102</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Starlight Solitaire Cubic Zirconia Drop Earrings</image:title>
+      <image:caption>Diamond-cut AAA+ cubic zirconia crystals set in rose gold plating with 925 sterling silver posts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-103</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Celestial Rose Gold Flower Ring</image:title>
+      <image:caption>Adjustable statement floral ring with brilliant micro-pave CZ stones in dual tone rose gold</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-104</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Imperial Meenakari Gold Plated Bangles Set</image:title>
+      <image:caption>Hand-painted Meenakari enamel bangles with gold electroplating</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-105</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Maharani Emerald Drop Kundan Choker Set</image:title>
+      <image:caption>Bridal Kundan choker set featuring vibrant glass emerald beads and intricate foil-backed Kundan work</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-106</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Silver Rhythm CZ Statement Cocktail Ring</image:title>
+      <image:caption>Concentric bands of precision-cut cubic zirconia crystals with mirror rhodium finish</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-107</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Royal Peacock Feather Jhumka Earrings</image:title>
+      <image:caption>Traditional peacock motif jhumkas with pearl-fringed bell domes</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#product-ec-108</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
+      <image:title>Regal Pearl &amp; Polki Layered Rani Haar Set</image:title>
+      <image:caption>5-layer long Rani Haar necklace with Polki glass stones and shell pearls</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 5. Editorial & Blog Articles (Ella Journal) -->
+  <url>
+    <loc>https://ellacreations.co/#blog</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#blog-blog-101</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>The Ultimate Guide to Choosing Bridal Kundan Jewelry for Your Big Day</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#blog-blog-102</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>How to Style Cubic Zirconia (CZ) Jewelry from Workday to Cocktail Glam</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ellacreations.co/#blog-blog-103</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>5 Essential Tips to Care for &amp; Store Your Artificial Jewelry</image:title>
+    </image:image>
+  </url>
+
+  <!-- 6. Legal, Care Guides & Site Index -->
+  <url>
+    <loc>https://ellacreations.co/#brand-guidelines</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
     <loc>https://ellacreations.co/#terms</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
     <loc>https://ellacreations.co/#privacy</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://ellacreations.co/#brand-guidelines</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
     <loc>https://ellacreations.co/#sitemap</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
+
 </urlset>
+

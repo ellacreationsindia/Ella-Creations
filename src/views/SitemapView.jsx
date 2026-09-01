@@ -8,36 +8,41 @@ export default function SitemapView() {
 
   const siteStructure = [
     {
-      category: 'Main Navigation & Shop',
+      category: 'Main Navigation & Catalog',
       icon: ShoppingBag,
       color: 'text-brand-rose',
       links: [
-        { label: 'Home Page', view: 'home', desc: 'Hero showcase, featured Kundan sets & customer reviews' },
-        { label: 'Shop Catalog', view: 'shop', desc: 'Complete collection of necklaces, earrings, rings & sets' },
-        { label: 'About Ella Creations', view: 'home', desc: 'Our brand story & handcrafted craftsmanship' },
-        { label: 'Contact Us & Concierge', view: 'contact', desc: 'Customer support & WhatsApp help' }
+        { label: 'Home Page', view: 'home', desc: 'Hero showcase, signature Kundan chokers, reviews & FAQs' },
+        { label: 'Master Shop Catalog', view: 'shop', desc: 'Complete collection of artificial jewelry' },
+        { label: 'Necklaces & Chokers', view: 'shop', category: 'Necklaces', desc: 'Royal Kundan chokers & Polki Rani Haars' },
+        { label: 'Earrings & Jhumkas', view: 'shop', category: 'Earrings', desc: 'AAA+ Cubic Zirconia drops & peacock jhumkas' },
+        { label: 'Solitaire & Floral Rings', view: 'shop', category: 'Rings', desc: 'Rose gold adjustable cocktail rings' },
+        { label: 'Meenakari Bangles', view: 'shop', category: 'Bracelets', desc: 'Hand-painted enamel bangles & cuffs' },
+        { label: 'Bridal Wedding Sets', view: 'shop', category: 'Sets', desc: 'Complete wedding jewelry with maang tikka' }
       ]
     },
     {
-      category: 'Customer Care & Resources',
+      category: 'Ella Journal & Styling Guides',
       icon: ShieldCheck,
       color: 'text-brand-gold',
       links: [
-        { label: 'Jewelry Care Guide', view: 'brand-guidelines', desc: 'Maintenance tips for handcrafted jewelry longevity' },
-        { label: 'Shipping & Delivery', view: 'terms', desc: 'Pincode serviceability & express shipping rates' },
-        { label: 'No Return Policy & Terms', view: 'terms', desc: 'Store guidelines and shipping policies' },
-        { label: 'VIP Sparkle Club', view: 'home', desc: 'Newsletter subscription for preview drops' }
+        { label: 'Ella Journal Editorial', view: 'blog', desc: 'Jewelry styling advice & bridal fashion trends' },
+        { label: 'Bridal Kundan Guide', view: 'blog-detail', itemId: 'blog-101', desc: 'How to choose Kundan for your lehenga' },
+        { label: 'Styling CZ Day to Night', view: 'blog-detail', itemId: 'blog-102', desc: 'Office wear to cocktail glam transition' },
+        { label: '5 Tips to Care for Jewelry', view: 'blog-detail', itemId: 'blog-103', desc: 'Gold electroplating preservation guide' },
+        { label: 'Jewelry Care & Metallurgy', view: 'brand-guidelines', desc: '100% lead-free & nickel-free craftsmanship' }
       ]
     },
     {
-      category: 'Legal & Brand Documentation',
+      category: 'Legal, Policies & Machine Sitemaps',
       icon: FileText,
       color: 'text-emerald-600',
       links: [
-        { label: 'Terms & Conditions', view: 'terms', desc: 'Store guidelines, pricing & Indian jurisdiction' },
-        { label: 'Privacy Policy', view: 'privacy', desc: 'DPDP Act compliance & Razorpay payment security' },
-        { label: 'Brand Guidelines & Heritage', view: 'brand-guidelines', desc: 'Brand story, colors, fonts & craftsmanship' },
-        { label: 'XML Sitemap (Search Engines)', url: '/sitemap.xml', external: true, desc: 'Machine-readable XML sitemap for SEO crawlers' }
+        { label: 'Terms & Conditions', view: 'terms', desc: 'Pricing, courier shipping & Indian jurisdiction' },
+        { label: 'Privacy Policy', view: 'privacy', desc: 'DPDP compliance & Razorpay payment security' },
+        { label: 'Brand Guidelines & Heritage', view: 'brand-guidelines', desc: 'Color palette, fonts & artisan story' },
+        { label: 'XML Sitemap (Google)', url: '/sitemap.xml', external: true, desc: 'Machine-readable XML image & URL sitemap' },
+        { label: 'LLMs.txt (AI Search Engines)', url: '/llms.txt', external: true, desc: 'AI search engine specification file' }
       ]
     }
   ];
@@ -90,7 +95,7 @@ export default function SitemapView() {
                         </a>
                       ) : (
                         <button
-                          onClick={() => navigateTo(link.view)}
+                          onClick={() => navigateTo(link.view, link.itemId || null, link.category || null)}
                           className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left"
                         >
                           {link.label}

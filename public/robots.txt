@@ -1,5 +1,31 @@
+# robots.txt for Ella Creations (https://ellacreations.co)
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/*
+Disallow: /#admin
+Disallow: /?view=admin
+Disallow: /checkout
+Disallow: /account
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /logo.png
+Allow: /favicon/*
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+
+User-agent: Pinterestbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
 
 Sitemap: https://ellacreations.co/sitemap.xml
+

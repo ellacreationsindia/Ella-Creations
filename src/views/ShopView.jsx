@@ -203,8 +203,16 @@ export default function ShopView() {
       <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-6 sm:p-8 rounded-3xl border border-brand-gold/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 shadow-sm">
         <div>
           <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-brand-gold">Ella Creations Catalog</span>
-          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 mt-1">Artificial Jewelry Collection</h1>
-          <p className="text-xs sm:text-sm text-stone-600 mt-1">Handcrafted Kundan, Cubic Zirconia drops, Rose Gold & Sterling Silver creations.</p>
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 mt-1">
+            {selectedCategory && selectedCategory !== 'All' 
+              ? `${selectedCategory} Collection - Handcrafted Artificial Jewelry` 
+              : 'Artificial Fine Jewelry Collection'}
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-600 mt-1">
+            {selectedCategory && selectedCategory !== 'All'
+              ? `Explore our curated selection of handcrafted ${selectedCategory.toLowerCase()} with gold finish and AAA+ crystals.`
+              : 'Handcrafted Kundan, Cubic Zirconia drops, Rose Gold & Sterling Silver creations with express shipping across India.'}
+          </p>
         </div>
         <div className="flex items-center gap-2.5 bg-white/80 px-3.5 py-2 rounded-2xl border border-brand-gold/40 shadow-sm self-start md:self-auto">
           <Sparkles className="w-4 h-4 text-brand-gold" />

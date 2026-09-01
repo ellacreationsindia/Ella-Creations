@@ -133,8 +133,87 @@ export const StoreProvider = ({ children }) => {
     if (category) {
       setSelectedCategory(category);
     }
+
+    // Synchronize window.location.hash for deep linking & SEO crawlability
+    if (typeof window !== 'undefined') {
+      let targetHash = '';
+      if (view === 'home') {
+        targetHash = '';
+      } else if (view === 'shop') {
+        targetHash = category && category !== 'All' 
+          ? `#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` 
+          : '#shop';
+      } else if (view === 'product') {
+        const targetId = itemId || selectedProductId;
+        targetHash = targetId ? `#product-${targetId}` : '#shop';
+      } else if (view === 'blog') {
+        targetHash = '#blog';
+      } else if (view === 'blog-detail') {
+        const targetBlog = itemId || selectedBlogId;
+        targetHash = targetBlog ? `#blog-${targetBlog}` : '#blog';
+      } else {
+        targetHash = `#${view}`;
+      }
+
+      if (window.location.hash !== targetHash) {
+        if (!targetHash) {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.location.hash = targetHash;
+        }
+      }
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Deep Link & Hash Routing Initializer / Listener
+  useEffect(() => {
+    const handleHashRouting = () => {
+      if (typeof window === 'undefined') return;
+      const rawHash = window.location.hash || '';
+      if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
+
+      const hash = rawHash.replace(/^#\/?/, '').trim();
+      if (!hash || hash === 'home') {
+        setCurrentView('home');
+      } else if (hash.startsWith('product-')) {
+        const pid = hash.replace('product-', '');
+        setCurrentView('product');
+        setSelectedProductId(pid);
+      } else if (hash.startsWith('blog-')) {
+        const bid = hash.replace('blog-', '');
+        setCurrentView('blog-detail');
+        setSelectedBlogId(bid);
+      } else if (hash === 'blog') {
+        setCurrentView('blog');
+      } else if (hash === 'shop') {
+        setCurrentView('shop');
+        setSelectedCategory('All');
+      } else if (hash === 'necklaces') {
+        setCurrentView('shop');
+        setSelectedCategory('Necklaces');
+      } else if (hash === 'earrings') {
+        setCurrentView('shop');
+        setSelectedCategory('Earrings');
+      } else if (hash === 'rings') {
+        setCurrentView('shop');
+        setSelectedCategory('Rings');
+      } else if (hash === 'bracelets') {
+        setCurrentView('shop');
+        setSelectedCategory('Bracelets');
+      } else if (hash === 'sets' || hash === 'bridal-sets') {
+        setCurrentView('shop');
+        setSelectedCategory('Sets');
+      } else if (['terms', 'privacy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin'].includes(hash)) {
+        setCurrentView(hash);
+      }
+    };
+
+    handleHashRouting();
+    window.addEventListener('hashchange', handleHashRouting);
+    return () => window.removeEventListener('hashchange', handleHashRouting);
+  }, []);
 
   // 1. Automatic OAuth Catch & Forwarding
   useEffect(() => {

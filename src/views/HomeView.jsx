@@ -12,13 +12,15 @@ import {
   Truck, 
   RefreshCw, 
   Instagram, 
-  ShoppingBag,
-  Flame,
-  BookOpen,
-  Clock,
-  User,
-  Crown,
-  ChevronRight
+  ShoppingBag, 
+  Flame, 
+  BookOpen, 
+  Clock, 
+  User, 
+  Crown, 
+  ChevronRight,
+  ChevronDown,
+  HelpCircle
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
@@ -27,6 +29,7 @@ export default function HomeView() {
   const { products, blogs, navigateTo, applyCoupon, showToast, reviews } = useStore();
   const [copiedCoupon, setCopiedCoupon] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'featured' | 'new' | 'kundan' | 'cz'
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   // Filter 8-12 products for Homepage Showcase
   let showcaseProducts = [...products];
@@ -482,6 +485,60 @@ export default function HomeView() {
                 <span className="text-xs font-semibold text-stone-800">{rev.author}</span>
                 <span className="text-[11px] text-stone-400">{rev.date}</span>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Frequently Asked Questions (FAQ) Section for Search Rich Results */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center space-y-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-brand-gold flex items-center justify-center gap-1.5">
+            <HelpCircle className="w-4 h-4 text-brand-gold" /> Frequently Asked Questions
+          </span>
+          <h2 className="font-serif text-3xl font-bold text-stone-900">Got Questions About Our Jewelry?</h2>
+          <p className="text-xs sm:text-sm text-stone-600">Everything you need to know about materials, skin safety, delivery, and jewelry care.</p>
+        </div>
+
+        <div className="space-y-4">
+          {[
+            {
+              q: "What types of artificial jewelry does Ella Creations specialize in?",
+              a: "Ella Creations specializes in handcrafted artificial fine jewelry including royal gold-plated Kundan choker sets, AAA+ Cubic Zirconia (CZ) solitaire drop earrings, micro-pave statement rings, hand-painted Meenakari enamel bangles, and complete bridal wedding sets with maang tikka and jhumkas."
+            },
+            {
+              q: "Is Ella Creations jewelry hypoallergenic and skin-safe?",
+              a: "Yes! All pieces are handcrafted using premium 100% lead-free and nickel-free brass alloy bases. Our earrings feature hypoallergenic 925 sterling silver posts and protective electroplating to ensure long, irritation-free wear even for sensitive skin."
+            },
+            {
+              q: "How long does shipping take across India?",
+              a: "We provide fast, insured express courier dispatch across all serviceable Indian pincodes. Orders typically dispatch within 24–48 hours and arrive within 3 to 5 business days with live SMS and WhatsApp tracking."
+            },
+            {
+              q: "How should I care for and maintain artificial Kundan and CZ jewelry?",
+              a: "Follow the golden rule of 'Last On, First Off'—put your jewelry on after perfumes, cosmetics, and hairsprays. Keep jewelry away from direct water or moisture. Store each piece in an airtight pouch or velvet box after wiping gently with a dry microfiber cloth."
+            },
+            {
+              q: "What payment methods do you accept?",
+              a: "We accept all major secure payment methods through Razorpay, including UPI (Google Pay, PhonePe, Paytm), Credit and Debit Cards (Visa, Mastercard, RuPay), and Net Banking across 50+ Indian banks."
+            }
+          ].map((faq, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl border border-brand-gold/20 shadow-sm overflow-hidden transition-all"
+            >
+              <button
+                onClick={() => setOpenFaqIndex(openFaqIndex === idx ? -1 : idx)}
+                className="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-brand-cream/30 transition-colors"
+              >
+                <span className="font-serif text-base font-semibold text-stone-900">{faq.q}</span>
+                <ChevronDown className={`w-4 h-4 text-brand-gold flex-shrink-0 transition-transform duration-300 ${openFaqIndex === idx ? 'rotate-180' : ''}`} />
+              </button>
+              {openFaqIndex === idx && (
+                <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-stone-600 leading-relaxed border-t border-stone-100">
+                  {faq.a}
+                </div>
+              )}
             </div>
           ))}
         </div>

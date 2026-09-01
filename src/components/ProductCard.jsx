@@ -74,7 +74,8 @@ export default function ProductCard({ product }) {
         {/* Primary Image (Uncropped) */}
         <img
           src={product.images?.[0] || '/logo.png'}
-          alt={product.title}
+          alt={`${product.title} - Handcrafted ${product.category} by Ella Creations`}
+          loading="lazy"
           className={`w-full h-full object-contain object-center transition-all duration-500 ease-in-out ${
             product.images && product.images.length > 1 ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
           } ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
@@ -84,7 +85,8 @@ export default function ProductCard({ product }) {
         {product.images && product.images.length > 1 && (
           <img
             src={product.images[1]}
-            alt={`${product.title} alternate view`}
+            alt={`${product.title} - ${product.category} detailed view | Ella Creations`}
+            loading="lazy"
             className={`absolute inset-0 w-full h-full object-contain object-center p-4 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out ${
               isOutOfStock ? 'opacity-60 grayscale' : ''
             }`}
