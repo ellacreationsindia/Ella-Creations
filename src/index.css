@@ -17,11 +17,17 @@
 }
 
 @layer base {
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
   body {
     background-color: #FFF6EE;
     color: #333333;
     font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
   }
   h1, h2, h3, h4, h5, h6, .font-serif {
     font-family: 'Playfair Display', serif;

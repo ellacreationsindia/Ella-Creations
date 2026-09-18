@@ -5,7 +5,7 @@ export default function SEOHead() {
   const { currentView, selectedProductId, selectedCategory, selectedBlogId, products, blogs } = useStore();
 
   useEffect(() => {
-    const domain = 'https://ellacreations.co';
+    const domain = 'https://ella-creations.com';
     const activeProduct = products.find(p => p.id === selectedProductId) || (selectedProductId ? products[0] : null);
     const activeBlog = blogs.find(b => b.id === selectedBlogId || b.slug === selectedBlogId) || (selectedBlogId ? blogs[0] : null);
 
@@ -82,6 +82,11 @@ export default function SEOHead() {
       title = 'Admin Control Panel | Ella Creations';
       description = 'Internal store management dashboard.';
       robotsContent = 'noindex, nofollow';
+    } else if (currentView === '404') {
+      title = '404: Page Not Found | Ella Creations India';
+      description = 'The jewelry piece or page you are looking for cannot be found. Browse our handcrafted artificial Kundan, CZ and bridal jewelry collections.';
+      robotsContent = 'noindex, nofollow';
+      canonicalUrl = `${domain}/404`;
     }
 
     // 2. Update Document Title

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X, Check, Tag } from 'lucide-react';
+import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X, Check, Tag, Eye, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { isProductInCampaign } from '../utils/pricing';
 import ProductCard from '../components/ProductCard';
@@ -10,14 +10,19 @@ export default function ShopView() {
     selectedCategory, 
     setSelectedCategory,
     activePromotions = [],
-    activePopupCampaign
+    activePopupCampaign,
+    recentlyViewed
   } = useStore();
 
+  // Detailed & Relevant Jewelry Filters
+  const [selectedOccasion, setSelectedOccasion] = useState('All');
+  const [selectedPolish, setSelectedPolish] = useState('All');
   const [selectedStone, setSelectedStone] = useState('All');
+  const [priceBucket, setPriceBucket] = useState('All');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(50000);
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc' | 'rating'
+  const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'discount'
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [shopSearch, setShopSearch] = useState('');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -40,24 +45,118 @@ export default function ShopView() {
 
   // Filter products
   let filtered = products.filter((p) => {
+    // 1. Category Filter
     if (selectedCategory && selectedCategory !== 'All') {
       if (selectedCategory === 'Sale') {
         const isPromoItem = activePromotions.some(promo => isProductInCampaign(p.id, promo));
         if (!isPromoItem) return false;
       } else {
-        const normSel = selectedCategory.toLowerCase().trim();
-        const normCat = (p.category || '').toLowerCase().trim();
+        const normSel = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normCat = (p.category || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normTitle = (p.title || '').toLowerCase();
         
-        const isSetMatch = (normSel.includes('set') || normSel.includes('bridal')) && (normCat.includes('set') || normCat.includes('bridal'));
-        const isDirectMatch = normCat === normSel || normCat.includes(normSel) || normSel.includes(normCat);
-        
-        if (!isSetMatch && !isDirectMatch) return false;
+        if (normSel === 'necklace') {
+          const match = normCat.includes('neck') || normTitle.includes('necklace') || normTitle.includes('choker') || normTitle.includes('haar');
+          if (!match) return false;
+        } else if (normSel === 'pendantset') {
+          const match = normCat.includes('pendant') || normTitle.includes('pendant') || (normCat.includes('set') && !normTitle.includes('bridal'));
+          if (!match) return false;
+        } else if (normSel === 'rings') {
+          const match = normCat.includes('ring') || normTitle.includes('ring');
+          if (!match) return false;
+        } else if (normSel === 'earring') {
+          const match = normCat.includes('ear') || normTitle.includes('earring') || normTitle.includes('jhumka') || normTitle.includes('drop');
+          if (!match) return false;
+        } else if (normSel === 'bridalsets') {
+          const match = normCat.includes('bridal') || normTitle.includes('bridal') || (normCat.includes('set') && normTitle.includes('set'));
+          if (!match) return false;
+        } else if (normSel.includes('bracelet') || normSel.includes('bangle')) {
+          const match = normCat.includes('bracelet') || normCat.includes('bangle') || normTitle.includes('bracelet') || normTitle.includes('bangle') || normTitle.includes('cuff');
+          if (!match) return false;
+        } else if (normSel === 'others') {
+          const isStandard = 
+            normCat.includes('neck') || normTitle.includes('necklace') || normTitle.includes('choker') ||
+            normCat.includes('ring') || normTitle.includes('ring') ||
+            normCat.includes('ear') || normTitle.includes('earring') || normTitle.includes('jhumka') ||
+            normCat.includes('bridal') || normTitle.includes('bridal') ||
+            normCat.includes('bracelet') || normCat.includes('bangle');
+          if (isStandard && normCat !== 'others') return false;
+        } else {
+          const isDirectMatch = normCat.includes(normSel) || normSel.includes(normCat) || normTitle.includes(normSel);
+          if (!isDirectMatch) return false;
+        }
       }
     }
-    if (selectedStone !== 'All' && !p.stoneType.toLowerCase().includes(selectedStone.toLowerCase())) return false;
+
+    // 2. Occasion Filter
+    if (selectedOccasion !== 'All') {
+      const pTags = Array.isArray(p.occasionTags) ? p.occasionTags.join(' ').toLowerCase() : '';
+      const pText = `${pTags} ${p.title} ${p.description || ''}`.toLowerCase();
+      if (selectedOccasion === 'Bridal & Wedding') {
+        if (!pText.includes('bridal') && !pText.includes('wedding') && !pText.includes('dulhan') && !pText.includes('shaadi')) return false;
+      } else if (selectedOccasion === 'Festive & Sangeet') {
+        if (!pText.includes('festiv') && !pText.includes('sangeet') && !pText.includes('diwali') && !pText.includes('traditional') && !pText.includes('ethnic')) return false;
+      } else if (selectedOccasion === 'Cocktail & Party') {
+        if (!pText.includes('cocktail') && !pText.includes('party') && !pText.includes('reception') && !pText.includes('evening') && !pText.includes('glam')) return false;
+      } else if (selectedOccasion === 'Daily Wear') {
+        if (!pText.includes('daily') && !pText.includes('minimal') && !pText.includes('subtle') && !pText.includes('office') && !pText.includes('everyday')) return false;
+      } else if (selectedOccasion === 'Gifting') {
+        if (!pText.includes('gift') && p.price > 4000) return false;
+      }
+    }
+
+    // 3. Metal Polish / Finish Filter
+    if (selectedPolish !== 'All') {
+      const varNames = (p.variants || []).map(v => (v.name || '').toLowerCase()).join(' ');
+      const pText = `${varNames} ${p.title} ${p.description || ''}`.toLowerCase();
+      if (selectedPolish === 'Gold Polish') {
+        if (!pText.includes('gold') || pText.includes('rose gold') || pText.includes('antique gold')) return false;
+      } else if (selectedPolish === 'Rose Gold') {
+        if (!pText.includes('rose gold') && !pText.includes('rose')) return false;
+      } else if (selectedPolish === 'Antique Gold') {
+        if (!pText.includes('antique') && !pText.includes('matte gold') && !pText.includes('temple')) return false;
+      } else if (selectedPolish === 'Silver / Rhodium') {
+        if (!pText.includes('silver') && !pText.includes('rhodium') && !pText.includes('white gold') && !pText.includes('platinum')) return false;
+      }
+    }
+
+    // 4. Stone & Craft Filter
+    if (selectedStone !== 'All') {
+      const pText = `${p.stoneType || ''} ${p.title} ${p.description || ''}`.toLowerCase();
+      if (selectedStone === 'Kundan & Polki') {
+        if (!pText.includes('kundan') && !pText.includes('polki') && !pText.includes('jadau')) return false;
+      } else if (selectedStone === 'Cubic Zirconia (CZ)') {
+        if (!pText.includes('cz') && !pText.includes('cubic') && !pText.includes('zirconia') && !pText.includes('crystal') && !pText.includes('ad')) return false;
+      } else if (selectedStone === 'Pearl') {
+        if (!pText.includes('pearl') && !pText.includes('moti')) return false;
+      } else if (selectedStone === 'Uncut Stone') {
+        if (!pText.includes('uncut') && !pText.includes('raw') && !pText.includes('polki')) return false;
+      }
+    }
+
+    // 5. Quick Price Bucket Filter
+    if (priceBucket !== 'All') {
+      if (priceBucket === 'under-1500' && p.price >= 1500) return false;
+      if (priceBucket === '1500-3000' && (p.price < 1500 || p.price > 3000)) return false;
+      if (priceBucket === '3000-6000' && (p.price < 3000 || p.price > 6000)) return false;
+      if (priceBucket === '6000-above' && p.price < 6000) return false;
+    }
+
+    // 6. Dual Price Slider Filter
     if (p.price < minPrice || p.price > maxPrice) return false;
+
+    // 7. Stock status
     if (inStockOnly && (p.price <= 0 || p.stock <= 0)) return false;
-    if (shopSearch.trim() && !p.title.toLowerCase().includes(shopSearch.toLowerCase())) return false;
+
+    // 8. Search query
+    if (shopSearch.trim()) {
+      const q = shopSearch.toLowerCase();
+      const match = (p.title || '').toLowerCase().includes(q) || 
+                    (p.category || '').toLowerCase().includes(q) || 
+                    (p.stoneType || '').toLowerCase().includes(q);
+      if (!match) return false;
+    }
+
     return true;
   });
 
@@ -68,11 +167,20 @@ export default function ShopView() {
     filtered.sort((a, b) => b.price - a.price);
   } else if (sortBy === 'rating') {
     filtered.sort((a, b) => b.rating - a.rating);
+  } else if (sortBy === 'discount') {
+    filtered.sort((a, b) => {
+      const discA = a.comparePrice && a.comparePrice > a.price ? (a.comparePrice - a.price) : 0;
+      const discB = b.comparePrice && b.comparePrice > b.price ? (b.comparePrice - b.price) : 0;
+      return discB - discA;
+    });
   }
 
   const resetFilters = () => {
     setSelectedCategory('All');
+    setSelectedOccasion('All');
+    setSelectedPolish('All');
     setSelectedStone('All');
+    setPriceBucket('All');
     setMinPrice(MIN_LIMIT);
     setMaxPrice(MAX_LIMIT);
     setInStockOnly(false);
@@ -80,16 +188,36 @@ export default function ShopView() {
     setSortBy('featured');
   };
 
-  const activeFilterCount = (selectedCategory !== 'All' ? 1 : 0) +
+  const activeFilterCount = 
+    (selectedCategory !== 'All' ? 1 : 0) +
+    (selectedOccasion !== 'All' ? 1 : 0) +
+    (selectedPolish !== 'All' ? 1 : 0) +
     (selectedStone !== 'All' ? 1 : 0) +
+    (priceBucket !== 'All' ? 1 : 0) +
     (minPrice > MIN_LIMIT || maxPrice < MAX_LIMIT ? 1 : 0) +
     (inStockOnly ? 1 : 0) +
     (shopSearch.trim() ? 1 : 0);
 
   const categories = activePromotions.length > 0 
-    ? ['All', 'Sale', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Sets'] 
-    : ['All', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Sets'];
-  const stones = ['All', 'Kundan', 'Cubic Zirconia', 'Pearl', 'Uncut'];
+    ? ['All', 'Sale', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'] 
+    : ['All', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'];
+
+  const occasions = ['All', 'Bridal & Wedding', 'Festive & Sangeet', 'Cocktail & Party', 'Daily Wear', 'Gifting'];
+  const polishes = ['All', 'Gold Polish', 'Rose Gold', 'Antique Gold', 'Silver / Rhodium'];
+  const stones = ['All', 'Kundan & Polki', 'Cubic Zirconia (CZ)', 'Pearl', 'Uncut Stone'];
+  const priceBuckets = [
+    { id: 'All', label: 'All Prices' },
+    { id: 'under-1500', label: 'Under ₹1,500' },
+    { id: '1500-3000', label: '₹1,500 - ₹3,000' },
+    { id: '3000-6000', label: '₹3,000 - ₹6,000' },
+    { id: '6000-above', label: '₹6,000 & Above' }
+  ];
+
+  // Recently Viewed
+  const recentlyViewedProducts = (recentlyViewed || [])
+    .map(id => products.find(p => p.id === id))
+    .filter(Boolean)
+    .slice(0, 4);
 
   // Single Track Dual-Thumb Percentages
   const minPercent = Math.max(0, Math.min(100, ((minPrice - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100));
@@ -99,14 +227,14 @@ export default function ShopView() {
     <div className="space-y-6">
       {/* Search inside shop */}
       <div>
-        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Search Catalog</label>
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Search Jewelry</label>
         <div className="relative">
           <input
             type="text"
-            placeholder="Title or keyword..."
+            placeholder="Search by name, stone or craft..."
             value={shopSearch}
             onChange={(e) => setShopSearch(e.target.value)}
-            className="w-full text-xs pl-8 pr-3 py-2 border border-stone-300 rounded-xl outline-none focus:border-brand-rose bg-white"
+            className="w-full text-xs pl-8 pr-3 py-2 border border-stone-300 rounded-xl outline-none focus:border-brand-rose bg-white text-stone-800"
           />
           <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
         </div>
@@ -141,17 +269,57 @@ export default function ShopView() {
         </div>
       </div>
 
-      {/* Stone / Gemstone Filter */}
-      <div>
-        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2.5">Stone Type</label>
+      {/* Occasion Filter */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Occasion & Style</label>
+        <div className="flex flex-wrap gap-1.5">
+          {occasions.map((occ) => (
+            <button
+              key={occ}
+              onClick={() => setSelectedOccasion(occ)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
+                selectedOccasion === occ
+                  ? 'bg-stone-900 text-white border-stone-900 shadow-sm font-bold'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {occ}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Polish / Finish Filter */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Metal Polish / Finish</label>
+        <div className="flex flex-wrap gap-1.5">
+          {polishes.map((pol) => (
+            <button
+              key={pol}
+              onClick={() => setSelectedPolish(pol)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
+                selectedPolish === pol
+                  ? 'bg-brand-rose text-white border-brand-rose shadow-sm font-bold'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {pol}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stone / Craft Filter */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Stone & Craft</label>
         <div className="flex flex-wrap gap-1.5">
           {stones.map((st) => (
             <button
               key={st}
               onClick={() => setSelectedStone(st)}
-              className={`text-[11px] px-2.5 py-1 rounded-lg border font-medium transition-all ${
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
                 selectedStone === st
-                  ? 'bg-stone-900 text-white border-stone-900 shadow-sm'
+                  ? 'bg-stone-900 text-white border-stone-900 shadow-sm font-bold'
                   : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
               }`}
             >
@@ -161,10 +329,30 @@ export default function ShopView() {
         </div>
       </div>
 
+      {/* Price Quick Buckets */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Price Budget</label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {priceBuckets.map((bucket) => (
+            <button
+              key={bucket.id}
+              onClick={() => setPriceBucket(bucket.id)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border text-center transition-all cursor-pointer ${
+                priceBucket === bucket.id
+                  ? 'bg-brand-gold text-stone-900 border-brand-gold font-bold shadow-xs'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {bucket.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Dual Price Range Slider (Minimum & Maximum on Single Bar) */}
       <div className="space-y-3 pt-2 border-t border-stone-100">
         <div className="flex justify-between items-center text-xs font-semibold text-stone-800">
-          <span className="uppercase tracking-wider">Price Range</span>
+          <span className="uppercase tracking-wider">Custom Price Range</span>
           <span className="text-brand-rose font-bold font-mono bg-brand-cream px-2 py-0.5 rounded border border-brand-gold/30">
             {formatPrice(minPrice)} - {formatPrice(maxPrice)}
           </span>
@@ -172,9 +360,7 @@ export default function ShopView() {
         
         {/* Single Track Container */}
         <div className="relative w-full pt-4 pb-2 select-none">
-          {/* Background Track */}
           <div className="relative h-2 w-full rounded-full bg-stone-200">
-            {/* Colored Active Highlight Track */}
             <div
               className="absolute h-full rounded-full bg-brand-rose"
               style={{
@@ -184,7 +370,6 @@ export default function ShopView() {
             />
           </div>
 
-          {/* Both Min and Max Knobs on the Same Slider */}
           <input
             type="range"
             min={MIN_LIMIT}
@@ -312,39 +497,126 @@ export default function ShopView() {
         </>
       )}
 
-      {/* Mobile Sticky Filter & Quick Sort Trigger Bar */}
-      <div className="lg:hidden sticky top-16 z-30 flex items-center justify-between gap-2 bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-brand-gold/30 shadow-md">
-        <button
-          onClick={() => setIsMobileFilterOpen(true)}
-          className="flex items-center gap-1.5 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-gold/40 flex-1 justify-center transition-all cursor-pointer"
-        >
-          <SlidersHorizontal className="w-4 h-4 text-brand-rose shrink-0" />
-          <span>Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-brand-rose text-white text-[10px] flex items-center justify-center font-bold shrink-0">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-
-        <div className="flex items-center gap-1">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="text-xs px-2.5 py-2 rounded-xl border border-stone-200 bg-stone-50 font-medium outline-none focus:border-brand-rose text-stone-800 cursor-pointer"
-            aria-label="Sort products"
+      {/* Mobile Sticky Filter Sub-Bar & Quick Swipe Category Pills */}
+      <div className="lg:hidden sticky top-14 sm:top-16 z-30 bg-white/95 backdrop-blur-md -mx-4 px-3 sm:px-4 py-2.5 border-y border-brand-gold/30 shadow-md space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={() => setIsMobileFilterOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-3 py-2 rounded-xl border border-brand-gold/40 flex-1 justify-center transition-all cursor-pointer shadow-xs"
           >
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="rating">Top Rated</option>
-          </select>
+            <SlidersHorizontal className="w-4 h-4 text-brand-rose shrink-0" />
+            <span>All Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-brand-rose text-white text-[10px] flex items-center justify-center font-bold shrink-0">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+
+          <div className="flex items-center gap-1">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="text-xs px-2.5 py-2 rounded-xl border border-stone-200 bg-stone-50 font-medium outline-none text-stone-800 cursor-pointer"
+              aria-label="Sort products"
+            >
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
+              <option value="discount">Biggest Deals</option>
+            </select>
+          </div>
+
+          <span className="text-[11px] font-bold text-brand-rose whitespace-nowrap bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 shrink-0">
+            {filtered.length} items
+          </span>
         </div>
 
-        <span className="text-[11px] font-semibold text-stone-500 whitespace-nowrap px-1">
-          {filtered.length} items
-        </span>
+        {/* Quick Horizontal Scrollable Category Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+          {categories.map((cat) => {
+            const isSel = selectedCategory === cat;
+            const isSale = cat === 'Sale';
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`text-[11px] px-3 py-1 rounded-full whitespace-nowrap font-medium transition-all shrink-0 cursor-pointer ${
+                  isSel
+                    ? (isSale ? 'bg-gradient-to-r from-rose-700 to-brand-rose text-white shadow-xs font-bold' : 'bg-stone-900 text-white font-bold')
+                    : (isSale ? 'bg-rose-50 text-brand-rose border border-rose-200 font-bold' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200')
+                }`}
+              >
+                {isSale ? '🔥 Sale' : cat}
+              </button>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Active Filter Chips / Badges Row (1-Tap Clear) */}
+      {activeFilterCount > 0 && (
+        <div className="flex flex-wrap items-center gap-2 p-3 bg-white rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] uppercase font-bold text-stone-500 tracking-wider">Active:</span>
+          
+          {selectedCategory !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-brand-rose/10 text-brand-rose border border-brand-rose/30 px-2.5 py-1 rounded-full font-medium">
+              Category: {selectedCategory}
+              <button onClick={() => setSelectedCategory('All')} className="hover:text-stone-900 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedOccasion !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-stone-100 text-stone-800 border border-stone-300 px-2.5 py-1 rounded-full font-medium">
+              Occasion: {selectedOccasion}
+              <button onClick={() => setSelectedOccasion('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedPolish !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full font-medium">
+              Finish: {selectedPolish}
+              <button onClick={() => setSelectedPolish('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedStone !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-purple-50 text-purple-900 border border-purple-200 px-2.5 py-1 rounded-full font-medium">
+              Stone: {selectedStone}
+              <button onClick={() => setSelectedStone('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {priceBucket !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-emerald-50 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-full font-medium">
+              Budget: {priceBuckets.find(b => b.id === priceBucket)?.label}
+              <button onClick={() => setPriceBucket('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {inStockOnly && (
+            <span className="inline-flex items-center gap-1 text-xs bg-emerald-50 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-full font-medium">
+              In Stock Only
+              <button onClick={() => setInStockOnly(false)} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {shopSearch.trim() && (
+            <span className="inline-flex items-center gap-1 text-xs bg-stone-100 text-stone-800 border border-stone-300 px-2.5 py-1 rounded-full font-medium">
+              "{shopSearch}"
+              <button onClick={() => setShopSearch('')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          <button
+            onClick={resetFilters}
+            className="text-xs text-stone-500 hover:text-brand-rose underline underline-offset-2 ml-auto font-semibold cursor-pointer"
+          >
+            Clear All ({activeFilterCount})
+          </button>
+        </div>
+      )}
 
       {/* Main Layout Grid */}
       <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -487,6 +759,27 @@ export default function ShopView() {
         </div>
 
       </div>
+
+      {/* Recently Viewed Jewelry Section */}
+      {recentlyViewedProducts.length > 0 && (
+        <section className="pt-10 border-t border-brand-gold/30 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Eye className="w-5 h-5 text-brand-rose" />
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">Recently Viewed by You</h3>
+                <p className="text-xs text-stone-500">Curated pieces you explored earlier</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+            {recentlyViewedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
     </div>
   );
 }

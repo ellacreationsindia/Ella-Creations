@@ -1,5 +1,5 @@
-import React from 'react';
-import { Star, Heart, Eye, ShoppingBag, Sparkles, Ban } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Heart, Eye, ShoppingBag, Sparkles, Ban, Share2, Check } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 
 export default function ProductCard({ product }) {
@@ -9,8 +9,12 @@ export default function ProductCard({ product }) {
     addToCart, 
     navigateTo, 
     setQuickViewProduct,
-    getProductPricing
+    getProductPricing,
+    getProductUrl,
+    showToast
   } = useStore();
+
+  const [justShared, setJustShared] = useState(false);
 
   const pricing = getProductPricing ? getProductPricing(product) : {
     hasPromo: false,
@@ -76,6 +80,43 @@ export default function ProductCard({ product }) {
         aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
       >
         <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-current' : ''}`} />
+      </button>
+
+      {/* Quick Share Button */}
+      <button
+        onClick={async (e) => {
+          e.stopPropagation();
+          const shareUrl = getProductUrl ? getProductUrl(product) : window.location.href;
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: `${product.title} | Ella Creations`,
+                text: `Explore this piece from Ella Creations: ${product.title}`,
+                url: shareUrl
+              });
+              return;
+            } catch (err) {
+              if (err.name === 'AbortError') return;
+            }
+          }
+          try {
+            await navigator.clipboard.writeText(shareUrl);
+            setJustShared(true);
+            showToast?.('Product link copied to clipboard!', 'success');
+            setTimeout(() => setJustShared(false), 2000);
+          } catch (err) {
+            console.warn(err);
+          }
+        }}
+        className={`absolute top-11 sm:top-13 right-2.5 sm:right-3 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+          justShared
+            ? 'bg-stone-900 text-brand-gold shadow-md scale-105'
+            : 'bg-white/85 backdrop-blur-md text-stone-600 hover:text-brand-gold hover:bg-white shadow-sm'
+        }`}
+        title="Share piece"
+        aria-label="Share piece"
+      >
+        {justShared ? <Check className="w-3.5 h-3.5 text-brand-gold" /> : <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
       </button>
 
       {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}

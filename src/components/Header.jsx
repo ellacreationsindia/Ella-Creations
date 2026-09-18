@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   ShoppingBag, 
   Heart, 
@@ -357,9 +358,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* APP-LIKE SLIDE-OUT MOBILE NAVIGATION DRAWER */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
+      {/* APP-LIKE SLIDE-OUT MOBILE NAVIGATION DRAWER (PORTALED TO BODY TO PREVENT HEADER CLIPPING) */}
+      {isMobileMenuOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] lg:hidden flex">
           {/* Dark Backdrop Overlay */}
           <div 
             className="fixed inset-0 bg-stone-950/70 backdrop-blur-sm transition-opacity animate-fadeIn"
@@ -427,7 +428,7 @@ export default function Header() {
                     className="w-full text-left px-3.5 py-2.5 rounded-xl text-stone-800 hover:bg-brand-cream transition-colors flex items-center justify-between font-bold"
                   >
                     <span className="flex items-center gap-2">
-                      <ShoppingBag className="w-4 h-4 text-brand-gold" /> Shop Collections
+                      <ShoppingBag className="w-4 h-4 text-brand-gold" /> Shop Categories
                     </span>
                     <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform duration-200 ${isMobileShopOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -438,51 +439,27 @@ export default function Header() {
                         onClick={() => { navigateTo('shop', null, 'All'); setIsMobileMenuOpen(false); }}
                         className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
                       >
-                        <span>All Jewelry Catalog</span>
+                        <span>All Jewelry</span>
                         <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
                       </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Necklaces'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Necklaces & Chokers</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Earrings'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Earrings & Jhumkas</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Rings'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Solitaire & Statement Rings</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Bracelets'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Bracelets & Cuffs</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Sets'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Full Sets & Combos</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'Bridal Sets'); setIsMobileMenuOpen(false); }}
-                        className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
-                      >
-                        <span>Royal Bridal Sets</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
+                      {[
+                        { label: 'Necklace', cat: 'Necklace' },
+                        { label: 'Pendant Set', cat: 'Pendant Set' },
+                        { label: 'Rings', cat: 'Rings' },
+                        { label: 'Earring', cat: 'Earring' },
+                        { label: 'Bridal Sets', cat: 'Bridal Sets' },
+                        { label: 'Bracelets / Bangles', cat: 'Bracelets/Bangles' },
+                        { label: 'Others', cat: 'Others' }
+                      ].map((item) => (
+                        <button
+                          key={item.cat}
+                          onClick={() => { navigateTo('shop', null, item.cat); setIsMobileMenuOpen(false); }}
+                          className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
+                        >
+                          <span>{item.label}</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -581,12 +558,13 @@ export default function Header() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* MOBILE-OPTIMIZED INSTANT SEARCH OVERLAY */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-sm flex items-start justify-center p-3 sm:p-4 pt-12 sm:pt-20 animate-fadeIn">
+      {/* MOBILE-OPTIMIZED INSTANT SEARCH OVERLAY (PORTALED TO BODY) */}
+      {isSearchOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-stone-950/70 backdrop-blur-sm flex items-start justify-center p-3 sm:p-4 pt-12 sm:pt-20 animate-fadeIn">
           <div className="bg-white rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl border border-brand-gold/30 relative max-h-[85vh] flex flex-col">
             
             {/* Search Input Bar */}
@@ -676,7 +654,8 @@ export default function Header() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </header>

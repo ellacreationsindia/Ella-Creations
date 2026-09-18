@@ -21,7 +21,14 @@ import {
   ZoomOut,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Share2,
+  Copy,
+  Check,
+  MessageCircle,
+  MapPin,
+  Clock,
+  Eye
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
@@ -40,7 +47,10 @@ export default function ProductDetailView() {
     user,
     hasUserPurchasedProduct,
     requireAuthForAction,
-    getProductPricing
+    getProductPricing,
+    getProductUrl,
+    recordProductView,
+    recentlyViewed
   } = useStore();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
@@ -68,6 +78,76 @@ export default function ProductDetailView() {
     photo: null
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  // Share & Pincode Checker State
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [pincode, setPincode] = useState('');
+  const [pincodeStatus, setPincodeStatus] = useState(null);
+
+  // Record this product in recently viewed
+  useEffect(() => {
+    if (product?.id && recordProductView) {
+      recordProductView(product.id);
+    }
+  }, [product?.id, recordProductView]);
+
+  // Product Share URL (SEO-friendly slug)
+  const productShareUrl = getProductUrl ? getProductUrl(product) : (typeof window !== 'undefined' ? window.location.href : '');
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(productShareUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch (e) {
+      console.warn('Failed copying link to clipboard', e);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${product.title} | Ella Creations Luxury Artificial Jewelry`,
+          text: `Take a look at this exquisite handcrafted jewelry piece: ${product.title}`,
+          url: productShareUrl
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          handleCopyLink();
+        }
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
+
+  const handlePincodeCheck = (e) => {
+    e.preventDefault();
+    const clean = (pincode || '').trim();
+    if (!/^\d{6}$/.test(clean)) {
+      setPincodeStatus({
+        checked: true,
+        valid: false,
+        message: 'Please enter a valid 6-digit Indian PIN code.'
+      });
+      return;
+    }
+    const today = new Date();
+    const dMin = new Date(today);
+    dMin.setDate(today.getDate() + 3);
+    const dMax = new Date(today);
+    dMax.setDate(today.getDate() + 5);
+    const options = { month: 'short', day: 'numeric', weekday: 'short' };
+    const dateStr = `${dMin.toLocaleDateString('en-IN', options)} - ${dMax.toLocaleDateString('en-IN', options)}`;
+    setPincodeStatus({
+      checked: true,
+      valid: true,
+      pincode: clean,
+      deliveryDate: dateStr,
+      message: `Delivery available to ${clean}! Estimated arrival ${dateStr}. Free express insured courier with signature receipt.`
+    });
+  };
 
   // Mobile Touch Swipe & Zoom Modal State
   const [touchStartX, setTouchStartX] = useState(null);
@@ -110,6 +190,11 @@ export default function ProductDetailView() {
   const isOutOfStock = pricing.finalPrice <= 0 || product.stock <= 0;
   const productReviews = reviews.filter((r) => r.productId === product.id);
   const relatedProducts = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const recentlyViewedProducts = (recentlyViewed || [])
+    .filter((id) => id !== product.id)
+    .map((id) => products.find((p) => p.id === id))
+    .filter(Boolean)
+    .slice(0, 4);
 
   // Tax calculations
   const taxRate = product.taxPercent !== undefined && product.taxPercent !== null ? product.taxPercent : 0;
@@ -511,6 +596,136 @@ export default function ProductDetailView() {
             </div>
           </div>
 
+          {/* Delivery & Pincode Checker Widget */}
+          <div className="p-4 sm:p-5 bg-stone-50/80 rounded-2xl border border-stone-200/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-800 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-brand-rose" /> Delivery & Pincode Check
+              </span>
+              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                Pan-India Free Express
+              </span>
+            </div>
+
+            <form onSubmit={handlePincodeCheck} className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Enter 6-digit Pincode"
+                  className="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-stone-300 bg-white focus:outline-none focus:border-brand-rose text-stone-900 tracking-wider"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-stone-900 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors cursor-pointer shrink-0"
+              >
+                Check
+              </button>
+            </form>
+
+            {pincodeStatus && (
+              <div className={`p-3 rounded-xl text-xs flex items-start gap-2 ${
+                pincodeStatus.valid ? 'bg-emerald-50/90 text-emerald-900 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+              }`}>
+                {pincodeStatus.valid ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                ) : (
+                  <Ban className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                )}
+                <div className="space-y-0.5">
+                  <p className="font-medium leading-relaxed">{pincodeStatus.message}</p>
+                  {pincodeStatus.valid && (
+                    <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 pt-1">
+                      <Clock className="w-3.5 h-3.5" /> Dispatched in 24 hours in velvet gift box.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Social Share & Copy Link Bar */}
+          <div className="p-4 bg-brand-cream/50 rounded-2xl border border-brand-gold/25 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-800 flex items-center gap-1.5">
+                <Share2 className="w-4 h-4 text-brand-gold" /> Share This Piece
+              </span>
+              <span className="text-[10px] text-stone-500">Customized Link</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {/* WhatsApp 1-Click Share */}
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                  `Check out this exquisite handcrafted jewelry piece from Ella Creations:\n${product.title}\n${productShareUrl}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+                title="Share via WhatsApp"
+              >
+                <MessageCircle className="w-4 h-4 fill-white text-emerald-600" />
+                <span>WhatsApp</span>
+              </a>
+
+              {/* Copy Shareable Link */}
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  copiedLink
+                    ? 'bg-stone-900 text-white border-stone-900'
+                    : 'bg-white text-stone-700 border-stone-300 hover:border-brand-rose'
+                }`}
+                title="Copy customized product link"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 text-stone-500" />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Native device share for mobile */}
+            <button
+              type="button"
+              onClick={handleNativeShare}
+              className="w-full text-center text-[11px] text-stone-500 hover:text-brand-rose font-medium py-1 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <Share2 className="w-3 h-3" /> More Sharing Options (Instagram, Message, Email)
+            </button>
+          </div>
+
+          {/* WhatsApp Bridal & Styling Concierge */}
+          <div className="p-3.5 bg-gradient-to-r from-stone-900 to-stone-950 text-white rounded-2xl border border-brand-gold/30 flex items-center justify-between gap-3 shadow-sm">
+            <div className="space-y-0.5 min-w-0">
+              <p className="text-xs font-bold text-brand-gold flex items-center gap-1.5 truncate">
+                <Sparkles className="w-3.5 h-3.5 text-brand-gold shrink-0" /> Bridal Stylist Assistance
+              </p>
+              <p className="text-[11px] text-stone-300 leading-tight">Need matching earrings, sizing or styling help?</p>
+            </div>
+            <a
+              href={`https://api.whatsapp.com/send?phone=919876543210&text=${encodeURIComponent(
+                `Hello Ella Creations team! I am interested in "${product.title}" (${productShareUrl}) and would like styling guidance.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-brand-rose hover:bg-rose-700 text-white text-[11px] font-bold px-3 py-2 rounded-xl uppercase tracking-wider shrink-0 transition-colors shadow-sm inline-flex items-center gap-1"
+            >
+              Chat Stylist
+            </a>
+          </div>
+
         </div>
 
       </div>
@@ -689,6 +904,29 @@ export default function ProductDetailView() {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {relatedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Recently Viewed Jewelry Section */}
+      {recentlyViewedProducts.length > 0 && (
+        <section className="space-y-6 pt-4 border-t border-brand-gold/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Eye className="w-5 h-5 text-brand-rose" />
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">Recently Viewed by You</h3>
+                <p className="text-xs text-stone-500">Pick up right where you left off</p>
+              </div>
+            </div>
+            <button onClick={() => navigateTo('shop')} className="text-xs font-semibold text-stone-600 hover:text-brand-rose cursor-pointer">
+              Browse More →
+            </button>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {recentlyViewedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

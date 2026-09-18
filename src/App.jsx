@@ -19,7 +19,8 @@ import BrandGuidelinesView from './views/BrandGuidelinesView';
 import SitemapView from './views/SitemapView';
 import BlogView from './views/BlogView';
 import AccountView from './views/AccountView';
-import { Sparkles, AlertCircle, Info } from 'lucide-react';
+import NotFoundView from './views/NotFoundView';
+import { Sparkles, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 
 function AppContent() {
   const { currentView, toast, isAuthModalOpen, setIsAuthModalOpen } = useStore();
@@ -33,7 +34,7 @@ function AppContent() {
       {/* Show Storefront Header on non-admin views */}
       {currentView !== 'admin' && <Header />}
 
-      {/* Main View Router */}
+      {/* Main View Router with 404 Fallback */}
       <main className="flex-1">
         {currentView === 'home' && <HomeView />}
         {currentView === 'shop' && <ShopView />}
@@ -46,6 +47,11 @@ function AppContent() {
         {currentView === 'privacy' && <PrivacyView />}
         {currentView === 'brand-guidelines' && <BrandGuidelinesView />}
         {currentView === 'sitemap' && <SitemapView />}
+        {currentView === '404' && <NotFoundView />}
+        {![
+          'home', 'shop', 'product', 'checkout', 'account', 'admin', 
+          'blog', 'blog-detail', 'terms', 'privacy', 'brand-guidelines', 'sitemap', '404'
+        ].includes(currentView) && <NotFoundView />}
       </main>
 
       {/* Show Storefront Footer on non-admin views */}
@@ -58,24 +64,36 @@ function AppContent() {
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       {currentView !== 'admin' && <PromotionPopup />}
 
-      {/* Floating Toast Notification */}
+      {/* Floating Global Toast Notification (Success, Error & Info with Safe Area) */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border ${
+        <div className="fixed bottom-4 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 z-[99999] flex justify-center sm:justify-end pointer-events-none">
+          <div className={`pointer-events-auto flex items-center gap-2.5 sm:gap-3 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold border backdrop-blur-md transition-all animate-bounce ${
             toast.type === 'error' 
-              ? 'bg-rose-900 text-white border-rose-700' 
+              ? 'bg-rose-950/95 text-rose-100 border-rose-500/80 shadow-rose-950/50' 
+              : toast.type === 'success'
+              ? 'bg-emerald-950/95 text-emerald-100 border-emerald-500/80 shadow-emerald-950/50'
               : toast.type === 'info'
-              ? 'bg-stone-900 text-white border-stone-700'
-              : 'bg-stone-900 text-brand-cream border-brand-gold/40 shadow-gold-glow'
+              ? 'bg-stone-900/95 text-stone-100 border-stone-600 shadow-stone-950/50'
+              : 'bg-stone-900/95 text-brand-cream border-brand-gold/50 shadow-gold-glow'
           }`}>
             {toast.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 text-rose-400" />
+              <div className="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="w-4 h-4" />
+              </div>
+            ) : toast.type === 'success' ? (
+              <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
             ) : toast.type === 'info' ? (
-              <Info className="w-4 h-4 text-stone-400" />
+              <div className="w-6 h-6 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center flex-shrink-0">
+                <Info className="w-4 h-4" />
+              </div>
             ) : (
-              <Sparkles className="w-4 h-4 text-brand-gold" />
+              <div className="w-6 h-6 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-4 h-4" />
+              </div>
             )}
-            <span>{toast.message}</span>
+            <span className="leading-snug">{toast.message}</span>
           </div>
         </div>
       )}

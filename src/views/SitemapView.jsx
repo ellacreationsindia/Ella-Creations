@@ -14,11 +14,13 @@ export default function SitemapView() {
       links: [
         { label: 'Home Page', view: 'home', desc: 'Hero showcase, signature Kundan chokers, reviews & FAQs' },
         { label: 'Master Shop Catalog', view: 'shop', desc: 'Complete collection of artificial jewelry' },
-        { label: 'Necklaces & Chokers', view: 'shop', category: 'Necklaces', desc: 'Royal Kundan chokers & Polki Rani Haars' },
-        { label: 'Earrings & Jhumkas', view: 'shop', category: 'Earrings', desc: 'AAA+ Cubic Zirconia drops & peacock jhumkas' },
-        { label: 'Solitaire & Floral Rings', view: 'shop', category: 'Rings', desc: 'Rose gold adjustable cocktail rings' },
-        { label: 'Meenakari Bangles', view: 'shop', category: 'Bracelets', desc: 'Hand-painted enamel bangles & cuffs' },
-        { label: 'Bridal Wedding Sets', view: 'shop', category: 'Sets', desc: 'Complete wedding jewelry with maang tikka' }
+        { label: 'Necklaces & Chokers', view: 'shop', category: 'Necklace', desc: 'Royal Kundan chokers & Polki Rani Haars' },
+        { label: 'Pendant Sets', view: 'shop', category: 'Pendant Set', desc: 'Contemporary and delicate pendant sets' },
+        { label: 'Solitaire & Cocktail Rings', view: 'shop', category: 'Rings', desc: 'Rose gold adjustable solitaire rings' },
+        { label: 'Earrings & Jhumkas', view: 'shop', category: 'Earring', desc: 'AAA+ Cubic Zirconia drops & peacock jhumkas' },
+        { label: 'Royal Bridal Sets', view: 'shop', category: 'Bridal Sets', desc: 'Complete wedding jewelry with maang tikka' },
+        { label: 'Bracelets & Bangles', view: 'shop', category: 'Bracelets/Bangles', desc: 'Hand-painted enamel bangles & cuffs' },
+        { label: 'Other Jewelry & Accessories', view: 'shop', category: 'Others', desc: 'Specialty hair and occasion accents' }
       ]
     },
     {

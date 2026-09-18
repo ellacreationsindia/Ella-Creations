@@ -129,12 +129,12 @@ export default function TermsView() {
           <h3 className="font-serif text-base font-bold text-white">Questions Regarding Our Terms?</h3>
           <p className="text-xs text-stone-400">Reach out to our legal concierge team at ellacreationsindia@gmail.com</p>
         </div>
-        <button
-          onClick={() => navigateTo('contact')}
-          className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors flex-shrink-0"
+        <a
+          href="mailto:ellacreationsindia@gmail.com"
+          className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors flex-shrink-0 inline-flex items-center justify-center"
         >
           Contact Legal Team
-        </button>
+        </a>
       </div>
 
     </div>

@@ -13,6 +13,28 @@ export const formatPrice = (amount) => {
   return `₹${amount.toLocaleString('en-IN')}`;
 };
 
+export const slugify = (text) => {
+  return (text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
+export const getProductSlug = (product) => {
+  if (!product) return '';
+  const cleanTitle = slugify(product.title);
+  return `${cleanTitle}--${product.id}`;
+};
+
+export const getProductUrl = (product) => {
+  if (!product) return typeof window !== 'undefined' ? window.location.origin : 'https://ella-creations.com';
+  const slug = getProductSlug(product);
+  const base = typeof window !== 'undefined' ? window.location.origin : 'https://ella-creations.com';
+  return `${base}/#product/${slug}`;
+};
+
 const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
 
 export const StoreProvider = ({ children }) => {
@@ -156,6 +178,26 @@ export const StoreProvider = ({ children }) => {
     return products.filter(p => allActivePids.has(p.id));
   };
 
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ella_recently_viewed');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const recordProductView = (productId) => {
+    if (!productId) return;
+    setRecentlyViewed(prev => {
+      const updated = [productId, ...prev.filter(id => id !== productId)].slice(0, 8);
+      try {
+        localStorage.setItem('ella_recently_viewed', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
@@ -166,13 +208,15 @@ export const StoreProvider = ({ children }) => {
     if (view === 'blog-detail' && itemId) {
       setSelectedBlogId(itemId);
     } else if (itemId) {
-      setSelectedProductId(itemId);
+      let targetId = typeof itemId === 'object' && itemId.id ? itemId.id : itemId;
+      setSelectedProductId(targetId);
+      recordProductView(targetId);
     }
     if (category) {
       setSelectedCategory(category);
     }
 
-    // Synchronize window.location.hash for deep linking & SEO crawlability
+    // Synchronize window.location.hash for shareable links, deep linking & SEO crawlability
     if (typeof window !== 'undefined') {
       let targetHash = '';
       if (view === 'home') {
@@ -181,11 +225,14 @@ export const StoreProvider = ({ children }) => {
         targetHash = category && category === 'Sale'
           ? '#sale'
           : (category && category !== 'All' 
-              ? `#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` 
+              ? `#${slugify(category)}` 
               : '#shop');
       } else if (view === 'product') {
-        const targetId = itemId || selectedProductId;
-        targetHash = targetId ? `#product-${targetId}` : '#shop';
+        const rawTarget = itemId || selectedProductId;
+        const targetProd = products.find(p => p.id === rawTarget || slugify(p.title) === slugify(rawTarget)) || 
+                           products.find(p => p.id === selectedProductId) ||
+                           products[0];
+        targetHash = targetProd ? `#product/${getProductSlug(targetProd)}` : '#shop';
       } else if (view === 'blog') {
         targetHash = '#blog';
       } else if (view === 'blog-detail') {
@@ -210,19 +257,36 @@ export const StoreProvider = ({ children }) => {
   // Deep Link & Hash Routing Initializer / Listener
   useEffect(() => {
     const handleHashRouting = () => {
-      if (typeof window !== 'undefined') return;
+      if (typeof window === 'undefined') return;
       const rawHash = window.location.hash || '';
       if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
 
       const hash = rawHash.replace(/^#\/?/, '').trim();
       if (!hash || hash === 'home') {
         setCurrentView('home');
-      } else if (hash.startsWith('product-')) {
-        const pid = hash.replace('product-', '');
-        setCurrentView('product');
-        setSelectedProductId(pid);
-      } else if (hash.startsWith('blog-')) {
-        const bid = hash.replace('blog-', '');
+      } else if (hash.startsWith('product/') || hash.startsWith('product-')) {
+        const param = hash.startsWith('product/') ? hash.replace('product/', '') : hash.replace('product-', '');
+        let found = null;
+        if (param.includes('--')) {
+          const parts = param.split('--');
+          const possibleId = parts[parts.length - 1];
+          found = products.find(p => p.id.toLowerCase() === possibleId.toLowerCase());
+        }
+        if (!found) {
+          found = products.find(p => p.id.toLowerCase() === param.toLowerCase());
+        }
+        if (!found) {
+          found = products.find(p => slugify(p.title) === slugify(param) || slugify(p.title).includes(slugify(param)));
+        }
+        if (found) {
+          setCurrentView('product');
+          setSelectedProductId(found.id);
+          recordProductView(found.id);
+        } else {
+          setCurrentView('shop');
+        }
+      } else if (hash.startsWith('blog-') || hash.startsWith('blog/')) {
+        const bid = hash.startsWith('blog/') ? hash.replace('blog/', '') : hash.replace('blog-', '');
         setCurrentView('blog-detail');
         setSelectedBlogId(bid);
       } else if (hash === 'blog') {
@@ -233,22 +297,28 @@ export const StoreProvider = ({ children }) => {
       } else if (hash === 'shop') {
         setCurrentView('shop');
         setSelectedCategory('All');
-      } else if (hash === 'necklaces') {
+      } else if (hash === 'necklace' || hash === 'necklaces') {
         setCurrentView('shop');
-        setSelectedCategory('Necklaces');
-      } else if (hash === 'earrings') {
+        setSelectedCategory('Necklace');
+      } else if (hash === 'pendant-set' || hash === 'pendant') {
         setCurrentView('shop');
-        setSelectedCategory('Earrings');
-      } else if (hash === 'rings') {
+        setSelectedCategory('Pendant Set');
+      } else if (hash === 'rings' || hash === 'ring') {
         setCurrentView('shop');
         setSelectedCategory('Rings');
-      } else if (hash === 'bracelets') {
+      } else if (hash === 'earring' || hash === 'earrings') {
         setCurrentView('shop');
-        setSelectedCategory('Bracelets');
-      } else if (hash === 'sets' || hash === 'bridal-sets') {
+        setSelectedCategory('Earring');
+      } else if (hash === 'bridal-sets' || hash === 'bridal') {
         setCurrentView('shop');
-        setSelectedCategory('Sets');
-      } else if (['terms', 'privacy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin'].includes(hash)) {
+        setSelectedCategory('Bridal Sets');
+      } else if (hash === 'bracelets-bangles' || hash === 'bracelets' || hash === 'bangles') {
+        setCurrentView('shop');
+        setSelectedCategory('Bracelets/Bangles');
+      } else if (hash === 'others') {
+        setCurrentView('shop');
+        setSelectedCategory('Others');
+      } else if (['terms', 'privacy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(hash)) {
         setCurrentView(hash);
       }
     };
@@ -256,7 +326,7 @@ export const StoreProvider = ({ children }) => {
     handleHashRouting();
     window.addEventListener('hashchange', handleHashRouting);
     return () => window.removeEventListener('hashchange', handleHashRouting);
-  }, []);
+  }, [products]);
 
   // 1. Automatic OAuth Catch & Forwarding
   useEffect(() => {
@@ -1519,7 +1589,12 @@ export const StoreProvider = ({ children }) => {
         addPromotion,
         updatePromotion,
         deletePromotion,
-        togglePromotionStatus
+        togglePromotionStatus,
+        recentlyViewed,
+        recordProductView,
+        slugify,
+        getProductSlug,
+        getProductUrl
       }}
     >
       {children}
