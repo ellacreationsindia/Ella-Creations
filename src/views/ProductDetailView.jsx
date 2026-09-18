@@ -34,7 +34,8 @@ export default function ProductDetailView() {
     setIsCheckoutOpen,
     user,
     hasUserPurchasedProduct,
-    requireAuthForAction
+    requireAuthForAction,
+    getProductPricing
   } = useStore();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
@@ -74,8 +75,17 @@ export default function ProductDetailView() {
     );
   }
 
+  const pricing = getProductPricing ? getProductPricing(product, selectedVariant) : {
+    hasPromo: false,
+    originalPrice: Number(selectedVariant?.price ?? product.price ?? 0),
+    finalPrice: Number(selectedVariant?.price ?? product.price ?? 0),
+    discountPercent: 0,
+    savings: 0,
+    comparePrice: product.comparePrice
+  };
+
   const isWishlisted = wishlist.includes(product.id);
-  const isOutOfStock = product.price <= 0 || product.stock <= 0;
+  const isOutOfStock = pricing.finalPrice <= 0 || product.stock <= 0;
   const productReviews = reviews.filter((r) => r.productId === product.id);
   const relatedProducts = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
@@ -244,16 +254,33 @@ export default function ProductDetailView() {
           ) : (
             <div className="bg-brand-cream p-4 sm:p-5 rounded-2xl border border-brand-gold/20 space-y-2">
               <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">
-                <span className="text-2xl sm:text-3xl font-bold text-brand-rose">{formatPrice(product.price)}</span>
-                {product.comparePrice && (
-                  <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
-                    {formatPrice(product.comparePrice)}
-                  </span>
-                )}
-                {product.comparePrice && (
-                  <span className="text-[10px] sm:text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
-                    SAVE {formatPrice(product.comparePrice - product.price)}
-                  </span>
+                <span className="text-2xl sm:text-3xl font-bold text-brand-rose">
+                  {formatPrice(pricing.finalPrice)}
+                </span>
+                
+                {pricing.hasPromo ? (
+                  <>
+                    <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
+                      {formatPrice(pricing.originalPrice)}
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-bold text-white bg-gradient-to-r from-rose-700 to-brand-rose px-3 py-1 rounded-full ml-auto shadow-sm flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-brand-gold" />
+                      FESTIVE SALE -{pricing.discountPercent}% OFF (SAVE {formatPrice(pricing.savings)})
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {product.comparePrice && (
+                      <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
+                        {formatPrice(product.comparePrice)}
+                      </span>
+                    )}
+                    {product.comparePrice && (
+                      <span className="text-[10px] sm:text-xs font-bold text-white bg-stone-900 px-2.5 py-1 rounded-full ml-auto">
+                        SAVE {formatPrice(product.comparePrice - product.price)}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>

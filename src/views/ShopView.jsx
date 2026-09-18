@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X, Check } from 'lucide-react';
+import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X, Check, Tag } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import { isProductInCampaign } from '../utils/pricing';
 import ProductCard from '../components/ProductCard';
 
 export default function ShopView() {
-  const { products, selectedCategory, setSelectedCategory } = useStore();
+  const { 
+    products, 
+    selectedCategory, 
+    setSelectedCategory,
+    activePromotions = [],
+    activePopupCampaign
+  } = useStore();
 
   const [selectedStone, setSelectedStone] = useState('All');
   const [minPrice, setMinPrice] = useState(0);
@@ -22,13 +29,18 @@ export default function ShopView() {
   // Filter products
   let filtered = products.filter((p) => {
     if (selectedCategory && selectedCategory !== 'All') {
-      const normSel = selectedCategory.toLowerCase().trim();
-      const normCat = (p.category || '').toLowerCase().trim();
-      
-      const isSetMatch = (normSel.includes('set') || normSel.includes('bridal')) && (normCat.includes('set') || normCat.includes('bridal'));
-      const isDirectMatch = normCat === normSel || normCat.includes(normSel) || normSel.includes(normCat);
-      
-      if (!isSetMatch && !isDirectMatch) return false;
+      if (selectedCategory === 'Sale') {
+        const isPromoItem = activePromotions.some(promo => isProductInCampaign(p.id, promo));
+        if (!isPromoItem) return false;
+      } else {
+        const normSel = selectedCategory.toLowerCase().trim();
+        const normCat = (p.category || '').toLowerCase().trim();
+        
+        const isSetMatch = (normSel.includes('set') || normSel.includes('bridal')) && (normCat.includes('set') || normCat.includes('bridal'));
+        const isDirectMatch = normCat === normSel || normCat.includes(normSel) || normSel.includes(normCat);
+        
+        if (!isSetMatch && !isDirectMatch) return false;
+      }
     }
     if (selectedStone !== 'All' && !p.stoneType.toLowerCase().includes(selectedStone.toLowerCase())) return false;
     if (p.price < minPrice || p.price > maxPrice) return false;
@@ -62,7 +74,9 @@ export default function ShopView() {
     (inStockOnly ? 1 : 0) +
     (shopSearch.trim() ? 1 : 0);
 
-  const categories = ['All', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Sets'];
+  const categories = activePromotions.length > 0 
+    ? ['All', 'Sale', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Sets'] 
+    : ['All', 'Necklaces', 'Earrings', 'Rings', 'Bracelets', 'Sets'];
   const stones = ['All', 'Kundan', 'Cubic Zirconia', 'Pearl', 'Uncut'];
 
   // Single Track Dual-Thumb Percentages
@@ -90,18 +104,28 @@ export default function ShopView() {
       <div>
         <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2.5">Category</label>
         <div className="space-y-1">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => { setSelectedCategory(cat); }}
-              className={`w-full text-left text-xs px-3 py-2 rounded-xl font-medium transition-colors flex items-center justify-between ${
-                selectedCategory === cat ? 'bg-brand-rose text-white shadow-sm font-bold' : 'text-stone-700 hover:bg-brand-cream'
-              }`}
-            >
-              <span>{cat}</span>
-              {selectedCategory === cat && <Sparkles className="w-3 h-3" />}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const isSaleCat = cat === 'Sale';
+            const isSelected = selectedCategory === cat;
+
+            return (
+              <button
+                key={cat}
+                onClick={() => { setSelectedCategory(cat); }}
+                className={`w-full text-left text-xs px-3 py-2 rounded-xl font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                  isSelected 
+                    ? (isSaleCat ? 'bg-gradient-to-r from-rose-700 to-brand-rose text-white shadow-soft-rose font-bold' : 'bg-brand-rose text-white shadow-sm font-bold')
+                    : (isSaleCat ? 'text-brand-rose bg-rose-50 hover:bg-rose-100 font-bold border border-rose-200' : 'text-stone-700 hover:bg-brand-cream')
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  {isSaleCat && <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-pulse" />}
+                  <span>{isSaleCat ? 'Promotional Sale' : cat}</span>
+                </div>
+                {isSelected && <Sparkles className="w-3 h-3 text-white" />}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -200,25 +224,81 @@ export default function ShopView() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8">
       
       {/* Shop Header Banner */}
-      <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-6 sm:p-8 rounded-3xl border border-brand-gold/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 shadow-sm">
-        <div>
-          <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-brand-gold">Ella Creations Catalog</span>
-          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 mt-1">
-            {selectedCategory && selectedCategory !== 'All' 
-              ? `${selectedCategory} Collection - Handcrafted Artificial Jewelry` 
-              : 'Artificial Fine Jewelry Collection'}
-          </h1>
-          <p className="text-xs sm:text-sm text-stone-600 mt-1">
-            {selectedCategory && selectedCategory !== 'All'
-              ? `Explore our curated selection of handcrafted ${selectedCategory.toLowerCase()} with gold finish and AAA+ crystals.`
-              : 'Handcrafted Kundan, Cubic Zirconia drops, Rose Gold & Sterling Silver creations with express shipping across India.'}
-          </p>
+      {selectedCategory === 'Sale' ? (
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-stone-950 via-rose-950 to-stone-900 text-white p-6 sm:p-10 border border-brand-gold/40 shadow-xl">
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-brand-rose/20 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-brand-gold/15 blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="max-w-2xl space-y-2.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400/20 to-rose-400/20 border border-amber-300/40 text-amber-200 text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+                <span>{activePopupCampaign?.name || 'Festive Seasonal Sale'}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span>FLAT {activePopupCampaign?.discount_percentage || 50}% OFF</span>
+              </div>
+              <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-brand-cream">
+                {activePopupCampaign?.headline || 'Exclusive Promotional Jewelry Sale'}
+              </h1>
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                {activePopupCampaign?.description || 'Celebrate with our handcrafted artificial fine jewelry at exclusive celebratory pricing. Hand-set Kundan, Cubic Zirconia, and bridal heirlooms with complimentary insured dispatch across India.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-3 shrink-0">
+              <div className="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center">
+                <span className="text-[10px] uppercase font-bold text-amber-300 block tracking-widest">Promotion Items</span>
+                <span className="font-serif text-2xl font-bold text-white">{filtered.length} Curated Pieces</span>
+              </div>
+              <button
+                onClick={() => setSelectedCategory('All')}
+                className="text-xs text-stone-300 hover:text-white underline underline-offset-4 cursor-pointer"
+              >
+                View all jewelry catalog &rarr;
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2.5 bg-white/80 px-3.5 py-2 rounded-2xl border border-brand-gold/40 shadow-sm self-start md:self-auto">
-          <Sparkles className="w-4 h-4 text-brand-gold" />
-          <span className="text-xs font-semibold text-stone-800">{filtered.length} Items Available</span>
-        </div>
-      </div>
+      ) : (
+        <>
+          {activePopupCampaign && (
+            <div className="bg-gradient-to-r from-stone-900 via-rose-950 to-stone-900 text-white px-4 py-3 rounded-2xl border border-brand-gold/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+              <div className="flex items-center gap-2.5 text-xs text-center sm:text-left">
+                <Sparkles className="w-4 h-4 text-brand-gold shrink-0 animate-pulse" />
+                <span>
+                  <strong className="text-amber-200">{activePopupCampaign.headline}</strong> — Limited-time promotional discounts applied on selected items.
+                </span>
+              </div>
+              <button
+                onClick={() => setSelectedCategory('Sale')}
+                className="bg-brand-rose hover:bg-rose-700 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-xl uppercase tracking-wider shadow-sm shrink-0 transition-colors cursor-pointer"
+              >
+                Shop {activePopupCampaign.discount_percentage}% OFF Sale &rarr;
+              </button>
+            </div>
+          )}
+
+          <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-6 sm:p-8 rounded-3xl border border-brand-gold/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 shadow-sm">
+            <div>
+              <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-brand-gold">Ella Creations Catalog</span>
+              <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 mt-1">
+                {selectedCategory && selectedCategory !== 'All' 
+                  ? `${selectedCategory} Collection - Handcrafted Artificial Jewelry` 
+                  : 'Artificial Fine Jewelry Collection'}
+              </h1>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1">
+                {selectedCategory && selectedCategory !== 'All'
+                  ? `Explore our curated selection of handcrafted ${selectedCategory.toLowerCase()} with gold finish and AAA+ crystals.`
+                  : 'Handcrafted Kundan, Cubic Zirconia drops, Rose Gold & Sterling Silver creations with express shipping across India.'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5 bg-white/80 px-3.5 py-2 rounded-2xl border border-brand-gold/40 shadow-sm self-start md:self-auto">
+              <Sparkles className="w-4 h-4 text-brand-gold" />
+              <span className="text-xs font-semibold text-stone-800">{filtered.length} Items Available</span>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Mobile Sticky Filter Trigger Bar */}
       <div className="lg:hidden sticky top-20 z-30 flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-3 rounded-2xl border border-brand-gold/30 shadow-md">

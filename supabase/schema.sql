@@ -164,3 +164,45 @@ CREATE POLICY "Allow public insert newsletter" ON public.newsletter_subscribers 
 CREATE POLICY "Allow public read newsletter" ON public.newsletter_subscribers FOR SELECT USING (true);
 CREATE POLICY "Allow admin manage newsletter" ON public.newsletter_subscribers FOR ALL USING (true);
 
+-- 7. PROMOTIONAL SALES & CAMPAIGNS TABLE
+CREATE TABLE IF NOT EXISTS public.promotions (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  headline TEXT NOT NULL,
+  description TEXT,
+  discount_percentage INTEGER NOT NULL CHECK (discount_percentage >= 1 AND discount_percentage <= 100),
+  start_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  is_enabled BOOLEAN DEFAULT true,
+  priority INTEGER DEFAULT 1,
+  cta_text TEXT DEFAULT 'SHOP THE SALE',
+  cta_url TEXT DEFAULT '#sale',
+  image_url TEXT,
+  popup_enabled BOOLEAN DEFAULT true,
+  popup_frequency TEXT DEFAULT 'once_per_session',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 8. PROMOTION PRODUCTS JUNCTION TABLE
+CREATE TABLE IF NOT EXISTS public.promotion_products (
+  promotion_id TEXT REFERENCES public.promotions(id) ON DELETE CASCADE,
+  product_id TEXT REFERENCES public.products(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (promotion_id, product_id)
+);
+
+ALTER TABLE public.promotions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.promotion_products ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read promotions" ON public.promotions;
+DROP POLICY IF EXISTS "Allow admin manage promotions" ON public.promotions;
+DROP POLICY IF EXISTS "Allow public read promotion_products" ON public.promotion_products;
+DROP POLICY IF EXISTS "Allow admin manage promotion_products" ON public.promotion_products;
+
+CREATE POLICY "Allow public read promotions" ON public.promotions FOR SELECT USING (true);
+CREATE POLICY "Allow admin manage promotions" ON public.promotions FOR ALL USING (true);
+
+CREATE POLICY "Allow public read promotion_products" ON public.promotion_products FOR SELECT USING (true);
+CREATE POLICY "Allow admin manage promotion_products" ON public.promotion_products FOR ALL USING (true);
+

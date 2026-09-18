@@ -30,7 +30,9 @@ export default function Header() {
     setIsAuthModalOpen,
     setIsSecretAdminModalOpen,
     signOutUser,
-    showToast
+    showToast,
+    activePopupCampaign,
+    selectedCategory
   } = useStore();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -77,9 +79,24 @@ export default function Header() {
       
       {/* Top Announcement Bar */}
       <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-[11px] sm:text-xs py-2 px-3 text-center tracking-wider font-medium flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
-        <span>INSURED EXPRESS COURIER PACKAGING & DELIVERY ACROSS INDIA | ELLA CREATIONS LUXURY ARTIFICIAL JEWELRY</span>
-        <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
+        {activePopupCampaign ? (
+          <button
+            onClick={() => navigateTo('shop', null, 'Sale')}
+            className="hover:text-amber-200 transition-colors flex items-center justify-center gap-2 cursor-pointer w-full text-center"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin" style={{ animationDuration: '6s' }} />
+            <span>
+              <strong className="text-amber-300 font-bold uppercase tracking-wider">{activePopupCampaign.headline || activePopupCampaign.name}: FLAT {activePopupCampaign.discount_percentage}% OFF</strong> — TAP TO EXPLORE FESTIVE SALE
+            </span>
+            <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin" style={{ animationDuration: '6s' }} />
+          </button>
+        ) : (
+          <>
+            <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
+            <span>INSURED EXPRESS COURIER PACKAGING & DELIVERY ACROSS INDIA | ELLA CREATIONS LUXURY ARTIFICIAL JEWELRY</span>
+            <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin hidden sm:inline" style={{ animationDuration: '6s' }} />
+          </>
+        )}
       </div>
 
       {/* Main Navigation Bar (3-Column Layout with Perfectly Contained Centered Logo) */}
@@ -107,10 +124,26 @@ export default function Header() {
               </button>
               <button 
                 onClick={() => navigateTo('shop', null, 'All')} 
-                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' && selectedCategory !== 'Sale' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Shop Collections
               </button>
+              {activePopupCampaign && (
+                <button 
+                  onClick={() => navigateTo('shop', null, 'Sale')} 
+                  className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
+                    currentView === 'shop' && selectedCategory === 'Sale'
+                      ? 'text-rose-600 border-b-2 border-rose-600'
+                      : 'text-rose-600 hover:text-rose-700'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
+                  <span>Sale</span>
+                  <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                    {activePopupCampaign.discount_percentage}% OFF
+                  </span>
+                </button>
+              )}
               <button 
                 onClick={() => navigateTo('shop', null, 'Necklaces')} 
                 className="hover:text-brand-rose transition-colors py-1"
@@ -311,6 +344,20 @@ export default function Header() {
           >
             Shop All Jewelry Catalog
           </button>
+          {activePopupCampaign && (
+            <button
+              onClick={() => { navigateTo('shop', null, 'Sale'); setIsMobileMenuOpen(false); }}
+              className="w-full text-left font-bold text-rose-600 py-2.5 border-b border-stone-100 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
+                <span>Promotional Sale</span>
+              </div>
+              <span className="bg-rose-100 text-rose-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                FLAT {activePopupCampaign.discount_percentage}% OFF
+              </span>
+            </button>
+          )}
           <button
             onClick={() => { navigateTo('shop', null, 'Necklaces'); setIsMobileMenuOpen(false); }}
             className="block w-full text-left font-medium text-stone-800 py-2.5 border-b border-stone-100"

@@ -51,6 +51,7 @@ import {
 import { useState } from 'react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { compressImageDataUrl } from '../lib/supabase';
+import PromotionManager from '../components/promotions/PromotionManager';
 
 function SalesAreaChart({ data }) {
   const [hoveredPoint, setHoveredPoint] = useState(null);
@@ -145,6 +146,7 @@ export default function AdminView() {
     orders, 
     reviews, 
     coupons,
+    promotions = [],
     subscribers,
     blogs,
     addBlog,
@@ -170,7 +172,7 @@ export default function AdminView() {
     navigateTo 
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews' | 'coupons' | 'subscribers' | 'blogs'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'products' | 'orders' | 'reviews' | 'promotions' | 'coupons' | 'subscribers' | 'blogs'
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -874,6 +876,18 @@ export default function AdminView() {
           </button>
 
           <button
+            onClick={() => { setActiveTab('promotions'); setIsMobileSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+              activeTab === 'promotions' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Percent className="w-4 h-4 text-brand-gold" /> Sales & Promotions
+            </div>
+            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{promotions.length}</span>
+          </button>
+
+          <button
             onClick={() => { setActiveTab('coupons'); setIsMobileSidebarOpen(false); }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
               activeTab === 'coupons' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
@@ -1557,6 +1571,11 @@ export default function AdminView() {
                 ))}
               </div>
             </div>
+          )}
+
+          {/* TAB: SALES & PROMOTIONS */}
+          {activeTab === 'promotions' && (
+            <PromotionManager />
           )}
 
           {/* TAB 5: COUPONS GENERATOR */}

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase, syncOrderToShiprocket } from '../lib/supabase';
-import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS, INITIAL_BLOGS } from '../data/initialData';
+import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS, INITIAL_BLOGS, INITIAL_PROMOTIONS } from '../data/initialData';
+import { calculateProductPricing, verifyCartPricing, getActivePromotions, getActivePopupCampaign } from '../utils/pricing';
 
 const StoreContext = createContext();
 
@@ -21,6 +22,20 @@ export const StoreProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isSecretAdminModalOpen, setIsSecretAdminModalOpen] = useState(false);
   const [demoAdminOverride, setDemoAdminOverride] = useState(false);
+
+  // Promotions State (Loaded from localStorage or initial curated festive promotion)
+  const [promotions, setPromotions] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ella_promotions');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed parsing saved promotions:', e);
+    }
+    return INITIAL_PROMOTIONS || [];
+  });
 
   // Products, Orders, Reviews, Coupons
   const [products, setProducts] = useState(() => {
@@ -118,6 +133,29 @@ export const StoreProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState(null);
 
+  // Active Promotions & Helpers
+  const activePromotions = getActivePromotions(promotions);
+  const activePopupCampaign = getActivePopupCampaign(promotions);
+
+  const getProductPricing = (product, variant = null) => {
+    return calculateProductPricing(product, variant, activePromotions);
+  };
+
+  const getPromotionProducts = (promotionId = null) => {
+    if (promotionId) {
+      const targetPromo = promotions.find(p => p.id === promotionId);
+      if (!targetPromo) return [];
+      const pids = targetPromo.product_ids || targetPromo.productIds || [];
+      return products.filter(p => pids.includes(p.id));
+    }
+    const allActivePids = new Set();
+    activePromotions.forEach(promo => {
+      const pids = promo.product_ids || promo.productIds || [];
+      pids.forEach(id => allActivePids.add(id));
+    });
+    return products.filter(p => allActivePids.has(p.id));
+  };
+
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
@@ -140,9 +178,11 @@ export const StoreProvider = ({ children }) => {
       if (view === 'home') {
         targetHash = '';
       } else if (view === 'shop') {
-        targetHash = category && category !== 'All' 
-          ? `#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` 
-          : '#shop';
+        targetHash = category && category === 'Sale'
+          ? '#sale'
+          : (category && category !== 'All' 
+              ? `#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` 
+              : '#shop');
       } else if (view === 'product') {
         const targetId = itemId || selectedProductId;
         targetHash = targetId ? `#product-${targetId}` : '#shop';
@@ -170,7 +210,7 @@ export const StoreProvider = ({ children }) => {
   // Deep Link & Hash Routing Initializer / Listener
   useEffect(() => {
     const handleHashRouting = () => {
-      if (typeof window === 'undefined') return;
+      if (typeof window !== 'undefined') return;
       const rawHash = window.location.hash || '';
       if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
 
@@ -187,6 +227,9 @@ export const StoreProvider = ({ children }) => {
         setSelectedBlogId(bid);
       } else if (hash === 'blog') {
         setCurrentView('blog');
+      } else if (hash === 'sale') {
+        setCurrentView('shop');
+        setSelectedCategory('Sale');
       } else if (hash === 'shop') {
         setCurrentView('shop');
         setSelectedCategory('All');
@@ -271,6 +314,7 @@ export const StoreProvider = ({ children }) => {
     fetchReviewsFromSupabase();
     fetchCouponsFromSupabase();
     fetchBlogsFromSupabase();
+    fetchPromotionsFromSupabase();
   }, []);
 
   const fetchProductsFromSupabase = async () => {
@@ -550,6 +594,10 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('ella_subscribers', JSON.stringify(subscribers));
   }, [subscribers]);
 
+  useEffect(() => {
+    localStorage.setItem('ella_promotions', JSON.stringify(promotions));
+  }, [promotions]);
+
   // Check Admin Privilege: Restricted exclusively to ellacreationsindia@gmail.com
   const isAdmin = (user && user.email === ADMIN_EMAIL) || demoAdminOverride;
 
@@ -617,7 +665,7 @@ export const StoreProvider = ({ children }) => {
     showToast('Signed out of Ella Creations', 'info');
   };
 
-  // Cart operations (Variant Aware)
+  // Cart operations (Variant & Promotional Aware)
   const addToCart = (product, quantity = 1, selectedVariant = null) => {
     // Determine target variant or fallback to product baseline
     const variantObj = typeof selectedVariant === 'object' && selectedVariant !== null
@@ -626,9 +674,12 @@ export const StoreProvider = ({ children }) => {
           ? product.variants.find(v => v.name === selectedVariant) || product.variants[0]
           : { id: 'default', name: selectedVariant || 'Standard', price: product.price, stock: product.stock, sku: product.sku });
 
-    const itemPrice = Number(variantObj?.price ?? product.price);
     const itemStock = Number(variantObj?.stock ?? product.stock);
     const variantName = variantObj?.name || 'Standard';
+
+    // Authoritative Promotional Pricing Calculation
+    const pricing = calculateProductPricing(product, variantObj, activePromotions);
+    const itemPrice = pricing.finalPrice;
 
     if (itemPrice <= 0 || itemStock <= 0) {
       showToast(`"${product.title}" (${variantName}) is currently out of stock`, 'error');
@@ -643,6 +694,11 @@ export const StoreProvider = ({ children }) => {
       if (existingIndex > -1) {
         const updated = [...prevCart];
         updated[existingIndex].qty += quantity;
+        updated[existingIndex].price = itemPrice;
+        updated[existingIndex].originalPrice = pricing.originalPrice;
+        updated[existingIndex].hasPromo = pricing.hasPromo;
+        updated[existingIndex].discountPercent = pricing.discountPercent;
+        updated[existingIndex].campaignName = pricing.campaign?.name || null;
         return updated;
       } else {
         return [
@@ -651,6 +707,10 @@ export const StoreProvider = ({ children }) => {
             id: product.id,
             title: product.title,
             price: itemPrice,
+            originalPrice: pricing.originalPrice,
+            hasPromo: pricing.hasPromo,
+            discountPercent: pricing.discountPercent,
+            campaignName: pricing.campaign?.name || null,
             taxPercent: product.taxPercent || 18,
             image: variantObj?.image || product.images[0],
             finish: variantName,
@@ -783,7 +843,9 @@ export const StoreProvider = ({ children }) => {
 
   // Submit Order (With Razorpay Payment ID & Shiprocket Logistics details)
   const submitOrder = async (customerDetails, paymentMethod, paymentId = null, logisticsDetails = {}) => {
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    // Authoritatively re-verify all cart item prices against catalog and active promotions
+    const verified = verifyCartPricing(cart, products, activePromotions);
+    const subtotal = verified.subtotal;
     const taxAmount = 0;
     const discountAmount = activeCoupon ? (subtotal * activeCoupon.discountPercent) / 100 : 0;
     const shipping = logisticsDetails.shippingCost !== undefined ? logisticsDetails.shippingCost : 99;
@@ -795,10 +857,11 @@ export const StoreProvider = ({ children }) => {
       id: `EC-${Math.floor(10000 + Math.random() * 90000)}`,
       user_id: user?.id || null,
       customer: customerDetails,
-      items: [...cart],
+      items: verified.verifiedItems,
       subtotal: parseFloat(subtotal.toFixed(2)),
       tax_amount: parseFloat(taxAmount.toFixed(2)),
       discount: parseFloat(discountAmount.toFixed(2)),
+      promotional_savings: verified.totalSavings,
       shipping: parseFloat(shipping.toFixed(2)),
       total: parseFloat(total.toFixed(2)),
       status: 'Processing',
@@ -1195,8 +1258,187 @@ export const StoreProvider = ({ children }) => {
     showToast('Thank you! Your product review has been published.');
   };
 
+  // Supabase Promotion Campaign Handlers
+  const fetchPromotionsFromSupabase = async () => {
+    try {
+      const { data: promoData, error: promoError } = await supabase
+        .from('promotions')
+        .select('*')
+        .order('priority', { ascending: true });
+
+      if (promoError) {
+        console.warn('Supabase DB promotions fetch notice:', promoError.message);
+        return;
+      }
+
+      if (promoData && Array.isArray(promoData)) {
+        const { data: junctionData } = await supabase
+          .from('promotion_products')
+          .select('*');
+
+        const productMap = {};
+        if (junctionData && Array.isArray(junctionData)) {
+          junctionData.forEach(j => {
+            if (!productMap[j.promotion_id]) productMap[j.promotion_id] = [];
+            productMap[j.promotion_id].push(j.product_id);
+          });
+        }
+
+        const mapped = promoData.map(p => ({
+          id: p.id,
+          name: p.name || 'Untitled Campaign',
+          headline: p.headline || '',
+          description: p.description || '',
+          discount_percentage: Number(p.discount_percentage || 0),
+          discountPercentage: Number(p.discount_percentage || 0),
+          start_at: p.start_at,
+          startAt: p.start_at,
+          end_at: p.end_at,
+          endAt: p.end_at,
+          is_enabled: p.is_enabled !== false,
+          isEnabled: p.is_enabled !== false,
+          priority: Number(p.priority || 1),
+          product_ids: productMap[p.id] || [],
+          productIds: productMap[p.id] || [],
+          cta_text: p.cta_text || 'SHOP THE SALE',
+          ctaText: p.cta_text || 'SHOP THE SALE',
+          cta_url: p.cta_url || '#sale',
+          ctaUrl: p.cta_url || '#sale',
+          image_url: p.image_url || null,
+          imageUrl: p.image_url || null,
+          popup_enabled: p.popup_enabled !== false,
+          popupEnabled: p.popup_enabled !== false,
+          popup_frequency: p.popup_frequency || 'once_per_session',
+          popupFrequency: p.popup_frequency || 'once_per_session',
+          created_at: p.created_at,
+          updated_at: p.updated_at
+        }));
+
+        if (mapped.length > 0) {
+          setPromotions(mapped);
+        }
+      }
+    } catch (err) {
+      console.warn('Supabase DB promotions fetch error:', err.message);
+    }
+  };
+
+  const addPromotion = async (promotionData) => {
+    const newPromo = {
+      ...promotionData,
+      id: promotionData.id || `promo_${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    setPromotions(prev => [newPromo, ...prev]);
+
+    try {
+      const { error: promoError } = await supabase.from('promotions').insert([{
+        id: newPromo.id,
+        name: newPromo.name,
+        headline: newPromo.headline,
+        description: newPromo.description,
+        discount_percentage: newPromo.discount_percentage,
+        start_at: newPromo.start_at,
+        end_at: newPromo.end_at,
+        is_enabled: newPromo.is_enabled,
+        priority: newPromo.priority,
+        cta_text: newPromo.cta_text,
+        cta_url: newPromo.cta_url,
+        image_url: newPromo.image_url,
+        popup_enabled: newPromo.popup_enabled,
+        popup_frequency: newPromo.popup_frequency
+      }]);
+
+      if (promoError) throw promoError;
+
+      const pids = newPromo.product_ids || newPromo.productIds || [];
+      if (pids.length > 0) {
+        const rows = pids.map(pid => ({
+          promotion_id: newPromo.id,
+          product_id: pid
+        }));
+        await supabase.from('promotion_products').insert(rows);
+      }
+    } catch (err) {
+      console.warn('Supabase DB promotion insert notice:', err.message);
+    }
+
+    showToast(`Promotional campaign "${newPromo.name}" created!`, 'success');
+    return newPromo;
+  };
+
+  const updatePromotion = async (updatedPromo) => {
+    setPromotions(prev => prev.map(p => p.id === updatedPromo.id ? updatedPromo : p));
+
+    try {
+      const { error: promoError } = await supabase.from('promotions').upsert([{
+        id: updatedPromo.id,
+        name: updatedPromo.name,
+        headline: updatedPromo.headline,
+        description: updatedPromo.description,
+        discount_percentage: updatedPromo.discount_percentage,
+        start_at: updatedPromo.start_at,
+        end_at: updatedPromo.end_at,
+        is_enabled: updatedPromo.is_enabled,
+        priority: updatedPromo.priority,
+        cta_text: updatedPromo.cta_text,
+        cta_url: updatedPromo.cta_url,
+        image_url: updatedPromo.image_url,
+        popup_enabled: updatedPromo.popup_enabled,
+        popup_frequency: updatedPromo.popup_frequency,
+        updated_at: new Date().toISOString()
+      }]);
+
+      if (promoError) throw promoError;
+
+      await supabase.from('promotion_products').delete().eq('promotion_id', updatedPromo.id);
+      const pids = updatedPromo.product_ids || updatedPromo.productIds || [];
+      if (pids.length > 0) {
+        const rows = pids.map(pid => ({
+          promotion_id: updatedPromo.id,
+          product_id: pid
+        }));
+        await supabase.from('promotion_products').insert(rows);
+      }
+    } catch (err) {
+      console.warn('Supabase DB promotion update notice:', err.message);
+    }
+
+    showToast(`Campaign "${updatedPromo.name}" updated!`);
+  };
+
+  const deletePromotion = async (promotionId) => {
+    setPromotions(prev => prev.filter(p => p.id !== promotionId));
+
+    try {
+      await supabase.from('promotion_products').delete().eq('promotion_id', promotionId);
+      await supabase.from('promotions').delete().eq('id', promotionId);
+    } catch (err) {
+      console.warn('Supabase DB promotion delete notice:', err.message);
+    }
+
+    showToast('Promotional campaign removed', 'info');
+  };
+
+  const togglePromotionStatus = async (promotionId, currentEnabled) => {
+    const updatedEnabled = !currentEnabled;
+    setPromotions(prev => prev.map(p => p.id === promotionId ? { ...p, is_enabled: updatedEnabled, isEnabled: updatedEnabled } : p));
+
+    try {
+      await supabase.from('promotions').update({ is_enabled: updatedEnabled }).eq('id', promotionId);
+    } catch (err) {
+      console.warn('Supabase DB promotion status toggle notice:', err.message);
+    }
+
+    showToast(`Campaign is now ${updatedEnabled ? 'Enabled' : 'Disabled'}`);
+  };
+
+  const verifiedCartData = verifyCartPricing(cart, products, activePromotions);
   const cartItemsCount = cart.reduce((total, item) => total + item.qty, 0);
-  const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const cartSubtotal = verifiedCartData.subtotal;
+  const promotionalSavings = verifiedCartData.totalSavings;
 
   return (
     <StoreContext.Provider
@@ -1215,6 +1457,10 @@ export const StoreProvider = ({ children }) => {
         reviews,
         coupons,
         subscribers,
+        promotions,
+        activePromotions,
+        activePopupCampaign,
+        promotionalSavings,
         currentView,
         selectedProductId,
         selectedCategory,
@@ -1267,7 +1513,13 @@ export const StoreProvider = ({ children }) => {
         deleteProduct,
         updateOrderStatus,
         addReview,
-        showToast
+        showToast,
+        getProductPricing,
+        getPromotionProducts,
+        addPromotion,
+        updatePromotion,
+        deletePromotion,
+        togglePromotionStatus
       }}
     >
       {children}

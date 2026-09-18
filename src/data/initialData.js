@@ -406,3 +406,35 @@ export const INITIAL_ORDERS = [];
 
 export const ACTIVE_COUPONS = {};
 
+export const INITIAL_PROMOTIONS = [
+  {
+    id: "promo_festive_50",
+    name: "Festive Season Sale",
+    headline: "Festive Sale — Flat 50% OFF",
+    description: "Celebrate the festive season with exclusive 50% savings on selected Ella Creations handcrafted jewelry.",
+    discount_percentage: 50,
+    discountPercentage: 50,
+    start_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    startAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    end_at: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+    endAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+    is_enabled: true,
+    isEnabled: true,
+    priority: 1,
+    product_ids: ["ec-101", "ec-102", "ec-103"],
+    productIds: ["ec-101", "ec-102", "ec-103"],
+    cta_text: "SHOP THE SALE",
+    ctaText: "SHOP THE SALE",
+    cta_url: "#sale",
+    ctaUrl: "#sale",
+    image_url: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000",
+    imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000",
+    popup_enabled: true,
+    popupEnabled: true,
+    popup_frequency: "once_per_session",
+    popupFrequency: "once_per_session",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+

@@ -6,6 +6,7 @@ import ProductQuickView from './components/ProductQuickView';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import AuthModal from './components/AuthModal';
+import PromotionPopup from './components/PromotionPopup';
 import SEOHead from './components/SEOHead';
 import HomeView from './views/HomeView';
 import ShopView from './views/ShopView';
@@ -55,6 +56,7 @@ function AppContent() {
       <CartDrawer />
       <CheckoutModal />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      {currentView !== 'admin' && <PromotionPopup />}
 
       {/* Floating Toast Notification */}
       {toast && (

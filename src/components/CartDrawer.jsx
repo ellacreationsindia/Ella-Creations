@@ -10,6 +10,7 @@ export default function CartDrawer() {
     removeFromCart, 
     updateCartQty, 
     cartSubtotal, 
+    promotionalSavings = 0,
     activeCoupon, 
     applyCoupon, 
     removeCoupon,
@@ -133,9 +134,23 @@ export default function CartDrawer() {
                           +
                         </button>
                       </div>
-                      <span className="font-bold text-sm text-stone-900">
-                        {formatPrice(item.price * item.qty)}
-                      </span>
+                      <div className="text-right">
+                        <div className="flex items-baseline gap-1.5 justify-end">
+                          <span className={`font-bold text-sm ${item.hasPromo ? 'text-brand-rose' : 'text-stone-900'}`}>
+                            {formatPrice(item.price * item.qty)}
+                          </span>
+                          {item.hasPromo && item.originalPrice && (
+                            <span className="text-xs line-through text-stone-400">
+                              {formatPrice(item.originalPrice * item.qty)}
+                            </span>
+                          )}
+                        </div>
+                        {item.hasPromo && (
+                          <span className="text-[9px] font-bold text-brand-rose bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded inline-block mt-0.5">
+                            SALE -{item.discountPercent}%
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -208,6 +223,14 @@ export default function CartDrawer() {
                   <span>Subtotal</span>
                   <span className="font-semibold text-stone-900">{formatPrice(cartSubtotal)}</span>
                 </div>
+                {promotionalSavings > 0 && (
+                  <div className="flex justify-between text-rose-700 font-semibold bg-rose-50/80 px-2 py-1 rounded-md border border-rose-200">
+                    <span className="flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-brand-gold" /> Promotional Sale Savings
+                    </span>
+                    <span>-{formatPrice(promotionalSavings)}</span>
+                  </div>
+                )}
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-semibold">
                     <span>Discount ({activeCoupon?.code})</span>

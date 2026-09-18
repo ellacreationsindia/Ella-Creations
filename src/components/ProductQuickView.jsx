@@ -9,7 +9,8 @@ export default function ProductQuickView() {
     addToCart, 
     toggleWishlist, 
     wishlist, 
-    navigateTo 
+    navigateTo,
+    getProductPricing
   } = useStore();
 
   if (!quickViewProduct) return null;
@@ -21,6 +22,15 @@ export default function ProductQuickView() {
   const [qty, setQty] = useState(1);
 
   const isWishlisted = wishlist.includes(quickViewProduct.id);
+
+  const pricing = getProductPricing ? getProductPricing(quickViewProduct, selectedVariant) : {
+    hasPromo: false,
+    originalPrice: Number(selectedVariant?.price ?? quickViewProduct.price ?? 0),
+    finalPrice: Number(selectedVariant?.price ?? quickViewProduct.price ?? 0),
+    discountPercent: 0,
+    savings: 0,
+    comparePrice: quickViewProduct.comparePrice
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -88,10 +98,20 @@ export default function ProductQuickView() {
               </span>
             </div>
 
-            <div className="flex items-baseline gap-3 mt-3">
-              <span className="text-2xl font-bold text-brand-rose">{formatPrice(selectedVariant?.price || quickViewProduct.price)}</span>
-              {quickViewProduct.comparePrice && (
-                <span className="text-sm line-through text-stone-400">{formatPrice(quickViewProduct.comparePrice)}</span>
+            <div className="flex items-baseline gap-3 mt-3 flex-wrap">
+              <span className="text-2xl font-bold text-brand-rose">{formatPrice(pricing.finalPrice)}</span>
+              {pricing.hasPromo ? (
+                <>
+                  <span className="text-sm line-through text-stone-400">{formatPrice(pricing.originalPrice)}</span>
+                  <span className="text-[10px] font-bold text-white bg-gradient-to-r from-rose-700 to-brand-rose px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-brand-gold" />
+                    SALE -{pricing.discountPercent}% OFF
+                  </span>
+                </>
+              ) : (
+                quickViewProduct.comparePrice && (
+                  <span className="text-sm line-through text-stone-400">{formatPrice(quickViewProduct.comparePrice)}</span>
+                )
               )}
             </div>
 

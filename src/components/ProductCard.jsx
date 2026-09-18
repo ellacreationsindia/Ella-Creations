@@ -8,11 +8,20 @@ export default function ProductCard({ product }) {
     toggleWishlist, 
     addToCart, 
     navigateTo, 
-    setQuickViewProduct 
+    setQuickViewProduct,
+    getProductPricing
   } = useStore();
 
+  const pricing = getProductPricing ? getProductPricing(product) : {
+    hasPromo: false,
+    originalPrice: product.price,
+    finalPrice: product.price,
+    discountPercent: 0,
+    comparePrice: product.comparePrice
+  };
+
   const isWishlisted = wishlist.includes(product.id);
-  const isOutOfStock = product.price <= 0 || product.stock <= 0;
+  const isOutOfStock = pricing.finalPrice <= 0 || product.stock <= 0;
   
   const discountPercent = product.comparePrice && product.comparePrice > product.price 
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) 
@@ -29,15 +38,24 @@ export default function ProductCard({ product }) {
           </span>
         ) : (
           <>
-            {product.isNew && (
-              <span className="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
-                NEW
+            {pricing.hasPromo ? (
+              <span className="bg-gradient-to-r from-rose-700 via-brand-rose to-rose-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-soft-rose border border-rose-400/30 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
+                SALE -{pricing.discountPercent}%
               </span>
-            )}
-            {discountPercent > 0 && (
-              <span className="bg-brand-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-                -{discountPercent}% OFF
-              </span>
+            ) : (
+              <>
+                {product.isNew && (
+                  <span className="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+                    NEW
+                  </span>
+                )}
+                {discountPercent > 0 && (
+                  <span className="bg-brand-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                    -{discountPercent}% OFF
+                  </span>
+                )}
+              </>
             )}
           </>
         )}
@@ -164,11 +182,19 @@ export default function ProductCard({ product }) {
             ) : (
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-base font-bold text-stone-900">{formatPrice(product.price)}</span>
-                  {product.comparePrice && (
+                  <span className={`text-base font-bold ${pricing.hasPromo ? 'text-brand-rose' : 'text-stone-900'}`}>
+                    {formatPrice(pricing.finalPrice)}
+                  </span>
+                  {pricing.hasPromo ? (
                     <span className="text-xs line-through text-stone-400 font-normal">
-                      {formatPrice(product.comparePrice)}
+                      {formatPrice(pricing.originalPrice)}
                     </span>
+                  ) : (
+                    product.comparePrice && (
+                      <span className="text-xs line-through text-stone-400 font-normal">
+                        {formatPrice(product.comparePrice)}
+                      </span>
+                    )
                   )}
                 </div>
               </div>

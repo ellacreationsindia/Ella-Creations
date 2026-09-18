@@ -869,9 +869,23 @@ export default function CheckoutView() {
                     <img src={item.image} alt={item.title} className="w-full h-full object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-semibold text-stone-900 truncate">{item.title}</h4>
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-xs font-semibold text-stone-900 truncate">{item.title}</h4>
+                      {item.isPromotional && (
+                        <span className="text-[9px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.5 rounded border border-rose-200 shrink-0">
+                          {item.discountPercentage}% OFF
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[11px] text-stone-500">Finish: {item.finish} | Qty: {item.qty}</p>
-                    <p className="text-xs font-bold text-brand-rose mt-0.5">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-xs font-bold text-brand-rose">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</p>
+                      {item.isPromotional && item.originalPrice && (
+                        <span className="text-[10px] text-stone-400 line-through">
+                          {formatPrice((Number(item.originalPrice) || 0) * (Number(item.qty) || 1))}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
