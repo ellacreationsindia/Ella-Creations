@@ -16,6 +16,18 @@ export default function AuthModal({ isOpen, onClose }) {
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Lock body scrolling when AuthModal is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
@@ -53,8 +65,8 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-brand-gold/30 relative">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+      <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-brand-gold/30 relative max-h-[90vh] overflow-y-auto">
         
         <button
           onClick={onClose}
@@ -127,10 +139,11 @@ export default function AuthModal({ isOpen, onClose }) {
               <input
                 type="text"
                 required
+                autoComplete="name"
                 placeholder="e.g. Priyanshu Sharma"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
               />
             </div>
           )}
@@ -140,10 +153,12 @@ export default function AuthModal({ isOpen, onClose }) {
             <input
               type="email"
               required
+              autoComplete="email"
+              inputMode="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-medium"
+              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-medium bg-white"
             />
           </div>
 
@@ -152,17 +167,18 @@ export default function AuthModal({ isOpen, onClose }) {
             <input
               type="password"
               required
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs py-3 rounded-xl shadow-soft-rose transition-colors flex items-center justify-center gap-2 uppercase tracking-wider"
+            className="w-full min-h-[44px] bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs py-3 rounded-xl shadow-soft-rose transition-colors flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer active:scale-95"
           >
             {mode === 'signup' ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
             {mode === 'signup' ? 'Create Account' : 'Sign In'}

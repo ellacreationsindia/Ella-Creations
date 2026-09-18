@@ -95,6 +95,23 @@
   background-size: 200% 100%;
   animation: shimmer 2.5s infinite;
 }
+@keyframes slideRight {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slideRight {
+  animation: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
 
 /* Dual Range Input Slider CSS */
 .dual-range-input::-webkit-slider-thumb {
@@ -150,8 +167,46 @@
   input[type="password"],
   input[type="number"],
   input[type="tel"],
+  input[type="search"],
   select,
   textarea {
     font-size: 16px !important; /* Prevents auto-zoom on iOS Safari input focus */
+  }
+}
+
+/* Safe Area Insets for Modern Mobile Devices (iPhone notch & home indicator) */
+.safe-pb {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.safe-pt {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+.safe-bottom {
+  bottom: env(safe-area-inset-bottom);
+}
+
+/* Fast touch response without 300ms double-tap delay */
+button, a, input, select, textarea, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Hide scrollbars for touch-swipe thumbnail rails while preserving scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

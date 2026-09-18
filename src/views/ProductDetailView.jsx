@@ -16,7 +16,12 @@ import {
   Tag,
   Lock,
   Layers,
-  ListPlus
+  ListPlus,
+  ZoomIn,
+  ZoomOut,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
@@ -64,6 +69,23 @@ export default function ProductDetailView() {
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
+  // Mobile Touch Swipe & Zoom Modal State
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
+
+  // Lock background scroll when zoom modal is open
+  useEffect(() => {
+    if (isZoomOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isZoomOpen]);
+
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
@@ -99,6 +121,36 @@ export default function ProductDetailView() {
   ];
 
   const currentMedia = activeMedia.url ? activeMedia : (mediaList[0] || { type: 'image', url: product.images[0] });
+
+  const currentMediaIndex = mediaList.findIndex(m => m.url === currentMedia.url);
+  const handleSwipeNext = () => {
+    if (mediaList.length > 1) {
+      const nextIdx = (currentMediaIndex + 1) % mediaList.length;
+      setActiveMedia(mediaList[nextIdx]);
+    }
+  };
+  const handleSwipePrev = () => {
+    if (mediaList.length > 1) {
+      const prevIdx = (currentMediaIndex - 1 + mediaList.length) % mediaList.length;
+      setActiveMedia(mediaList[prevIdx]);
+    }
+  };
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchStartX - touchEndX;
+    if (Math.abs(diffX) > 40) {
+      if (diffX > 0) {
+        handleSwipeNext();
+      } else {
+        handleSwipePrev();
+      }
+    }
+    setTouchStartX(null);
+  };
 
   // Handle Photo Upload in Review Form
   const handlePhotoUpload = (e) => {
@@ -152,8 +204,12 @@ export default function ProductDetailView() {
         
         {/* Left Column: Media Gallery & Interactive Video Player */}
         <div className="lg:col-span-6 space-y-4">
-          {/* Main Media Display */}
-          <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white border border-brand-gold/30 shadow-md relative group p-4 flex items-center justify-center">
+          {/* Main Media Display with Touch Swipe & Zoom Trigger */}
+          <div 
+            className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white border border-brand-gold/30 shadow-md relative group p-4 flex items-center justify-center touch-pan-y"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {currentMedia.type === 'video' ? (
               <video
                 src={currentMedia.url}
@@ -169,7 +225,35 @@ export default function ProductDetailView() {
                 alt={`${product.title} - Handcrafted ${product.category} in India | Ella Creations`}
                 title={`${product.title} - Handcrafted Artificial Jewelry`}
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+                onClick={() => {
+                  setIsZoomOpen(true);
+                  setZoomScale(1);
+                }}
               />
+            )}
+
+            {/* Tap to Zoom indicator button */}
+            {currentMedia.type !== 'video' && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsZoomOpen(true);
+                  setZoomScale(1);
+                }}
+                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md text-stone-700 shadow-md flex items-center justify-center hover:bg-brand-rose hover:text-white transition-colors cursor-pointer"
+                title="Enlarge and inspect jewelry details"
+                aria-label="Enlarge image"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Mobile swipe counter pill */}
+            {mediaList.length > 1 && (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 bg-stone-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-3 py-1 rounded-full shadow-md">
+                <span>{(currentMediaIndex >= 0 ? currentMediaIndex : 0) + 1} / {mediaList.length}</span>
+              </div>
             )}
 
             {isOutOfStock ? (
@@ -599,11 +683,11 @@ export default function ProductDetailView() {
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">You May Also Admire</h3>
-            <button onClick={() => navigateTo('shop')} className="text-xs font-semibold text-brand-rose hover:underline">
+            <button onClick={() => navigateTo('shop')} className="text-xs font-semibold text-brand-rose hover:underline cursor-pointer">
               View All Catalog →
             </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -612,19 +696,24 @@ export default function ProductDetailView() {
       )}
 
       {/* STICKY BOTTOM ACTION BAR FOR MOBILE DEVICES (< 1024px) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md p-3.5 border-t border-brand-gold/30 shadow-2xl flex items-center gap-3">
-        <div className="flex-1 min-w-0">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md p-3 sm:p-4 border-t border-brand-gold/30 shadow-2xl flex items-center gap-2.5 safe-pb">
+        <div className="flex-1 min-w-0 pr-1">
           <span className="block text-[10px] text-stone-500 font-semibold uppercase truncate">{product.title}</span>
-          <span className="block text-base font-bold text-brand-rose">{formatPrice(product.price)}</span>
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-base font-bold text-brand-rose">{formatPrice(pricing.finalPrice)}</span>
+            {pricing.hasPromo && (
+              <span className="text-[10px] line-through text-stone-400">{formatPrice(pricing.originalPrice)}</span>
+            )}
+          </div>
         </div>
 
         <button
           disabled={isOutOfStock}
           onClick={() => addToCart(product, qty, selectedVariant || 'Standard')}
-          className={`font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider transition-colors ${
+          className={`min-h-[44px] font-semibold py-2.5 px-3.5 rounded-xl flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider transition-colors cursor-pointer shrink-0 ${
             isOutOfStock 
               ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
-              : 'bg-stone-900 text-white shadow-sm'
+              : 'bg-stone-900 text-white shadow-sm active:scale-95'
           }`}
         >
           <ShoppingBag className="w-4 h-4" /> Add
@@ -638,15 +727,100 @@ export default function ProductDetailView() {
               navigateTo('checkout');
             }, 'Please sign in or create an account to buy this product.');
           }}
-          className={`font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition-all ${
+          className={`min-h-[44px] font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer shrink-0 ${
             isOutOfStock 
               ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
-              : 'bg-brand-rose text-white shadow-soft-rose'
+              : 'bg-brand-rose hover:bg-brand-rose/90 text-white shadow-soft-rose active:scale-95'
           }`}
         >
           Buy Now
         </button>
       </div>
+
+      {/* FULL-SCREEN JEWELRY ZOOM & LIGHTBOX MODAL */}
+      {isZoomOpen && currentMedia.type !== 'video' && (
+        <div 
+          className="fixed inset-0 z-50 bg-stone-950/95 backdrop-blur-md flex flex-col justify-between p-3 sm:p-6 animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Header Controls */}
+          <div className="flex items-center justify-between text-white safe-pt">
+            <div className="space-y-0.5 max-w-[65%] truncate">
+              <p className="text-[10px] font-semibold text-brand-gold uppercase tracking-wider">{product.category}</p>
+              <h3 className="font-serif text-sm font-bold text-stone-200 truncate">{product.title}</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setZoomScale((prev) => Math.min(prev + 0.5, 3))}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setZoomScale((prev) => Math.max(prev - 0.5, 1))}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsZoomOpen(false)}
+                className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center cursor-pointer transition-colors ml-1"
+                title="Close Image Viewer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Center Zoomable Image with Swipe & Tap Zoom */}
+          <div 
+            className="flex-1 flex items-center justify-center overflow-hidden relative my-2 sm:my-4 touch-pan-y"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {mediaList.length > 1 && (
+              <button
+                type="button"
+                onClick={handleSwipePrev}
+                className="absolute left-2 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer transition-colors"
+                title="Previous Image"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <img
+              src={currentMedia.url || product.images[0]}
+              alt={product.title}
+              style={{ transform: `scale(${zoomScale})` }}
+              className="max-w-full max-h-[75vh] object-contain transition-transform duration-200 cursor-zoom-in"
+              onClick={() => setZoomScale((prev) => (prev > 1 ? 1 : 2))}
+            />
+
+            {mediaList.length > 1 && (
+              <button
+                type="button"
+                onClick={handleSwipeNext}
+                className="absolute right-2 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer transition-colors"
+                title="Next Image"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Footer indicator & swipe instructions */}
+          <div className="text-center safe-pb text-stone-400 text-xs py-1">
+            <span>Tap image to zoom ({zoomScale}x) • Swipe left/right • {currentMediaIndex + 1} of {mediaList.length}</span>
+          </div>
+        </div>
+      )}
 
     </div>
   );

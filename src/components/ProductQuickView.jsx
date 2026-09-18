@@ -13,6 +13,18 @@ export default function ProductQuickView() {
     getProductPricing
   } = useStore();
 
+  // Lock background scroll when quick view modal is open
+  React.useEffect(() => {
+    if (quickViewProduct) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [quickViewProduct]);
+
   if (!quickViewProduct) return null;
 
   const [selectedImage, setSelectedImage] = useState(quickViewProduct.images[0]);
@@ -33,8 +45,8 @@ export default function ProductQuickView() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative max-h-[90vh] flex flex-col md:flex-row">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+      <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative max-h-[90vh] flex flex-col md:flex-row overflow-y-auto">
         
         {/* Close Button */}
         <button

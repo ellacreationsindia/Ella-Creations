@@ -22,6 +22,18 @@ export default function ShopView() {
   const [shopSearch, setShopSearch] = useState('');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  // Lock background scroll when mobile filter sheet is open
+  React.useEffect(() => {
+    if (isMobileFilterOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileFilterOpen]);
+
   const MIN_LIMIT = 0;
   const MAX_LIMIT = 50000;
   const STEP = 500;
@@ -300,21 +312,38 @@ export default function ShopView() {
         </>
       )}
 
-      {/* Mobile Sticky Filter Trigger Bar */}
-      <div className="lg:hidden sticky top-20 z-30 flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-3 rounded-2xl border border-brand-gold/30 shadow-md">
+      {/* Mobile Sticky Filter & Quick Sort Trigger Bar */}
+      <div className="lg:hidden sticky top-16 z-30 flex items-center justify-between gap-2 bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-brand-gold/30 shadow-md">
         <button
           onClick={() => setIsMobileFilterOpen(true)}
-          className="flex items-center gap-2 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-4 py-2.5 rounded-xl border border-brand-gold/40 flex-1 justify-center transition-all"
+          className="flex items-center gap-1.5 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-gold/40 flex-1 justify-center transition-all cursor-pointer"
         >
-          <SlidersHorizontal className="w-4 h-4 text-brand-rose" />
-          Filter & Refine Jewelry
+          <SlidersHorizontal className="w-4 h-4 text-brand-rose shrink-0" />
+          <span>Filters</span>
           {activeFilterCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-brand-rose text-white text-[10px] flex items-center justify-center font-bold">
+            <span className="w-5 h-5 rounded-full bg-brand-rose text-white text-[10px] flex items-center justify-center font-bold shrink-0">
               {activeFilterCount}
             </span>
           )}
         </button>
-        <span className="text-xs font-semibold text-stone-600 px-2">{filtered.length} Results</span>
+
+        <div className="flex items-center gap-1">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="text-xs px-2.5 py-2 rounded-xl border border-stone-200 bg-stone-50 font-medium outline-none focus:border-brand-rose text-stone-800 cursor-pointer"
+            aria-label="Sort products"
+          >
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+          </select>
+        </div>
+
+        <span className="text-[11px] font-semibold text-stone-500 whitespace-nowrap px-1">
+          {filtered.length} items
+        </span>
       </div>
 
       {/* Main Layout Grid */}
@@ -372,10 +401,10 @@ export default function ShopView() {
               </div>
 
               {/* Drawer Footer CTA */}
-              <div className="p-4 px-6 border-t border-stone-200 bg-white">
+              <div className="p-4 px-6 border-t border-stone-200 bg-white safe-pb">
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider shadow-soft-rose"
+                  className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider shadow-soft-rose cursor-pointer"
                 >
                   <Check className="w-4 h-4" /> Show {filtered.length} Matching Pieces
                 </button>
@@ -442,13 +471,13 @@ export default function ShopView() {
               </p>
               <button
                 onClick={resetFilters}
-                className="bg-brand-rose text-white text-xs font-semibold px-6 py-2.5 rounded-full hover:bg-brand-rose/90 transition-colors"
+                className="bg-brand-rose text-white text-xs font-semibold px-6 py-2.5 rounded-full hover:bg-brand-rose/90 transition-colors cursor-pointer"
               >
                 Reset All Filters
               </button>
             </div>
           ) : (
-            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" : "space-y-4"}>
+            <div className={viewMode === 'grid' ? "grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6" : "space-y-4"}>
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

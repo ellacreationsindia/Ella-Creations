@@ -683,25 +683,37 @@ export default function AccountView() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {wishlistProducts.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl border border-stone-200 p-4 space-y-3 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="aspect-square rounded-xl bg-stone-50 overflow-hidden relative">
-                    <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+                <div key={product.id} className="bg-white rounded-2xl border border-stone-200/80 p-3 sm:p-4 space-y-2.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                  <div className="aspect-square rounded-xl bg-gradient-to-b from-stone-50 to-brand-cream/30 overflow-hidden relative p-2 flex items-center justify-center">
+                    <img 
+                      src={product.images[0]} 
+                      alt={product.title} 
+                      className="w-full h-full object-contain cursor-pointer"
+                      onClick={() => navigateTo('product', product.id)}
+                    />
                     <button
                       onClick={() => toggleWishlist(product.id)}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 text-rose-500 shadow-md"
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/95 text-rose-500 shadow-md flex items-center justify-center hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Remove from wishlist"
+                      aria-label="Remove from wishlist"
                     >
                       <Heart className="w-4 h-4 fill-current" />
                     </button>
                   </div>
-                  <div>
-                    <h4 className="font-serif text-sm font-bold text-stone-900 truncate">{product.title}</h4>
-                    <p className="text-xs font-bold text-brand-rose font-mono">{formatPrice(product.price)}</p>
+                  <div className="min-w-0">
+                    <h4 
+                      onClick={() => navigateTo('product', product.id)}
+                      className="font-serif text-xs sm:text-sm font-bold text-stone-900 truncate cursor-pointer hover:text-brand-rose"
+                    >
+                      {product.title}
+                    </h4>
+                    <p className="text-xs font-bold text-brand-rose mt-0.5">{formatPrice(product.price)}</p>
                   </div>
                   <button
                     onClick={() => addToCart(product)}
-                    className="w-full bg-brand-rose text-white text-xs font-semibold py-2 rounded-xl flex items-center justify-center gap-1 shadow-soft-rose"
+                    className="w-full min-h-[40px] bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow-soft-rose cursor-pointer transition-all active:scale-95"
                   >
                     <ShoppingBag className="w-3.5 h-3.5" /> Move to Cart
                   </button>

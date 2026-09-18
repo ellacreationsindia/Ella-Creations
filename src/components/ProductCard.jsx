@@ -28,30 +28,30 @@ export default function ProductCard({ product }) {
     : 0;
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-soft-rose transition-all duration-300 flex flex-col relative">
+    <div className="group bg-white rounded-2xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-soft-rose transition-all duration-300 flex flex-col relative h-full">
       
-      {/* Badges */}
-      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 pointer-events-none">
+      {/* Badges (Mobile-proportioned) */}
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 flex flex-col gap-1 pointer-events-none max-w-[70%]">
         {isOutOfStock ? (
-          <span className="bg-rose-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-            <Ban className="w-3 h-3" /> OUT OF STOCK
+          <span className="bg-rose-900 text-white text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-sm flex items-center gap-1 w-fit">
+            <Ban className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> OUT OF STOCK
           </span>
         ) : (
           <>
             {pricing.hasPromo ? (
-              <span className="bg-gradient-to-r from-rose-700 via-brand-rose to-rose-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-soft-rose border border-rose-400/30 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
+              <span className="bg-gradient-to-r from-rose-700 via-brand-rose to-rose-800 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-soft-rose border border-rose-400/30 flex items-center gap-1 w-fit">
+                <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-brand-gold animate-pulse" />
                 SALE -{pricing.discountPercent}%
               </span>
             ) : (
               <>
                 {product.isNew && (
-                  <span className="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+                  <span className="bg-stone-900 text-white text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-sm w-fit">
                     NEW
                   </span>
                 )}
                 {discountPercent > 0 && (
-                  <span className="bg-brand-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                  <span className="bg-brand-rose text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-sm w-fit">
                     -{discountPercent}% OFF
                   </span>
                 )}
@@ -61,30 +61,31 @@ export default function ProductCard({ product }) {
         )}
       </div>
 
-      {/* Wishlist Button */}
+      {/* Wishlist Button (Enlarged hit target for touch accessibility) */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           toggleWishlist(product.id);
         }}
-        className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+        className={`absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${
           isWishlisted
-            ? 'bg-brand-rose text-white shadow-md scale-110'
-            : 'bg-white/80 backdrop-blur-md text-stone-600 hover:text-brand-rose hover:bg-white'
+            ? 'bg-brand-rose text-white shadow-md scale-105'
+            : 'bg-white/85 backdrop-blur-md text-stone-600 hover:text-brand-rose hover:bg-white shadow-sm'
         }`}
         title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+        aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
       >
-        <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
+        <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-current' : ''}`} />
       </button>
 
       {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}
       <div 
         onClick={() => navigateTo('product', product.id)}
-        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-4 cursor-pointer group flex items-center justify-center border-b border-stone-100"
+        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-2.5 sm:p-4 cursor-pointer group flex items-center justify-center border-b border-stone-100"
       >
-        {/* Photo Count Indicator */}
+        {/* Photo Count Indicator (Desktop) */}
         {product.images && product.images.length > 1 && (
-          <div className="absolute top-3 right-14 z-10 bg-stone-900/70 backdrop-blur-md text-brand-gold text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-3 right-14 z-10 bg-stone-900/70 backdrop-blur-md text-brand-gold text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
             {product.images.length} Views
           </div>
         )}
@@ -99,20 +100,20 @@ export default function ProductCard({ product }) {
           } ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
         />
 
-        {/* Secondary Hover Image (Uncropped) */}
+        {/* Secondary Hover Image (Uncropped, Desktop) */}
         {product.images && product.images.length > 1 && (
           <img
             src={product.images[1]}
             alt={`${product.title} - ${product.category} detailed view | Ella Creations`}
             loading="lazy"
-            className={`absolute inset-0 w-full h-full object-contain object-center p-4 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out ${
+            className={`absolute inset-0 w-full h-full object-contain object-center p-2.5 sm:p-4 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out hidden sm:block ${
               isOutOfStock ? 'opacity-60 grayscale' : ''
             }`}
           />
         )}
 
-        {/* Hover Quick Actions */}
-        <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+        {/* Desktop-Only Hover Quick Actions */}
+        <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center gap-3">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -120,6 +121,7 @@ export default function ProductCard({ product }) {
             }}
             className="w-10 h-10 rounded-full bg-white text-stone-800 flex items-center justify-center shadow-lg hover:bg-brand-rose hover:text-white transition-all transform hover:scale-110"
             title="Quick View"
+            aria-label="Quick View Product"
           >
             <Eye className="w-5 h-5" />
           </button>
@@ -132,6 +134,7 @@ export default function ProductCard({ product }) {
               }}
               className="w-10 h-10 rounded-full bg-brand-gold text-white flex items-center justify-center shadow-lg hover:bg-stone-900 transition-all transform hover:scale-110"
               title="Add to Cart"
+              aria-label="Add product to cart"
             >
               <ShoppingBag className="w-5 h-5" />
             </button>
@@ -140,74 +143,88 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Product Content Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
         <div>
           {/* Category & Stone */}
-          <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium mb-1">
-            <span className="uppercase tracking-wider text-brand-gold font-semibold">{product.category}</span>
-            {product.stoneType ? <span>{product.stoneType}</span> : null}
+          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-stone-500 font-medium mb-1 gap-1 truncate">
+            <span className="uppercase tracking-wider text-brand-gold font-semibold truncate">{product.category}</span>
+            {product.stoneType ? <span className="truncate opacity-75">{product.stoneType}</span> : null}
           </div>
 
           {/* Title */}
           <h3 
             onClick={() => navigateTo('product', product.id)}
-            className="font-serif text-base font-semibold text-stone-900 line-clamp-1 hover:text-brand-rose cursor-pointer transition-colors"
+            className="font-serif text-xs sm:text-sm md:text-base font-semibold text-stone-900 line-clamp-1 hover:text-brand-rose cursor-pointer transition-colors leading-snug"
+            title={product.title}
           >
             {product.title}
           </h3>
 
           {/* Rating */}
-          <div className="flex items-center gap-1 mt-1.5">
+          <div className="flex items-center gap-1 mt-1">
             <div className="flex text-amber-400">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3.5 h-3.5 ${
+                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
                     i < Math.floor(product.rating) ? 'fill-current' : 'text-stone-300'
                   }`}
                 />
               ))}
             </div>
-            <span className="text-xs text-stone-600 font-medium">({product.reviewsCount})</span>
+            <span className="text-[10px] sm:text-xs text-stone-500 font-medium">({product.reviewsCount})</span>
           </div>
         </div>
 
-        {/* Price & Action */}
-        <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
-          <div>
+        {/* Price & Action Row */}
+        <div className="pt-2 border-t border-stone-100 flex items-center justify-between gap-1">
+          <div className="min-w-0 flex-1">
             {isOutOfStock ? (
-              <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md inline-block">
+              <span className="text-[10px] sm:text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-1.5 sm:px-2 py-0.5 rounded inline-block">
                 OUT OF STOCK
               </span>
             ) : (
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className={`text-base font-bold ${pricing.hasPromo ? 'text-brand-rose' : 'text-stone-900'}`}>
-                    {formatPrice(pricing.finalPrice)}
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className={`text-xs sm:text-sm md:text-base font-bold ${pricing.hasPromo ? 'text-brand-rose' : 'text-stone-900'}`}>
+                  {formatPrice(pricing.finalPrice)}
+                </span>
+                {pricing.hasPromo ? (
+                  <span className="text-[10px] sm:text-xs line-through text-stone-400 font-normal">
+                    {formatPrice(pricing.originalPrice)}
                   </span>
-                  {pricing.hasPromo ? (
-                    <span className="text-xs line-through text-stone-400 font-normal">
-                      {formatPrice(pricing.originalPrice)}
+                ) : (
+                  product.comparePrice && (
+                    <span className="text-[10px] sm:text-xs line-through text-stone-400 font-normal">
+                      {formatPrice(product.comparePrice)}
                     </span>
-                  ) : (
-                    product.comparePrice && (
-                      <span className="text-xs line-through text-stone-400 font-normal">
-                        {formatPrice(product.comparePrice)}
-                      </span>
-                    )
-                  )}
-                </div>
+                  )
+                )}
               </div>
             )}
           </div>
 
-          <button
-            onClick={() => navigateTo('product', product.id)}
-            className="text-xs font-semibold text-brand-rose hover:text-stone-900 transition-colors flex items-center gap-1 group/btn"
-          >
-            View Details
-            <Sparkles className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
-          </button>
+          {/* Action Button: Touch Quick-Add on Mobile, View Details on Desktop */}
+          {!isOutOfStock ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product, 1);
+              }}
+              className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white transition-all flex items-center gap-1 text-[11px] font-semibold flex-shrink-0"
+              title="Add to Shopping Bag"
+              aria-label={`Add ${product.title} to bag`}
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Add</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigateTo('product', product.id)}
+              className="text-[11px] font-semibold text-stone-400 hover:text-stone-700 transition-colors flex items-center gap-0.5 flex-shrink-0"
+            >
+              Details
+            </button>
+          )}
         </div>
 
       </div>

@@ -79,6 +79,18 @@ export default function PromotionPopup({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, handleClose]);
 
+  // Lock body scroll when storefront popup is open
+  useEffect(() => {
+    if (isOpen && !preview) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, preview]);
+
   if (!isOpen || !activeCampaign) return null;
 
   const handleCtaClick = () => {
@@ -198,7 +210,7 @@ export default function PromotionPopup({
 
       {/* Modal Container */}
       <div 
-        className={`relative w-full max-w-lg md:max-w-2xl bg-white rounded-3xl overflow-hidden border border-brand-gold/40 shadow-2xl z-10 transform transition-all duration-300 ${
+        className={`relative w-full max-w-lg md:max-w-2xl bg-white rounded-3xl overflow-hidden border border-brand-gold/40 shadow-2xl z-10 transform transition-all duration-300 max-h-[90vh] overflow-y-auto ${
           isClosing ? 'scale-95 translate-y-4' : 'scale-100 translate-y-0'
         }`}
       >

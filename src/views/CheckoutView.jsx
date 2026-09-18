@@ -464,10 +464,11 @@ export default function CheckoutView() {
                       <input
                         type="text"
                         required
+                        autoComplete="name"
                         placeholder="Enter your full name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
                       />
                     </div>
 
@@ -478,6 +479,8 @@ export default function CheckoutView() {
                       <input
                         type="email"
                         required
+                        autoComplete="email"
+                        inputMode="email"
                         placeholder="yourname@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -497,11 +500,13 @@ export default function CheckoutView() {
                       <input
                         type="tel"
                         required
+                        autoComplete="tel"
+                        inputMode="tel"
                         maxLength="10"
                         placeholder="10-digit mobile number"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '') })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono bg-white"
                       />
                     </div>
 
@@ -513,17 +518,20 @@ export default function CheckoutView() {
                         <input
                           type="text"
                           required
+                          autoComplete="postal-code"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           maxLength="6"
                           placeholder="e.g. 400050"
                           value={formData.zip}
                           onChange={(e) => handlePincodeChange(e.target.value)}
-                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono"
+                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose font-mono bg-white"
                         />
                         <button
                           type="button"
                           onClick={handleCheckPincode}
                           disabled={isCheckingPincode}
-                          className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0"
+                          className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3.5 py-2.5 rounded-xl transition-colors flex items-center gap-1 font-semibold flex-shrink-0 cursor-pointer min-h-[42px]"
                         >
                           {isCheckingPincode ? (
                             <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -545,10 +553,11 @@ export default function CheckoutView() {
                       <input
                         type="text"
                         required
+                        autoComplete="street-address"
                         placeholder="House no., Apartment, Building name"
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
                       />
                     </div>
 
@@ -560,7 +569,7 @@ export default function CheckoutView() {
                           placeholder="Near park, temple, etc."
                           value={formData.landmark}
                           onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
                         />
                       </div>
 
@@ -569,10 +578,11 @@ export default function CheckoutView() {
                         <input
                           type="text"
                           required
+                          autoComplete="address-level2"
                           placeholder="City"
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
                         />
                       </div>
 
@@ -581,10 +591,11 @@ export default function CheckoutView() {
                         <input
                           type="text"
                           required
+                          autoComplete="address-level1"
                           placeholder="State"
                           value={formData.state}
                           onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                          className="w-full text-xs px-3 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose"
+                          className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-stone-300 outline-none focus:border-brand-rose bg-white"
                         />
                       </div>
                     </div>
@@ -823,12 +834,12 @@ export default function CheckoutView() {
               )}
 
               {/* Navigation Action Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-stone-200">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-stone-200">
                 {step === 2 && (
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-xs font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1"
+                    className="text-xs font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1 cursor-pointer py-2"
                   >
                     ← Back to Address & Shipping
                   </button>
@@ -837,7 +848,7 @@ export default function CheckoutView() {
                 <button
                   type="submit"
                   disabled={isProcessingPayment}
-                  className="ml-auto bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-8 rounded-full flex items-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider"
+                  className="w-full sm:w-auto ml-auto bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-8 rounded-full flex items-center justify-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider cursor-pointer min-h-[48px]"
                 >
                   {isProcessingPayment ? (
                     <span className="flex items-center gap-2">

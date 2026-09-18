@@ -23,6 +23,18 @@ export default function CartDrawer() {
 
   const [couponInput, setCouponInput] = useState('');
 
+  // Lock background scrolling when cart drawer is open
+  React.useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isCartOpen]);
+
   if (!isCartOpen) return null;
 
   const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
@@ -45,9 +57,9 @@ export default function CartDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm">
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between border-l border-brand-gold/30">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full justify-end">
+        <div className="w-full sm:max-w-md bg-white shadow-2xl flex flex-col justify-between border-l border-brand-gold/30">
           
           {/* Header */}
           <div className="p-6 border-b border-stone-200 bg-brand-cream flex items-center justify-between">
@@ -119,17 +131,19 @@ export default function CartDrawer() {
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center border border-stone-300 rounded-md bg-white">
+                      <div className="flex items-center border border-stone-300 rounded-lg bg-white overflow-hidden">
                         <button
                           onClick={() => updateCartQty(idx, item.qty - 1)}
-                          className="px-2 py-0.5 text-xs text-stone-600 font-bold hover:bg-stone-100"
+                          className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm text-stone-600 font-bold hover:bg-stone-100 active:bg-stone-200 cursor-pointer"
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
-                        <span className="px-2.5 py-0.5 text-xs font-semibold">{item.qty}</span>
+                        <span className="px-2 sm:px-3 text-xs font-semibold">{item.qty}</span>
                         <button
                           onClick={() => updateCartQty(idx, item.qty + 1)}
-                          className="px-2 py-0.5 text-xs text-stone-600 font-bold hover:bg-stone-100"
+                          className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm text-stone-600 font-bold hover:bg-stone-100 active:bg-stone-200 cursor-pointer"
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
@@ -160,7 +174,7 @@ export default function CartDrawer() {
 
           {/* Footer & Checkout Action */}
           {cart.length > 0 && (
-            <div className="p-6 border-t border-stone-200 bg-stone-50 space-y-4">
+            <div className="p-4 sm:p-6 border-t border-stone-200 bg-stone-50 space-y-4 safe-pb">
               {/* Coupon Form */}
               <div>
                 {activeCoupon ? (
@@ -250,7 +264,7 @@ export default function CartDrawer() {
               {/* Checkout CTA */}
               <button
                 onClick={handleProceedToCheckout}
-                className="w-full bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-all transform active:scale-95 text-xs uppercase tracking-wider"
+                className="w-full min-h-[48px] bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-all transform active:scale-95 text-xs uppercase tracking-wider cursor-pointer"
               >
                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
               </button>
