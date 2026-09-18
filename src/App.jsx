@@ -15,6 +15,8 @@ import CheckoutView from './views/CheckoutView';
 import AdminView from './views/AdminView';
 import TermsView from './views/TermsView';
 import PrivacyView from './views/PrivacyView';
+import RefundPolicyView from './views/RefundPolicyView';
+import ShippingPolicyView from './views/ShippingPolicyView';
 import BrandGuidelinesView from './views/BrandGuidelinesView';
 import SitemapView from './views/SitemapView';
 import BlogView from './views/BlogView';
@@ -45,12 +47,14 @@ function AppContent() {
         {(currentView === 'blog' || currentView === 'blog-detail') && <BlogView />}
         {currentView === 'terms' && <TermsView />}
         {currentView === 'privacy' && <PrivacyView />}
+        {currentView === 'refund-policy' && <RefundPolicyView />}
+        {currentView === 'shipping-policy' && <ShippingPolicyView />}
         {currentView === 'brand-guidelines' && <BrandGuidelinesView />}
         {currentView === 'sitemap' && <SitemapView />}
         {currentView === '404' && <NotFoundView />}
         {![
           'home', 'shop', 'product', 'checkout', 'account', 'admin', 
-          'blog', 'blog-detail', 'terms', 'privacy', 'brand-guidelines', 'sitemap', '404'
+          'blog', 'blog-detail', 'terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', '404'
         ].includes(currentView) && <NotFoundView />}
       </main>
 

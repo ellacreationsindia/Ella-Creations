@@ -151,7 +151,10 @@ export default function Footer() {
             <ul className={`text-xs text-stone-400 space-y-2 pt-2 ${isCustomerCareOpen ? 'block' : 'hidden lg:block'}`}>
               <li><button onClick={() => navigateTo('blog')} className="hover:text-brand-rose text-white font-semibold transition-colors cursor-pointer">📖 Ella Journal & Blogs</button></li>
               <li><button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors cursor-pointer">Jewelry Care Guide</button></li>
+              <li><button onClick={() => navigateTo('shipping-policy')} className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery Policy</button></li>
+              <li><button onClick={() => navigateTo('refund-policy')} className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation Policy</button></li>
               <li><button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</button></li>
+              <li><button onClick={() => navigateTo('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button></li>
               <li><button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors cursor-pointer">Sitemap Directory</button></li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
@@ -194,18 +197,22 @@ export default function Footer() {
       </div>
 
       {/* Bottom Copyright & Attribution Bar */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-6 border-t border-stone-800 space-y-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-5 border-t border-stone-800 space-y-3">
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left text-xs text-stone-500">
           <p>© {new Date().getFullYear()} Ella Creations India. All Rights Reserved. Crafted with <Heart className="w-3.5 h-3.5 text-brand-rose inline mx-0.5 fill-current" /> for jewelry lovers.</p>
           
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-stone-400 text-[11px] sm:text-xs">
-            <button onClick={() => navigateTo('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
+            <button onClick={() => navigateTo('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
             <span>•</span>
-            <button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors">Terms of Service</button>
+            <button onClick={() => navigateTo('terms')} className="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
             <span>•</span>
-            <button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors">Brand Guidelines</button>
+            <button onClick={() => navigateTo('refund-policy')} className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation</button>
             <span>•</span>
-            <button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors">Sitemap</button>
+            <button onClick={() => navigateTo('shipping-policy')} className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery</button>
+            <span>•</span>
+            <button onClick={() => navigateTo('brand-guidelines')} className="hover:text-white transition-colors cursor-pointer">Jewelry Care</button>
+            <span>•</span>
+            <button onClick={() => navigateTo('sitemap')} className="hover:text-white transition-colors cursor-pointer">Sitemap</button>
           </div>
         </div>
 

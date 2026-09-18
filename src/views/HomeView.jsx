@@ -162,10 +162,10 @@ export default function HomeView() {
 
       {/* Category Collections Section (Small Round Fitted Shapes for 7 Categories) */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="text-center space-y-1.5 sm:space-y-2 mb-4 sm:mb-8">
+        <div className="text-center space-y-1 sm:space-y-1.5 mb-3 sm:mb-5">
           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">Curated Collections</span>
           <h2 className="font-serif text-xl sm:text-3xl lg:text-4xl font-bold text-stone-900">Shop by Jewelry Category</h2>
-          <div className="gold-divider max-w-xs mx-auto my-1.5 sm:my-3">
+          <div className="gold-divider max-w-xs mx-auto my-1 sm:my-2">
             <Sparkles className="w-3.5 h-3.5" />
           </div>
         </div>
@@ -230,8 +230,8 @@ export default function HomeView() {
       </section>
 
       {/* Expanded Catalog Showcase Section (Showing 8 - 12 Products in Mobile 2-Col Grid) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-brand-gold/20 pb-4 gap-3 sm:gap-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-brand-gold/20 pb-3 gap-2 sm:gap-4">
           <div>
             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-gold">Full Master Showcase</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mt-1">Explore Popular Creations</h2>
@@ -281,8 +281,8 @@ export default function HomeView() {
 
       {/* Jewelry Styling & Occasion Guide Section */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-sand/50 rounded-3xl p-5 sm:p-8 lg:p-10 border border-brand-gold/30 space-y-5 sm:space-y-6 shadow-sm">
-          <div className="text-center max-w-2xl mx-auto space-y-1.5">
+        <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-sand/50 rounded-3xl p-4 sm:p-6 lg:p-8 border border-brand-gold/30 space-y-4 sm:space-y-5 shadow-sm">
+          <div className="text-center max-w-2xl mx-auto space-y-1">
             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-gold">Styling Concierge</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">Jewelry for Every Special Occasion</h2>
             <p className="text-xs sm:text-sm text-stone-600">Explore tailored jewelry guides designed to match your outfit and event vibe perfectly.</p>
@@ -441,8 +441,8 @@ export default function HomeView() {
 
       {/* Why Choose Ella Creations Guarantee Section */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 border border-brand-gold/20 shadow-sm text-center space-y-6">
-          <div className="space-y-1.5">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-brand-gold/20 shadow-sm text-center space-y-4 sm:space-y-5">
+          <div className="space-y-1">
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">Craftsmanship & Promise</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">Why Ella Creations Stand Out</h2>
           </div>
@@ -493,7 +493,7 @@ export default function HomeView() {
 
       {/* Verified Customer Reviews Section */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="text-center space-y-2 mb-6 sm:mb-8">
+        <div className="text-center space-y-1.5 mb-4 sm:mb-6">
           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-rose">Customer Love</span>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">Loved by Women Across India</h2>
         </div>
@@ -526,8 +526,8 @@ export default function HomeView() {
       </section>
 
       {/* Frequently Asked Questions (FAQ) Section for Search Rich Results */}
-      <section className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
-        <div className="text-center space-y-2">
+      <section className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-5">
+        <div className="text-center space-y-1.5">
           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold flex items-center justify-center gap-1.5">
             <HelpCircle className="w-3.5 h-3.5 text-brand-gold" /> Frequently Asked Questions
           </span>
