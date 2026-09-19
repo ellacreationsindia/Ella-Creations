@@ -13,12 +13,25 @@ export default function ProductQuickView() {
     getProductPricing
   } = useStore();
 
-  // Lock background scroll when quick view modal is open
+  const [selectedImage, setSelectedImage] = useState(quickViewProduct?.images?.[0] || null);
+  const [selectedVariant, setSelectedVariant] = useState(
+    quickViewProduct?.variants && quickViewProduct.variants.length > 0 ? quickViewProduct.variants[0] : null
+  );
+  const [qty, setQty] = useState(1);
+  const [selectedAddons, setSelectedAddons] = useState([]);
+
+  // Lock background scroll and initialize defaults when quick view modal is open
   React.useEffect(() => {
     if (quickViewProduct) {
       document.body.style.overflow = 'hidden';
+      setSelectedImage(quickViewProduct.images?.[0] || null);
+      setSelectedVariant(quickViewProduct.variants && quickViewProduct.variants.length > 0 ? quickViewProduct.variants[0] : null);
+      setQty(1);
+      const reqAddons = Array.isArray(quickViewProduct.addons) ? quickViewProduct.addons.filter(a => a.isRequired) : [];
+      setSelectedAddons(reqAddons);
     } else {
       document.body.style.overflow = '';
+      setSelectedAddons([]);
     }
     return () => {
       document.body.style.overflow = '';
@@ -27,11 +40,17 @@ export default function ProductQuickView() {
 
   if (!quickViewProduct) return null;
 
-  const [selectedImage, setSelectedImage] = useState(quickViewProduct.images[0]);
-  const [selectedVariant, setSelectedVariant] = useState(
-    quickViewProduct.variants && quickViewProduct.variants.length > 0 ? quickViewProduct.variants[0] : null
-  );
-  const [qty, setQty] = useState(1);
+  const handleToggleAddon = (addon) => {
+    if (addon.isRequired) return;
+    setSelectedAddons((prev) => {
+      const exists = prev.some(a => (a.id && a.id === addon.id) || a.name === addon.name);
+      if (exists) {
+        return prev.filter(a => (a.id && a.id !== addon.id) || a.name !== addon.name);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
 
   const isWishlisted = wishlist.includes(quickViewProduct.id);
 
@@ -43,6 +62,10 @@ export default function ProductQuickView() {
     savings: 0,
     comparePrice: quickViewProduct.comparePrice
   };
+
+  const addonsExtraTotal = (selectedAddons || []).reduce((acc, a) => acc + (Number(a.price) || 0), 0);
+  const effectiveFinalPrice = pricing.finalPrice + addonsExtraTotal;
+  const effectiveOriginalPrice = pricing.originalPrice + addonsExtraTotal;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
@@ -111,10 +134,15 @@ export default function ProductQuickView() {
             </div>
 
             <div className="flex items-baseline gap-3 mt-3 flex-wrap">
-              <span className="text-2xl font-bold text-brand-rose">{formatPrice(pricing.finalPrice)}</span>
+              <span className="text-2xl font-bold text-brand-rose">{formatPrice(effectiveFinalPrice)}</span>
+              {addonsExtraTotal > 0 && (
+                <span className="text-[10px] font-semibold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-300">
+                  +{formatPrice(addonsExtraTotal)} Add-ons
+                </span>
+              )}
               {pricing.hasPromo ? (
                 <>
-                  <span className="text-sm line-through text-stone-400">{formatPrice(pricing.originalPrice)}</span>
+                  <span className="text-sm line-through text-stone-400">{formatPrice(effectiveOriginalPrice)}</span>
                   <span className="text-[10px] font-bold text-white bg-gradient-to-r from-rose-700 to-brand-rose px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1">
                     <Sparkles className="w-3 h-3 text-brand-gold" />
                     SALE -{pricing.discountPercent}% OFF
@@ -122,7 +150,7 @@ export default function ProductQuickView() {
                 </>
               ) : (
                 quickViewProduct.comparePrice && (
-                  <span className="text-sm line-through text-stone-400">{formatPrice(quickViewProduct.comparePrice)}</span>
+                  <span className="text-sm line-through text-stone-400">{formatPrice(Number(quickViewProduct.comparePrice) + addonsExtraTotal)}</span>
                 )
               )}
             </div>
@@ -161,20 +189,62 @@ export default function ProductQuickView() {
               </div>
             )}
 
+            {/* Chargeable Custom Add-ons & Upgrades */}
+            {quickViewProduct.addons && quickViewProduct.addons.length > 0 && (
+              <div className="mt-4 p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-500" /> Custom Upgrades & Add-ons
+                  </label>
+                  {selectedAddons.length > 0 && (
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
+                      +{formatPrice(addonsExtraTotal)}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  {quickViewProduct.addons.map((addon) => {
+                    const isChecked = selectedAddons.some(a => (a.id && a.id === addon.id) || a.name === addon.name);
+                    return (
+                      <label
+                        key={addon.id || addon.name}
+                        onClick={() => handleToggleAddon(addon)}
+                        className={`p-2 rounded-xl border text-xs flex items-center justify-between cursor-pointer select-none transition-all ${
+                          isChecked ? 'border-brand-rose bg-rose-50/60 font-semibold' : 'border-stone-200 bg-white hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            disabled={Boolean(addon.isRequired)}
+                            onChange={() => {}}
+                            className="accent-brand-rose rounded cursor-pointer"
+                          />
+                          <span>{addon.name}</span>
+                        </div>
+                        <span className="text-brand-rose font-bold font-sans">+{formatPrice(addon.price)}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Quantity Selector */}
             <div className="mt-4 flex items-center gap-4">
               <label className="text-xs font-semibold text-stone-800 uppercase tracking-wider">Quantity:</label>
               <div className="flex items-center border border-stone-300 rounded-lg">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-3 py-1 text-stone-600 hover:bg-stone-100 font-bold"
+                  className="px-3 py-1 text-stone-600 hover:bg-stone-100 font-bold cursor-pointer"
                 >
                   -
                 </button>
                 <span className="px-4 py-1 font-semibold text-sm">{qty}</span>
                 <button
                   onClick={() => setQty(qty + 1)}
-                  className="px-3 py-1 text-stone-600 hover:bg-stone-100 font-bold"
+                  className="px-3 py-1 text-stone-600 hover:bg-stone-100 font-bold cursor-pointer"
                 >
                   +
                 </button>
@@ -187,17 +257,17 @@ export default function ProductQuickView() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  addToCart(quickViewProduct, qty, selectedVariant || 'Standard');
+                  addToCart(quickViewProduct, qty, selectedVariant || 'Standard', selectedAddons);
                   setQuickViewProduct(null);
                 }}
-                className="flex-1 bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider"
+                className="flex-1 bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-soft-rose transition-colors text-xs uppercase tracking-wider cursor-pointer"
               >
-                <ShoppingBag className="w-4 h-4" /> Add to Shopping Bag
+                <ShoppingBag className="w-4 h-4" /> Add to Shopping Bag • {formatPrice(effectiveFinalPrice * qty)}
               </button>
 
               <button
                 onClick={() => toggleWishlist(quickViewProduct.id)}
-                className={`p-3 rounded-xl border transition-colors ${
+                className={`p-3 rounded-xl border transition-colors cursor-pointer ${
                   isWishlisted ? 'border-brand-rose bg-brand-rose/10 text-brand-rose' : 'border-stone-300 text-stone-600 hover:border-brand-rose'
                 }`}
               >
@@ -210,7 +280,7 @@ export default function ProductQuickView() {
                 navigateTo('product', quickViewProduct.id);
                 setQuickViewProduct(null);
               }}
-              className="w-full text-center text-xs font-semibold text-stone-700 hover:text-brand-rose transition-colors py-1 flex items-center justify-center gap-1"
+              className="w-full text-center text-xs font-semibold text-stone-700 hover:text-brand-rose transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer"
             >
               Go to Full Product Page & Specifications <Sparkles className="w-3 h-3 text-brand-gold" />
             </button>

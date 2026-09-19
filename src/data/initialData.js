@@ -50,6 +50,10 @@ export const INITIAL_PRODUCTS = [
         ]
       }
     ],
+    addons: [
+      { id: "addon-101-box", name: "Luxury Velvet Gift Box", price: 199, description: "Burgundy heirloom jewelry box with gold foil lettering", isRequired: false },
+      { id: "addon-101-kit", name: "Anti-Tarnish Polish & Preservation Kit", price: 299, description: "Includes micro-cloth and dry silica moisture pouch", isRequired: false }
+    ],
     occasionTags: ["Bridal", "Wedding", "Festive"]
   },
   {
@@ -70,6 +74,9 @@ export const INITIAL_PRODUCTS = [
       { id: "v-102-2", name: "Pure Silver Polish", sku: "EC-ER-102-SLV", price: 1899, stock: 10, swatchColor: "#C0C0C0" }
     ],
     stoneType: "AAA+ Cubic Zirconia (CZ)",
+    addons: [
+      { id: "addon-102-note", name: "Handwritten Calligraphy Card", price: 99, description: "Personalized message on artisanal handmade paper", isRequired: false }
+    ],
     images: [
       "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=1000"

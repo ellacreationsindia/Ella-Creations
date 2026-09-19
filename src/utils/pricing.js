@@ -22,9 +22,12 @@ export function getCurrentTimestamp() {
  */
 export function parseCampaignDateTime(dateStr) {
   if (!dateStr) return null;
+  if (typeof dateStr === 'number') return isNaN(dateStr) ? null : dateStr;
+  if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr.getTime();
+  if (typeof dateStr !== 'string') return null;
   
   // If it's already an ISO string with Z or timezone offset (+XX:XX)
-  if (typeof dateStr === 'string' && (dateStr.includes('Z') || dateStr.includes('+') || (dateStr.includes('-') && dateStr.lastIndexOf('-') > 10))) {
+  if (dateStr.includes('Z') || dateStr.includes('+') || (dateStr.includes('-') && dateStr.lastIndexOf('-') > 10)) {
     const d = new Date(dateStr);
     return isNaN(d.getTime()) ? null : d.getTime();
   }
@@ -90,22 +93,34 @@ export function toISTInputString(dateInput) {
 /**
  * Evaluates the real-time status of a promotional campaign:
  * - 'Disabled': is_enabled is explicitly false
- * - 'Draft': marked as draft or missing required dates
+ * - 'Draft': marked as draft
  * - 'Scheduled': start time is in the future
  * - 'Expired': end time is in the past
- * - 'Active': current time is between start and end time
+ * - 'Active': current time is between start and end time (with 5-minute clock-skew grace)
  */
 export function getCampaignStatus(campaign, currentTimestamp = getCurrentTimestamp()) {
   if (!campaign) return 'Draft';
-  if (campaign.is_enabled === false) return 'Disabled';
+  if (campaign.is_enabled === false || campaign.isEnabled === false) return 'Disabled';
   if (campaign.status === 'Draft') return 'Draft';
 
-  const startMs = parseCampaignDateTime(campaign.start_at);
-  const endMs = parseCampaignDateTime(campaign.end_at);
+  const startMs = parseCampaignDateTime(campaign.start_at || campaign.startAt);
+  const endMs = parseCampaignDateTime(campaign.end_at || campaign.endAt);
 
-  if (!startMs || !endMs) return 'Draft';
+  // If no dates provided, but enabled, it is Active
+  if (!startMs && !endMs) return 'Active';
 
-  if (currentTimestamp < startMs) {
+  // Only end date provided
+  if (!startMs && endMs) {
+    return currentTimestamp <= endMs ? 'Active' : 'Expired';
+  }
+
+  // Only start date provided
+  if (startMs && !endMs) {
+    return currentTimestamp + 5 * 60 * 1000 >= startMs ? 'Active' : 'Scheduled';
+  }
+
+  // 5-minute grace tolerance for start date to prevent clock skew / immediate creation lag
+  if (currentTimestamp + 5 * 60 * 1000 < startMs) {
     return 'Scheduled';
   } else if (currentTimestamp > endMs) {
     return 'Expired';
@@ -130,12 +145,12 @@ export function getActivePromotions(promotions = [], currentTimestamp = getCurre
       const prioB = Number(b.priority ?? 99);
       if (prioA !== prioB) return prioA - prioB;
 
-      const discA = Number(a.discount_percentage ?? 0);
-      const discB = Number(b.discount_percentage ?? 0);
+      const discA = Number(a.discount_percentage ?? a.discountPercentage ?? 0);
+      const discB = Number(b.discount_percentage ?? b.discountPercentage ?? 0);
       if (discB !== discA) return discB - discA;
 
-      const timeA = new Date(a.created_at || 0).getTime();
-      const timeB = new Date(b.created_at || 0).getTime();
+      const timeA = new Date(a.created_at || a.createdAt || 0).getTime();
+      const timeB = new Date(b.created_at || b.createdAt || 0).getTime();
       return timeB - timeA;
     });
 }
@@ -146,7 +161,7 @@ export function getActivePromotions(promotions = [], currentTimestamp = getCurre
  */
 export function getActivePopupCampaign(promotions = [], currentTimestamp = getCurrentTimestamp()) {
   const active = getActivePromotions(promotions, currentTimestamp);
-  return active.find(p => p.popup_enabled !== false) || null;
+  return active.find(p => p.popup_enabled !== false && p.popupEnabled !== false) || null;
 }
 
 /**
@@ -154,9 +169,22 @@ export function getActivePopupCampaign(promotions = [], currentTimestamp = getCu
  */
 export function isProductInCampaign(productId, campaign) {
   if (!productId || !campaign) return false;
-  const list = campaign.product_ids || campaign.productIds || [];
-  if (!Array.isArray(list)) return false;
-  return list.some(id => String(id) === String(productId));
+  if (campaign.all_products === true || campaign.allProducts === true) return true;
+
+  const list = campaign.product_ids || campaign.productIds || campaign.products || [];
+  if (!Array.isArray(list) || list.length === 0) return false;
+
+  const targetIdStr = String(productId).trim().toLowerCase();
+  const cleanTarget = targetIdStr.replace(/^ec-/, '');
+
+  return list.some(item => {
+    if (!item) return false;
+    const itemId = String(typeof item === 'object' ? (item.id || item.productId || '') : item).trim().toLowerCase();
+    if (!itemId) return false;
+    if (itemId === targetIdStr) return true;
+    const cleanItem = itemId.replace(/^ec-/, '');
+    return cleanItem === cleanTarget;
+  });
 }
 
 /**
@@ -207,14 +235,20 @@ export function calculateProductPricing(product, selectedVariant = null, activeP
   );
 
   if (!applicableCampaign) {
+    const hasCatalogDiscount = Boolean(comparePrice && comparePrice > basePrice);
+    const catalogDiscountPercent = hasCatalogDiscount 
+      ? Math.round(((comparePrice - basePrice) / comparePrice) * 100) 
+      : 0;
+    const catalogSavings = hasCatalogDiscount ? Math.max(0, comparePrice - basePrice) : 0;
+
     return {
-      hasPromo: false,
-      originalPrice: basePrice,
+      hasPromo: hasCatalogDiscount,
+      originalPrice: hasCatalogDiscount ? comparePrice : basePrice,
       finalPrice: basePrice,
-      discountPercent: 0,
-      savings: 0,
+      discountPercent: catalogDiscountPercent,
+      savings: catalogSavings,
       campaign: null,
-      comparePrice
+      comparePrice: hasCatalogDiscount ? comparePrice : null
     };
   }
 
@@ -269,7 +303,14 @@ export function verifyCartPricing(cart = [], catalogProducts = [], activePromoti
     }
 
     const priceInfo = calculateProductPricing(realProduct, targetVariant, activePromotions);
-    const itemTotal = priceInfo.finalPrice * qty;
+    
+    // Add extra charges from custom chargeable addons
+    const selectedAddons = Array.isArray(item.selectedAddons) ? item.selectedAddons : [];
+    const addonsExtraPerUnit = selectedAddons.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
+    const unitPrice = priceInfo.finalPrice + addonsExtraPerUnit;
+    const unitOriginalPrice = priceInfo.originalPrice + addonsExtraPerUnit;
+
+    const itemTotal = unitPrice * qty;
     const itemSavings = priceInfo.savings * qty;
 
     subtotal += itemTotal;
@@ -277,8 +318,11 @@ export function verifyCartPricing(cart = [], catalogProducts = [], activePromoti
 
     return {
       ...item,
-      price: priceInfo.finalPrice,
-      originalPrice: priceInfo.originalPrice,
+      price: unitPrice,
+      basePrice: priceInfo.finalPrice,
+      addonsPrice: addonsExtraPerUnit,
+      selectedAddons,
+      originalPrice: unitOriginalPrice,
       hasPromo: priceInfo.hasPromo,
       discountPercent: priceInfo.discountPercent,
       campaignName: priceInfo.campaign?.name || null,

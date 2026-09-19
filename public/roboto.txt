@@ -1,4 +1,5 @@
-# robots.txt for Ella Creations (https://ella-creations.com)
+# roboto.txt (Alias/Mirror for robots.txt)
+# Ella Creations (https://ella-creations.com)
 # Handcrafted Luxury Artificial & Bridal Jewelry India
 
 # -------------------------------------------------------------

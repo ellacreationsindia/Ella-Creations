@@ -247,7 +247,8 @@ export default function AdminView() {
     images: [],
     videos: [],
     variants: [], // Array of { id, name, sku, price, stock, swatchColor }
-    customSections: [] // Array of { title, items: [{ label, value }] }
+    customSections: [], // Array of { title, items: [{ label, value }] }
+    addons: [] // Array of { id, name, price, description, isRequired }
   });
 
   const handleInlineAdminLogin = async (e) => {
@@ -595,6 +596,62 @@ export default function AdminView() {
     });
   };
 
+  // Preset Add-on Templates for Admin
+  const ADDON_PRESETS = [
+    { name: 'Luxury Velvet Gift Box', price: 199, description: 'Opulent crimson velvet box with satin pull-ribbon.' },
+    { name: 'Extended Anti-Tarnish Polish Kit', price: 299, description: 'Microfiber polishing cloth & antioxidant protective seal.' },
+    { name: 'Silk Brocade Pouch & Travel Case', price: 149, description: 'Handcrafted Varanasi brocade jewelry pouch.' },
+    { name: 'Custom Handwritten Calligraphy Card', price: 99, description: 'Personalized gift greeting card on handmade parchment.' },
+    { name: 'Express Gift Wrap & Wax Seal', price: 120, description: 'Gold embossed wrapping paper with Ella royal wax seal.' }
+  ];
+
+  const addProductAddon = () => {
+    setProductForm((prev) => ({
+      ...prev,
+      addons: [
+        ...(prev.addons || []),
+        {
+          id: `addon-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          name: '',
+          price: '199',
+          description: '',
+          isRequired: false
+        }
+      ]
+    }));
+  };
+
+  const addPresetAddon = (preset) => {
+    setProductForm((prev) => ({
+      ...prev,
+      addons: [
+        ...(prev.addons || []),
+        {
+          id: `addon-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          name: preset.name,
+          price: String(preset.price),
+          description: preset.description,
+          isRequired: false
+        }
+      ]
+    }));
+  };
+
+  const updateProductAddon = (index, field, value) => {
+    setProductForm((prev) => {
+      const updated = [...(prev.addons || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, addons: updated };
+    });
+  };
+
+  const removeProductAddon = (index) => {
+    setProductForm((prev) => ({
+      ...prev,
+      addons: (prev.addons || []).filter((_, i) => i !== index)
+    }));
+  };
+
   // Coupon Generator Handler
   const handleGenerateCoupon = async (e) => {
     e.preventDefault();
@@ -651,6 +708,7 @@ export default function AdminView() {
       images: [],
       videos: [],
       variants: [],
+      addons: [],
       customSections: [
         {
           title: 'Specifications & Materials',
@@ -685,6 +743,7 @@ export default function AdminView() {
       images: existingImages,
       videos: [...(p.videos || [])],
       variants: Array.isArray(p.variants) ? [...p.variants] : (p.finishOptions ? p.finishOptions.map((opt, i) => ({ id: `v-${i}`, name: opt, price: p.price, stock: p.stock, sku: `${p.sku}-${i}` })) : []),
+      addons: Array.isArray(p.addons) ? [...p.addons] : [],
       customSections: p.customSections || p.customSpecs || []
     });
     setProductModalOpen(true);
@@ -729,6 +788,17 @@ export default function AdminView() {
         images: finalImages,
         videos: productForm.videos || [],
         variants: Array.isArray(productForm.variants) ? productForm.variants : [],
+        addons: Array.isArray(productForm.addons)
+          ? productForm.addons
+              .filter(a => a.name && a.name.trim())
+              .map(a => ({
+                id: a.id || `addon-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                name: a.name.trim(),
+                price: Math.max(0, parseFloat(a.price) || 0),
+                description: (a.description || '').trim(),
+                isRequired: Boolean(a.isRequired)
+              }))
+          : [],
         customSections: Array.isArray(productForm.customSections) ? productForm.customSections : [],
         details: editingProduct?.details || [
           "Handcrafted luxury design",
@@ -1473,7 +1543,23 @@ export default function AdminView() {
                             <span className="text-[10px] text-stone-400 block">{o.customer?.email || 'No email'}</span>
                             <span className="text-[10px] text-stone-500 font-mono">PIN: {o.shipping_pincode || o.customer?.zip || 'N/A'}</span>
                           </td>
-                          <td className="p-4">{itemCount} item(s)</td>
+                          <td className="p-4">
+                            <span className="font-semibold text-white block">{itemCount} item(s)</span>
+                            {Array.isArray(o.items) && o.items.length > 0 && (
+                              <div className="space-y-1 mt-1 text-[11px] text-stone-400">
+                                {o.items.map((it, idx) => (
+                                  <div key={idx} className="truncate max-w-[220px]">
+                                    <span className="text-stone-300 font-medium">{it.qty}x {it.title}</span>
+                                    {it.selectedAddons && it.selectedAddons.length > 0 && (
+                                      <div className="text-amber-400 text-[10px] pl-1 font-sans">
+                                        + {it.selectedAddons.map(a => `${a.name} (₹${a.price})`).join(', ')}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </td>
                           <td className="p-4 font-bold text-emerald-400">{formatPrice(o.total)}</td>
                           <td className="p-4">
                             <span className="text-stone-300 font-semibold block">{o.payment_method || o.paymentMethod || 'Prepaid'}</span>
@@ -2352,6 +2438,103 @@ export default function AdminView() {
                             <PlusCircle className="w-3 h-3" /> Add Item to {sec.title || 'Section'}
                           </button>
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* CHARGEABLE CUSTOM ADD-ONS & UPGRADES BUILDER */}
+              <div className="space-y-4 pt-4 border-t border-stone-800">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                  <div>
+                    <h4 className="font-serif text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Chargeable Product Add-ons & Upgrades
+                    </h4>
+                    <p className="text-[11px] text-stone-400">
+                      Offer optional or mandatory paid add-ons (gift boxes, polish care kits, custom calligraphy cards).
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addProductAddon}
+                    className="bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold font-bold text-xs px-3 py-1.5 rounded-xl border border-brand-gold/30 transition-colors flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> + Custom Add-on
+                  </button>
+                </div>
+
+                {/* Preset Fast-Add Chips */}
+                <div className="flex flex-wrap gap-1.5 items-center bg-stone-900/60 p-2.5 rounded-xl border border-stone-800">
+                  <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Quick Presets:</span>
+                  {ADDON_PRESETS.map((preset, pIdx) => (
+                    <button
+                      key={pIdx}
+                      type="button"
+                      onClick={() => addPresetAddon(preset)}
+                      className="text-[11px] px-2.5 py-1 rounded-lg bg-stone-950 hover:bg-brand-gold/20 text-stone-300 hover:text-brand-gold border border-stone-800 hover:border-brand-gold/40 transition-all font-medium flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-2.5 h-2.5" /> {preset.name} (+₹{preset.price})
+                    </button>
+                  ))}
+                </div>
+
+                {/* Add-ons List */}
+                {(!productForm.addons || productForm.addons.length === 0) ? (
+                  <div className="p-4 bg-stone-950 rounded-xl text-center text-xs text-stone-500 border border-stone-800">
+                    No custom add-ons configured for this piece. Click a quick preset above or "+ Custom Add-on" to create one.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {productForm.addons.map((addon, aIdx) => (
+                      <div key={addon.id || aIdx} className="p-3.5 bg-stone-950 rounded-2xl border border-stone-800 space-y-2.5">
+                        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
+                          <div className="flex-1 flex gap-2 w-full sm:w-auto">
+                            <input
+                              type="text"
+                              placeholder="Add-on Name (e.g. Velvet Gift Box)"
+                              value={addon.name}
+                              onChange={(e) => updateProductAddon(aIdx, 'name', e.target.value)}
+                              className="flex-1 text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-white outline-none focus:border-brand-rose"
+                            />
+                            <div className="relative w-28 shrink-0">
+                              <span className="absolute left-2.5 top-2 text-xs font-bold text-stone-400">₹</span>
+                              <input
+                                type="number"
+                                min="0"
+                                placeholder="Price"
+                                value={addon.price}
+                                onChange={(e) => updateProductAddon(aIdx, 'price', e.target.value)}
+                                className="w-full text-xs font-bold pl-6 pr-2.5 py-2 rounded-xl bg-stone-900 border border-stone-700 text-emerald-400 outline-none focus:border-brand-rose"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <label className="inline-flex items-center gap-1.5 text-[11px] text-stone-400 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(addon.isRequired)}
+                                onChange={(e) => updateProductAddon(aIdx, 'isRequired', e.target.checked)}
+                                className="accent-brand-rose rounded cursor-pointer"
+                              />
+                              <span>Required</span>
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => removeProductAddon(aIdx)}
+                              className="p-1.5 text-rose-400 hover:text-rose-200 hover:bg-rose-950/50 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Optional short description shown to customer..."
+                          value={addon.description || ''}
+                          onChange={(e) => updateProductAddon(aIdx, 'description', e.target.value)}
+                          className="w-full text-[11px] px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-stone-300 outline-none focus:border-brand-rose"
+                        />
                       </div>
                     ))}
                   </div>

@@ -31,20 +31,26 @@ export default function HomeView() {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'featured' | 'new' | 'kundan' | 'cz'
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
-  // Filter 8-12 products for Homepage Showcase
+  // Filter products for Homepage Showcase
   let showcaseProducts = [...products];
   if (activeTab === 'featured') {
-    showcaseProducts = products.filter(p => p.isFeatured);
+    showcaseProducts = products.filter(p => p.isFeatured || p.isBestseller || (p.reviewsCount && p.reviewsCount > 20) || (p.rating && p.rating >= 4.8));
   } else if (activeTab === 'new') {
-    showcaseProducts = products.filter(p => p.isNew);
+    showcaseProducts = products.filter(p => p.isNew || Boolean(p.is_new));
   } else if (activeTab === 'kundan') {
-    showcaseProducts = products.filter(p => (p.stoneType || '').toLowerCase().includes('kundan'));
+    showcaseProducts = products.filter(p => {
+      const text = `${p.title || ''} ${p.category || ''} ${p.stoneType || ''} ${p.description || ''} ${(p.occasionTags || []).join(' ')}`.toLowerCase();
+      return text.includes('kundan') || text.includes('polki') || text.includes('meenakari') || text.includes('rani haar') || text.includes('choker');
+    });
   } else if (activeTab === 'cz') {
-    showcaseProducts = products.filter(p => (p.stoneType || '').toLowerCase().includes('cubic zirconia') || (p.stoneType || '').toLowerCase().includes('cz'));
+    showcaseProducts = products.filter(p => {
+      const text = `${p.title || ''} ${p.category || ''} ${p.stoneType || ''} ${p.description || ''} ${(p.occasionTags || []).join(' ')}`.toLowerCase();
+      return text.includes('cubic zirconia') || text.includes('cz') || text.includes('solitaire') || text.includes('crystal') || text.includes('zircon') || text.includes('rhodium');
+    });
   }
 
-  // Ensure at least 8-12 products are shown
-  const displayProducts = showcaseProducts.length >= 8 ? showcaseProducts.slice(0, 12) : products.slice(0, 12);
+  // Display matching products (up to 12)
+  const displayProducts = showcaseProducts.slice(0, 12);
 
   // Latest 3 Journal Articles for Homepage Section
   const latestBlogs = (blogs || []).filter(b => b.status !== 'Draft').slice(0, 3);
@@ -60,7 +66,7 @@ export default function HomeView() {
     <div className="space-y-6 sm:space-y-8 lg:space-y-10 pb-6 sm:pb-10">
       
       {/* Hero Banner Section (Compact & Visually Balanced Layout) */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 py-5 sm:py-8 lg:py-10 border-b border-brand-gold/20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-brand-sand/70 via-brand-cream/60 to-brand-pink/30 backdrop-blur-sm py-5 sm:py-8 lg:py-10 border-b border-brand-gold/20">
         
         {/* Background Decorative Gold Vines & Ornaments */}
         <div className="absolute top-10 right-10 opacity-15 pointer-events-none">
@@ -170,8 +176,8 @@ export default function HomeView() {
           </div>
         </div>
 
-        {/* 7 Round Category Avatars Grid */}
-        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2.5 sm:gap-4 md:gap-6 items-start justify-items-center">
+        {/* 7 Round Category Avatars: Mobile Single Row Horizontal Rail, Desktop 7-Col Grid */}
+        <div className="flex sm:grid sm:grid-cols-7 gap-3 sm:gap-4 md:gap-6 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-2 sm:pb-0 px-1 items-start justify-start sm:justify-items-center">
           {[
             { 
               title: "necklace", 
@@ -212,7 +218,7 @@ export default function HomeView() {
             <div
               key={idx}
               onClick={() => navigateTo('shop', null, cat.title)}
-              className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center w-full"
+              className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[74px] sm:w-full"
             >
               <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-1 shadow-sm group-hover:shadow-soft-rose transition-all flex items-center justify-center">
                 <img
@@ -221,7 +227,7 @@ export default function HomeView() {
                   className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <span className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-semibold text-stone-800 tracking-tight leading-tight group-hover:text-brand-rose transition-colors line-clamp-2 max-w-[76px] sm:max-w-none">
+              <span className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-semibold text-stone-800 tracking-tight leading-tight group-hover:text-brand-rose transition-colors line-clamp-2 w-full text-center">
                 {cat.label}
               </span>
             </div>
@@ -263,11 +269,23 @@ export default function HomeView() {
         </div>
 
         {/* 8 to 12 Product Cards in Mobile 2-Column Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-          {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {displayProducts.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {displayProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 text-center border border-brand-gold/20 space-y-2">
+            <p className="text-xs text-stone-600 font-medium">New pieces arriving soon in this collection.</p>
+            <button
+              onClick={() => setActiveTab('all')}
+              className="text-xs text-brand-rose font-bold hover:underline cursor-pointer"
+            >
+              Browse All Catalog &rarr;
+            </button>
+          </div>
+        )}
 
         <div className="text-center pt-2 sm:pt-4">
           <button

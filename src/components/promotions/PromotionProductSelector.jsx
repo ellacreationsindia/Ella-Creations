@@ -21,7 +21,7 @@ export default function PromotionProductSelector({
   // Filter products based on search term & category
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      if (viewMode === 'selected' && !selectedProductIds.includes(p.id)) return false;
+      if (viewMode === 'selected' && !selectedProductIds.some(id => String(id) === String(p.id))) return false;
       if (categoryFilter !== 'All' && p.category !== categoryFilter) return false;
       if (searchTerm.trim()) {
         const q = searchTerm.toLowerCase();
@@ -36,8 +36,10 @@ export default function PromotionProductSelector({
   }, [products, selectedProductIds, categoryFilter, searchTerm, viewMode]);
 
   const toggleSelectProduct = (id) => {
-    if (selectedProductIds.includes(id)) {
-      onChange(selectedProductIds.filter(item => item !== id));
+    const sId = String(id);
+    const exists = selectedProductIds.some(item => String(item) === sId);
+    if (exists) {
+      onChange(selectedProductIds.filter(item => String(item) !== sId));
     } else {
       onChange([...selectedProductIds, id]);
     }
@@ -163,7 +165,7 @@ export default function PromotionProductSelector({
         <div className="flex items-center gap-1.5 flex-wrap max-h-24 overflow-y-auto p-2 bg-stone-950/70 rounded-xl border border-stone-800">
           <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider mr-1">Selected:</span>
           {selectedProductIds.map(id => {
-            const p = products.find(prod => prod.id === id);
+            const p = products.find(prod => String(prod.id) === String(id));
             return (
               <span 
                 key={id} 
@@ -202,7 +204,7 @@ export default function PromotionProductSelector({
           </div>
         ) : (
           filteredProducts.map(product => {
-            const isSelected = selectedProductIds.includes(product.id);
+            const isSelected = selectedProductIds.some(id => String(id) === String(product.id));
             const numPrice = Number(product.price || 0);
             const discountedPrice = discountVal > 0 ? Math.round(numPrice * (1 - discountVal / 100)) : numPrice;
             const thumb = Array.isArray(product.images) && product.images[0] ? product.images[0] : '/logo.png';

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useStore, formatPrice } from '../context/StoreContext';
+import { useStore, formatPrice, getProductSlug } from '../context/StoreContext';
 
 export default function SEOHead() {
   const { currentView, selectedProductId, selectedCategory, selectedBlogId, products, blogs } = useStore();
@@ -30,8 +30,8 @@ export default function SEOHead() {
       description = `Browse our catalog of handcrafted ${catName.toLowerCase()}. Premium gold electroplating, AAA+ Cubic Zirconia crystals, and uncut Kundan with insured express delivery across India.`;
       keywords = `${catName.toLowerCase()}, artificial ${catName.toLowerCase()} online, buy kundan set, cz earrings, solitaire rings India, bridal jewelry catalog, Ella Creations`;
       canonicalUrl = selectedCategory && selectedCategory !== 'All'
-        ? `${domain}/#${selectedCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-        : `${domain}/#shop`;
+        ? `${domain}/shop?category=${encodeURIComponent(selectedCategory)}`
+        : `${domain}/shop`;
     } else if (currentView === 'product' && activeProduct) {
       const priceText = formatPrice(activeProduct.price);
       title = `${activeProduct.title} - Buy Online ${priceText} | Ella Creations`;
@@ -39,7 +39,8 @@ export default function SEOHead() {
         ? `${activeProduct.description.slice(0, 150)}... Handcrafted ${activeProduct.category} in India at ${priceText}. Insured shipping & luxury gift box.`
         : `Buy ${activeProduct.title} handcrafted in India with protective gold plating at ${priceText}. Exclusive artificial fine jewelry from Ella Creations.`;
       keywords = `${activeProduct.title}, ${activeProduct.category}, ${activeProduct.stoneType || 'artificial jewelry'}, buy ${activeProduct.title} online, kundan jewelry India, Ella Creations`;
-      canonicalUrl = `${domain}/#product-${activeProduct.id}`;
+      const prodSlug = getProductSlug(activeProduct);
+      canonicalUrl = `${domain}/product/${prodSlug}`;
       if (activeProduct.images && activeProduct.images.length > 0) {
         ogImage = activeProduct.images[0];
       }
@@ -48,12 +49,12 @@ export default function SEOHead() {
       title = 'Ella Journal | Indian Jewelry Styling, Kundan Care & Bridal Guides';
       description = 'Read expert jewelry styling advice, bridal Kundan guides, AAA+ CZ maintenance tips, and contemporary accessory trends from Ella Creations editorial.';
       keywords = 'jewelry styling tips, bridal kundan guide, artificial jewelry care, cz jewelry maintenance, indian bridal fashion blog, Ella Creations blog';
-      canonicalUrl = `${domain}/#blog`;
+      canonicalUrl = `${domain}/blog`;
     } else if (currentView === 'blog-detail' && activeBlog) {
       title = `${activeBlog.title} | Ella Journal`;
       description = activeBlog.excerpt || `Read "${activeBlog.title}" on Ella Journal. Expert styling & care tips from Ella Creations.`;
       keywords = `${activeBlog.category}, ${activeBlog.title}, jewelry guide, artificial jewelry blog, Ella Creations`;
-      canonicalUrl = `${domain}/#blog-${activeBlog.slug || activeBlog.id}`;
+      canonicalUrl = `${domain}/blog/${activeBlog.slug || activeBlog.id}`;
       if (activeBlog.coverImage) {
         ogImage = activeBlog.coverImage;
       }
@@ -61,19 +62,27 @@ export default function SEOHead() {
     } else if (currentView === 'brand-guidelines') {
       title = 'Jewelry Craftsmanship & Care Guidelines | Ella Creations';
       description = 'Discover Ella Creations craftsmanship standards, lead-free brass metallurgy, gold electroplating, and proper artificial jewelry preservation guidelines.';
-      canonicalUrl = `${domain}/#brand-guidelines`;
+      canonicalUrl = `${domain}/brand-guidelines`;
     } else if (currentView === 'terms') {
       title = 'Terms & Conditions, Shipping & Store Policies | Ella Creations';
       description = 'Review Ella Creations terms of service, payment methods via Razorpay, Pan-India courier shipping timelines, and customer policies.';
-      canonicalUrl = `${domain}/#terms`;
+      canonicalUrl = `${domain}/terms`;
     } else if (currentView === 'privacy') {
       title = 'Privacy Policy & Customer Security | Ella Creations';
       description = 'Learn how Ella Creations protects customer data, complies with DPDP regulations, and ensures encrypted transaction security with Razorpay.';
-      canonicalUrl = `${domain}/#privacy`;
+      canonicalUrl = `${domain}/privacy`;
+    } else if (currentView === 'refund-policy') {
+      title = 'Refund & Cancellation Policy | Ella Creations';
+      description = 'Review Ella Creations 7-day hassle-free replacement and damage protection policy for artificial jewelry.';
+      canonicalUrl = `${domain}/refund-policy`;
+    } else if (currentView === 'shipping-policy') {
+      title = 'Shipping Policy & Pan-India Timelines | Ella Creations';
+      description = 'Free insured Pan-India shipping timelines, courier partners and dispatch details from Ella Creations.';
+      canonicalUrl = `${domain}/shipping-policy`;
     } else if (currentView === 'sitemap') {
       title = 'Website Sitemap & Catalog Directory | Ella Creations India';
       description = 'Structured directory of all product categories, individual collections, editorial guides, and customer service resources on Ella Creations.';
-      canonicalUrl = `${domain}/#sitemap`;
+      canonicalUrl = `${domain}/sitemap`;
     } else if (currentView === 'account' || currentView === 'checkout') {
       title = 'Customer Portal & Checkout | Ella Creations';
       description = 'Secure customer account portal and order tracking on Ella Creations.';
@@ -372,7 +381,7 @@ export default function SEOHead() {
       const topItems = products.slice(0, 10).map((p, idx) => ({
         "@type": "ListItem",
         "position": idx + 1,
-        "url": `${domain}/#product-${p.id}`,
+        "url": `${domain}/product/${getProductSlug(p)}`,
         "name": p.title
       }));
 

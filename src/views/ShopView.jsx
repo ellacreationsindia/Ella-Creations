@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, SlidersHorizontal, Grid, List, Search, Sparkles, RefreshCw, X, Check, Tag, Eye, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { Filter, SlidersHorizontal, Search, Sparkles, RefreshCw, X, Check, Tag, Eye, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import { isProductInCampaign } from '../utils/pricing';
 import ProductCard from '../components/ProductCard';
@@ -9,6 +9,7 @@ export default function ShopView() {
     products, 
     selectedCategory, 
     setSelectedCategory,
+    promotions = [],
     activePromotions = [],
     activePopupCampaign,
     recentlyViewed
@@ -18,12 +19,14 @@ export default function ShopView() {
   const [selectedOccasion, setSelectedOccasion] = useState('All');
   const [selectedPolish, setSelectedPolish] = useState('All');
   const [selectedStone, setSelectedStone] = useState('All');
+  const [selectedCollection, setSelectedCollection] = useState('All');
+  const [selectedDiscount, setSelectedDiscount] = useState('All');
+  const [selectedRating, setSelectedRating] = useState('All');
   const [priceBucket, setPriceBucket] = useState('All');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(50000);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'discount'
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [shopSearch, setShopSearch] = useState('');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
@@ -48,7 +51,14 @@ export default function ShopView() {
     // 1. Category Filter
     if (selectedCategory && selectedCategory !== 'All') {
       if (selectedCategory === 'Sale') {
-        const isPromoItem = activePromotions.some(promo => isProductInCampaign(p.id, promo));
+        const isPromoItem = 
+          (Array.isArray(activePromotions) && activePromotions.some(promo => isProductInCampaign(p.id, promo))) ||
+          (Array.isArray(promotions) && promotions.some(promo => (promo.is_enabled !== false && promo.isEnabled !== false) && isProductInCampaign(p.id, promo))) ||
+          (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
+          Boolean(p.isSale || p.onSale || p.sale || p.is_sale) ||
+          (Array.isArray(p.occasionTags) && p.occasionTags.some(t => String(t).toLowerCase() === 'sale')) ||
+          (p.category && String(p.category).toLowerCase() === 'sale');
+
         if (!isPromoItem) return false;
       } else {
         const normSel = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -134,7 +144,42 @@ export default function ShopView() {
       }
     }
 
-    // 5. Quick Price Bucket Filter
+    // 5. Curated Collection Filter
+    if (selectedCollection !== 'All') {
+      if (selectedCollection === 'Bestsellers') {
+        const isBestseller = p.isFeatured || (p.reviewsCount >= 30) || (p.rating >= 4.8);
+        if (!isBestseller) return false;
+      } else if (selectedCollection === 'New Arrivals') {
+        if (!p.isNew && !(Array.isArray(p.tags) && p.tags.includes('new'))) return false;
+      } else if (selectedCollection === 'Sale & Clearance') {
+        const isPromoItem = 
+          (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
+          Boolean(p.isSale || p.onSale || p.sale) ||
+          (Array.isArray(p.occasionTags) && p.occasionTags.some(t => String(t).toLowerCase() === 'sale'));
+        if (!isPromoItem) return false;
+      } else if (selectedCollection === 'Bridal Heritage') {
+        const pTags = Array.isArray(p.occasionTags) ? p.occasionTags.join(' ').toLowerCase() : '';
+        const pText = `${pTags} ${p.title} ${p.category || ''}`.toLowerCase();
+        if (!pText.includes('bridal') && !pText.includes('wedding')) return false;
+      }
+    }
+
+    // 6. Discount % Filter
+    if (selectedDiscount !== 'All') {
+      const minDisc = Number(selectedDiscount);
+      const discPct = p.comparePrice && Number(p.comparePrice) > Number(p.price)
+        ? Math.round(((Number(p.comparePrice) - Number(p.price)) / Number(p.comparePrice)) * 100)
+        : 0;
+      if (discPct < minDisc) return false;
+    }
+
+    // 7. Customer Rating Filter
+    if (selectedRating !== 'All') {
+      const minR = Number(selectedRating);
+      if ((p.rating || 0) < minR) return false;
+    }
+
+    // 8. Quick Price Bucket Filter
     if (priceBucket !== 'All') {
       if (priceBucket === 'under-1500' && p.price >= 1500) return false;
       if (priceBucket === '1500-3000' && (p.price < 1500 || p.price > 3000)) return false;
@@ -142,13 +187,13 @@ export default function ShopView() {
       if (priceBucket === '6000-above' && p.price < 6000) return false;
     }
 
-    // 6. Dual Price Slider Filter
+    // 9. Dual Price Slider Filter
     if (p.price < minPrice || p.price > maxPrice) return false;
 
-    // 7. Stock status
+    // 10. Stock status
     if (inStockOnly && (p.price <= 0 || p.stock <= 0)) return false;
 
-    // 8. Search query
+    // 11. Search query
     if (shopSearch.trim()) {
       const q = shopSearch.toLowerCase();
       const match = (p.title || '').toLowerCase().includes(q) || 
@@ -180,6 +225,9 @@ export default function ShopView() {
     setSelectedOccasion('All');
     setSelectedPolish('All');
     setSelectedStone('All');
+    setSelectedCollection('All');
+    setSelectedDiscount('All');
+    setSelectedRating('All');
     setPriceBucket('All');
     setMinPrice(MIN_LIMIT);
     setMaxPrice(MAX_LIMIT);
@@ -193,14 +241,47 @@ export default function ShopView() {
     (selectedOccasion !== 'All' ? 1 : 0) +
     (selectedPolish !== 'All' ? 1 : 0) +
     (selectedStone !== 'All' ? 1 : 0) +
+    (selectedCollection !== 'All' ? 1 : 0) +
+    (selectedDiscount !== 'All' ? 1 : 0) +
+    (selectedRating !== 'All' ? 1 : 0) +
     (priceBucket !== 'All' ? 1 : 0) +
     (minPrice > MIN_LIMIT || maxPrice < MAX_LIMIT ? 1 : 0) +
     (inStockOnly ? 1 : 0) +
     (shopSearch.trim() ? 1 : 0);
 
-  const categories = activePromotions.length > 0 
+  const hasSaleProducts = products.some(p => 
+    (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
+    Boolean(p.isSale || p.onSale || p.sale || p.is_sale) ||
+    (Array.isArray(promotions) && promotions.some(promo => (promo.is_enabled !== false && promo.isEnabled !== false) && isProductInCampaign(p.id, promo))) ||
+    (Array.isArray(activePromotions) && activePromotions.some(promo => isProductInCampaign(p.id, promo)))
+  );
+
+  const categories = (hasSaleProducts || activePromotions.length > 0 || (promotions && promotions.length > 0))
     ? ['All', 'Sale', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'] 
     : ['All', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'];
+
+  const collections = [
+    { id: 'All', label: 'All Collections' },
+    { id: 'Bestsellers', label: '⭐ Bestsellers' },
+    { id: 'New Arrivals', label: '✨ New Arrivals' },
+    { id: 'Sale & Clearance', label: '🔥 Sale & Deals' },
+    { id: 'Bridal Heritage', label: '👑 Bridal Troussau' }
+  ];
+
+  const discounts = [
+    { id: 'All', label: 'Any Discount' },
+    { id: '10', label: '10% & Above' },
+    { id: '25', label: '25% & Above' },
+    { id: '40', label: '40% & Above' },
+    { id: '50', label: '50% & Above' }
+  ];
+
+  const ratings = [
+    { id: 'All', label: 'Any Rating' },
+    { id: '4.5', label: '4.5★ & Above' },
+    { id: '4.0', label: '4.0★ & Above' },
+    { id: '3.5', label: '3.5★ & Above' }
+  ];
 
   const occasions = ['All', 'Bridal & Wedding', 'Festive & Sangeet', 'Cocktail & Party', 'Daily Wear', 'Gifting'];
   const polishes = ['All', 'Gold Polish', 'Rose Gold', 'Antique Gold', 'Silver / Rhodium'];
@@ -269,6 +350,26 @@ export default function ShopView() {
         </div>
       </div>
 
+      {/* Curated Collections */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Curated Collections</label>
+        <div className="flex flex-wrap gap-1.5">
+          {collections.map((col) => (
+            <button
+              key={col.id}
+              onClick={() => setSelectedCollection(col.id)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
+                selectedCollection === col.id
+                  ? 'bg-gradient-to-r from-amber-700 to-brand-gold text-white border-brand-gold shadow-xs font-bold'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {col.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Occasion Filter */}
       <div className="pt-2 border-t border-stone-100">
         <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Occasion & Style</label>
@@ -324,6 +425,46 @@ export default function ShopView() {
               }`}
             >
               {st}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Minimum Discount % */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Discount Savings</label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {discounts.map((disc) => (
+            <button
+              key={disc.id}
+              onClick={() => setSelectedDiscount(disc.id)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border text-center transition-all cursor-pointer ${
+                selectedDiscount === disc.id
+                  ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {disc.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Customer Rating */}
+      <div className="pt-2 border-t border-stone-100">
+        <label className="block text-xs font-semibold text-stone-800 uppercase tracking-wider mb-2">Customer Rating</label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {ratings.map((rate) => (
+            <button
+              key={rate.id}
+              onClick={() => setSelectedRating(rate.id)}
+              className={`text-[11px] px-2.5 py-1.5 rounded-xl border text-center transition-all cursor-pointer ${
+                selectedRating === rate.id
+                  ? 'bg-amber-500 text-white border-amber-500 font-bold shadow-xs'
+                  : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-400'
+              }`}
+            >
+              {rate.label}
             </button>
           ))}
         </div>
@@ -418,7 +559,7 @@ export default function ShopView() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+    <div className="max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 py-4 sm:py-6 space-y-4 sm:space-y-6">
       
       {/* Shop Header Banner */}
       {selectedCategory === 'Sale' ? (
@@ -430,15 +571,29 @@ export default function ShopView() {
             <div className="max-w-2xl space-y-2.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400/20 to-rose-400/20 border border-amber-300/40 text-amber-200 text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-                <span>{activePopupCampaign?.name || 'Festive Seasonal Sale'}</span>
+                <span>
+                  {activePopupCampaign?.name || 
+                   promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.name || 
+                   'Festive Seasonal Sale'}
+                </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>FLAT {activePopupCampaign?.discount_percentage || 50}% OFF</span>
+                <span>
+                  FLAT {activePopupCampaign?.discount_percentage || 
+                        activePopupCampaign?.discountPercentage || 
+                        promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.discount_percentage || 
+                        promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.discountPercentage || 
+                        50}% OFF
+                </span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-brand-cream">
-                {activePopupCampaign?.headline || 'Exclusive Promotional Jewelry Sale'}
+                {activePopupCampaign?.headline || 
+                 promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.headline || 
+                 'Exclusive Promotional Jewelry Sale'}
               </h1>
               <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-                {activePopupCampaign?.description || 'Celebrate with our handcrafted artificial fine jewelry at exclusive celebratory pricing. Hand-set Kundan, Cubic Zirconia, and bridal heirlooms with complimentary insured dispatch across India.'}
+                {activePopupCampaign?.description || 
+                 promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.description || 
+                 'Celebrate with our handcrafted artificial fine jewelry at exclusive celebratory pricing. Hand-set Kundan, Cubic Zirconia, and bridal heirlooms with complimentary insured dispatch across India.'}
               </p>
             </div>
 
@@ -564,6 +719,27 @@ export default function ShopView() {
             <span className="inline-flex items-center gap-1 text-xs bg-brand-rose/10 text-brand-rose border border-brand-rose/30 px-2.5 py-1 rounded-full font-medium">
               Category: {selectedCategory}
               <button onClick={() => setSelectedCategory('All')} className="hover:text-stone-900 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedCollection !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full font-medium">
+              Collection: {collections.find(c => c.id === selectedCollection)?.label || selectedCollection}
+              <button onClick={() => setSelectedCollection('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedDiscount !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-rose-50 text-rose-800 border border-rose-300 px-2.5 py-1 rounded-full font-medium">
+              Discount: {discounts.find(d => d.id === selectedDiscount)?.label || `${selectedDiscount}%+`}
+              <button onClick={() => setSelectedDiscount('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
+            </span>
+          )}
+
+          {selectedRating !== 'All' && (
+            <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full font-medium">
+              Rating: {ratings.find(r => r.id === selectedRating)?.label || `${selectedRating}★+`}
+              <button onClick={() => setSelectedRating('All')} className="hover:text-rose-600 ml-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
             </span>
           )}
 
@@ -710,28 +886,10 @@ export default function ShopView() {
                   <option value="rating">Highest Customer Rating</option>
                 </select>
               </div>
-
-              {/* View Toggle */}
-              <div className="flex border border-stone-200 rounded-xl overflow-hidden bg-stone-50">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-1.5 ${viewMode === 'grid' ? 'bg-brand-rose text-white' : 'text-stone-600 hover:text-stone-900'}`}
-                  title="Grid View"
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-1.5 ${viewMode === 'list' ? 'bg-brand-rose text-white' : 'text-stone-600 hover:text-stone-900'}`}
-                  title="List View"
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
             </div>
           </div>
 
-          {/* Product Cards Grid */}
+          {/* Product Cards Grid: Mobile 2 cards per row, Desktop exactly 4 large cards per row */}
           {filtered.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center space-y-4 border border-stone-200">
               <div className="w-16 h-16 rounded-full bg-brand-cream mx-auto flex items-center justify-center text-brand-rose">
@@ -749,7 +907,7 @@ export default function ShopView() {
               </button>
             </div>
           ) : (
-            <div className={viewMode === 'grid' ? "grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6" : "space-y-4"}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-6 xl:gap-8">
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

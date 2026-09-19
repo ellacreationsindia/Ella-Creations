@@ -125,9 +125,21 @@ export default function CartDrawer() {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <span className="text-[11px] font-medium text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-md inline-block mt-1">
-                        Finish: {item.finish}
-                      </span>
+                      <div className="flex flex-wrap gap-1 items-center mt-1">
+                        <span className="text-[11px] font-medium text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-md inline-block">
+                          Finish: {item.finish}
+                        </span>
+                      </div>
+                      {item.selectedAddons && item.selectedAddons.length > 0 && (
+                        <div className="space-y-0.5 mt-1.5">
+                          {item.selectedAddons.map((addon, aIdx) => (
+                            <div key={aIdx} className="text-[10px] text-stone-600 bg-amber-50/80 border border-amber-200/60 px-2 py-0.5 rounded-md flex justify-between items-center">
+                              <span>+ {addon.name}</span>
+                              <span className="font-bold text-brand-rose font-sans">+{formatPrice(addon.price)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between mt-2">

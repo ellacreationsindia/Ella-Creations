@@ -8,6 +8,7 @@ import CheckoutModal from './components/CheckoutModal';
 import AuthModal from './components/AuthModal';
 import PromotionPopup from './components/PromotionPopup';
 import SEOHead from './components/SEOHead';
+import AnimatedBackground from './components/AnimatedBackground';
 import HomeView from './views/HomeView';
 import ShopView from './views/ShopView';
 import ProductDetailView from './views/ProductDetailView';
@@ -28,8 +29,11 @@ function AppContent() {
   const { currentView, toast, isAuthModalOpen, setIsAuthModalOpen } = useStore();
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-brand-cream text-brand-charcoal">
+    <div className="min-h-screen flex flex-col font-sans bg-transparent text-brand-charcoal relative selection:bg-brand-rose selection:text-white">
       
+      {/* Ambient Live Animated Gradient & Aurora Mesh Background */}
+      <AnimatedBackground />
+
       {/* Dynamic SEO Engine */}
       <SEOHead />
 

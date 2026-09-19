@@ -60,14 +60,29 @@ export default function ProductDetailView() {
     product?.variants && product.variants.length > 0 ? product.variants[0] : null
   );
   const [qty, setQty] = useState(1);
+  const [selectedAddons, setSelectedAddons] = useState([]);
 
   useEffect(() => {
     if (product) {
       setActiveMedia({ type: 'image', url: product.images?.[0] || '' });
       setSelectedVariant(product.variants && product.variants.length > 0 ? product.variants[0] : null);
       setQty(1);
+      const reqAddons = Array.isArray(product.addons) ? product.addons.filter(a => a.isRequired) : [];
+      setSelectedAddons(reqAddons);
     }
   }, [selectedProductId, product]);
+
+  const handleToggleAddon = (addon) => {
+    if (addon.isRequired) return;
+    setSelectedAddons((prev) => {
+      const exists = prev.some(a => (a.id && a.id === addon.id) || a.name === addon.name);
+      if (exists) {
+        return prev.filter(a => (a.id && a.id !== addon.id) || a.name !== addon.name);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
 
   // Review Form state
   const [reviewForm, setReviewForm] = useState({
@@ -185,6 +200,11 @@ export default function ProductDetailView() {
     savings: 0,
     comparePrice: product.comparePrice
   };
+
+  const addonsExtraPerUnit = (selectedAddons || []).reduce((acc, a) => acc + (Number(a.price) || 0), 0);
+  const addonsExtraTotal = addonsExtraPerUnit;
+  const effectiveFinalPrice = pricing.finalPrice + addonsExtraPerUnit;
+  const effectiveOriginalPrice = pricing.originalPrice + addonsExtraPerUnit;
 
   const isWishlisted = wishlist.includes(product.id);
   const isOutOfStock = pricing.finalPrice <= 0 || product.stock <= 0;
@@ -424,13 +444,18 @@ export default function ProductDetailView() {
             <div className="bg-brand-cream p-4 sm:p-5 rounded-2xl border border-brand-gold/20 space-y-2">
               <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">
                 <span className="text-2xl sm:text-3xl font-bold text-brand-rose">
-                  {formatPrice(pricing.finalPrice)}
+                  {formatPrice(effectiveFinalPrice)}
                 </span>
+                {addonsExtraTotal > 0 && (
+                  <span className="text-[11px] font-semibold text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300">
+                    Includes +{formatPrice(addonsExtraTotal)} add-on upgrades
+                  </span>
+                )}
                 
                 {pricing.hasPromo ? (
                   <>
                     <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
-                      {formatPrice(pricing.originalPrice)}
+                      {formatPrice(effectiveOriginalPrice)}
                     </span>
                     <span className="text-[10px] sm:text-xs font-bold text-white bg-gradient-to-r from-rose-700 to-brand-rose px-3 py-1 rounded-full ml-auto shadow-sm flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-brand-gold" />
@@ -441,7 +466,7 @@ export default function ProductDetailView() {
                   <>
                     {product.comparePrice && (
                       <span className="text-sm sm:text-base line-through text-stone-400 font-normal">
-                        {formatPrice(product.comparePrice)}
+                        {formatPrice(Number(product.comparePrice) + addonsExtraTotal)}
                       </span>
                     )}
                     {product.comparePrice && (
@@ -518,6 +543,64 @@ export default function ProductDetailView() {
             </div>
           )}
 
+          {/* Chargeable Custom Add-ons & Gift Upgrades */}
+          {product.addons && product.addons.length > 0 && (
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-gold/30 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-stone-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Custom Add-ons & Upgrades
+                </label>
+                {selectedAddons.length > 0 && (
+                  <span className="text-[11px] font-bold text-amber-800 bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-300">
+                    +{formatPrice(addonsExtraTotal)} Selected
+                  </span>
+                )}
+              </div>
+              <div className="space-y-2">
+                {product.addons.map((addon) => {
+                  const isChecked = selectedAddons.some(a => (a.id && a.id === addon.id) || a.name === addon.name);
+                  return (
+                    <div
+                      key={addon.id || addon.name}
+                      onClick={() => handleToggleAddon(addon)}
+                      className={`p-3 rounded-xl border transition-all flex items-start justify-between gap-3 cursor-pointer select-none ${
+                        isChecked
+                          ? 'border-brand-rose bg-rose-50/50 shadow-xs'
+                          : 'border-stone-200 hover:border-brand-gold/50 bg-stone-50/40'
+                      }`}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={Boolean(addon.isRequired)}
+                          onChange={() => {}} // Click handled by container
+                          className="mt-0.5 accent-brand-rose rounded cursor-pointer"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-stone-900">{addon.name}</span>
+                            {addon.isRequired && (
+                              <span className="text-[9px] bg-stone-200 text-stone-700 font-bold px-1.5 py-0.5 rounded uppercase">
+                                Mandatory
+                              </span>
+                            )}
+                          </div>
+                          {addon.description && (
+                            <p className="text-[11px] text-stone-500 mt-0.5 leading-snug">{addon.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-brand-rose shrink-0 font-sans">
+                        +{formatPrice(addon.price)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Quantity & CTA Buttons */}
           <div className="space-y-3 pt-2">
             <div className="flex gap-3 sm:gap-4">
@@ -541,19 +624,19 @@ export default function ProductDetailView() {
 
               <button
                 disabled={isOutOfStock}
-                onClick={() => addToCart(product, qty, selectedVariant || 'Standard')}
-                className={`flex-1 font-semibold py-3.5 px-4 sm:px-6 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition-colors ${
+                onClick={() => addToCart(product, qty, selectedVariant || 'Standard', selectedAddons)}
+                className={`flex-1 font-semibold py-3.5 px-4 sm:px-6 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition-colors cursor-pointer ${
                   isOutOfStock 
                     ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
                     : 'bg-brand-rose hover:bg-brand-rose/90 text-white shadow-soft-rose'
                 }`}
               >
-                <ShoppingBag className="w-4 h-4" /> {isOutOfStock ? 'OUT OF STOCK' : 'Add to Bag'}
+                <ShoppingBag className="w-4 h-4" /> {isOutOfStock ? 'OUT OF STOCK' : `Add to Bag • ${formatPrice(effectiveFinalPrice * qty)}`}
               </button>
 
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className={`p-3.5 rounded-xl border transition-colors ${
+                className={`p-3.5 rounded-xl border transition-colors cursor-pointer ${
                   isWishlisted ? 'border-brand-rose bg-brand-rose/10 text-brand-rose' : 'border-stone-300 text-stone-600 hover:border-brand-rose'
                 }`}
                 title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
@@ -566,11 +649,11 @@ export default function ProductDetailView() {
               disabled={isOutOfStock}
               onClick={() => {
                 requireAuthForAction(() => {
-                  addToCart(product, qty, selectedVariant || 'Standard');
+                  addToCart(product, qty, selectedVariant || 'Standard', selectedAddons);
                   navigateTo('checkout');
                 }, 'Please sign in or create an account to buy this product.');
               }}
-              className={`w-full font-bold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider transition-all ${
+              className={`w-full font-bold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer ${
                 isOutOfStock 
                   ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
                   : 'bg-brand-gold hover:bg-brand-gold/90 text-stone-900 shadow-gold-glow'

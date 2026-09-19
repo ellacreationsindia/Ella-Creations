@@ -3,10 +3,13 @@ import confetti from 'canvas-confetti';
 import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase, syncOrderToShiprocket } from '../lib/supabase';
 import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS, INITIAL_BLOGS, INITIAL_PROMOTIONS } from '../data/initialData';
 import { calculateProductPricing, verifyCartPricing, getActivePromotions, getActivePopupCampaign } from '../utils/pricing';
+import { encryptId, decryptId } from '../utils/idSecurity';
 
 const StoreContext = createContext();
 
 export const useStore = () => useContext(StoreContext);
+
+export { encryptId, decryptId };
 
 export const formatPrice = (amount) => {
   if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) return '₹0';
@@ -25,7 +28,8 @@ export const slugify = (text) => {
 export const getProductSlug = (product) => {
   if (!product) return '';
   const cleanTitle = slugify(product.title);
-  return `${cleanTitle}--${product.id}`;
+  const encryptedId = encryptId(product.id);
+  return `${cleanTitle}--${encryptedId}`;
 };
 
 export const getProductUrl = (product) => {
@@ -254,26 +258,39 @@ export const StoreProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Deep Link & Hash Routing Initializer / Listener
+  // Deep Link, Pathname & Hash Routing Initializer / Listener
   useEffect(() => {
     const handleHashRouting = () => {
       if (typeof window === 'undefined') return;
       const rawHash = window.location.hash || '';
       if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
 
-      const hash = rawHash.replace(/^#\/?/, '').trim();
-      if (!hash || hash === 'home') {
+      let routePath = rawHash.replace(/^#\/?/, '').trim();
+      // If no hash present, inspect pathname for clean canonical URLs
+      if (!routePath && window.location.pathname && window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+        routePath = window.location.pathname.replace(/^\//, '').trim();
+      }
+
+      if (!routePath || routePath === 'home') {
         setCurrentView('home');
-      } else if (hash.startsWith('product/') || hash.startsWith('product-')) {
-        const param = hash.startsWith('product/') ? hash.replace('product/', '') : hash.replace('product-', '');
+      } else if (routePath.startsWith('product/') || routePath.startsWith('product-')) {
+        const param = routePath.startsWith('product/') ? routePath.replace('product/', '') : routePath.replace('product-', '');
         let found = null;
         if (param.includes('--')) {
           const parts = param.split('--');
-          const possibleId = parts[parts.length - 1];
-          found = products.find(p => p.id.toLowerCase() === possibleId.toLowerCase());
+          const possibleToken = parts[parts.length - 1];
+          const decryptedId = decryptId(possibleToken);
+          found = products.find(p => 
+            p.id.toLowerCase() === decryptedId.toLowerCase() || 
+            p.id.toLowerCase() === possibleToken.toLowerCase()
+          );
         }
         if (!found) {
-          found = products.find(p => p.id.toLowerCase() === param.toLowerCase());
+          const decryptedParam = decryptId(param);
+          found = products.find(p => 
+            p.id.toLowerCase() === decryptedParam.toLowerCase() || 
+            p.id.toLowerCase() === param.toLowerCase()
+          );
         }
         if (!found) {
           found = products.find(p => slugify(p.title) === slugify(param) || slugify(p.title).includes(slugify(param)));
@@ -285,47 +302,57 @@ export const StoreProvider = ({ children }) => {
         } else {
           setCurrentView('shop');
         }
-      } else if (hash.startsWith('blog-') || hash.startsWith('blog/')) {
-        const bid = hash.startsWith('blog/') ? hash.replace('blog/', '') : hash.replace('blog-', '');
+      } else if (routePath.startsWith('blog-') || routePath.startsWith('blog/')) {
+        const bid = routePath.startsWith('blog/') ? routePath.replace('blog/', '') : routePath.replace('blog-', '');
         setCurrentView('blog-detail');
         setSelectedBlogId(bid);
-      } else if (hash === 'blog') {
+      } else if (routePath === 'blog' || routePath === 'blogs') {
         setCurrentView('blog');
-      } else if (hash === 'sale') {
+      } else if (routePath === 'sale') {
         setCurrentView('shop');
         setSelectedCategory('Sale');
-      } else if (hash === 'shop') {
+      } else if (routePath === 'shop') {
         setCurrentView('shop');
-        setSelectedCategory('All');
-      } else if (hash === 'necklace' || hash === 'necklaces') {
+        const searchParams = new URLSearchParams(window.location.search);
+        const cat = searchParams.get('category');
+        if (cat) {
+          setSelectedCategory(decodeURIComponent(cat));
+        } else {
+          setSelectedCategory('All');
+        }
+      } else if (routePath === 'necklace' || routePath === 'necklaces') {
         setCurrentView('shop');
         setSelectedCategory('Necklace');
-      } else if (hash === 'pendant-set' || hash === 'pendant') {
+      } else if (routePath === 'pendant-set' || routePath === 'pendant') {
         setCurrentView('shop');
         setSelectedCategory('Pendant Set');
-      } else if (hash === 'rings' || hash === 'ring') {
+      } else if (routePath === 'rings' || routePath === 'ring') {
         setCurrentView('shop');
         setSelectedCategory('Rings');
-      } else if (hash === 'earring' || hash === 'earrings') {
+      } else if (routePath === 'earring' || routePath === 'earrings') {
         setCurrentView('shop');
         setSelectedCategory('Earring');
-      } else if (hash === 'bridal-sets' || hash === 'bridal') {
+      } else if (routePath === 'bridal-sets' || routePath === 'bridal') {
         setCurrentView('shop');
         setSelectedCategory('Bridal Sets');
-      } else if (hash === 'bracelets-bangles' || hash === 'bracelets' || hash === 'bangles') {
+      } else if (routePath === 'bracelets-bangles' || routePath === 'bracelets' || routePath === 'bangles') {
         setCurrentView('shop');
         setSelectedCategory('Bracelets/Bangles');
-      } else if (hash === 'others') {
+      } else if (routePath === 'others') {
         setCurrentView('shop');
         setSelectedCategory('Others');
-      } else if (['terms', 'privacy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(hash)) {
-        setCurrentView(hash);
+      } else if (['terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(routePath)) {
+        setCurrentView(routePath);
       }
     };
 
     handleHashRouting();
     window.addEventListener('hashchange', handleHashRouting);
-    return () => window.removeEventListener('hashchange', handleHashRouting);
+    window.addEventListener('popstate', handleHashRouting);
+    return () => {
+      window.removeEventListener('hashchange', handleHashRouting);
+      window.removeEventListener('popstate', handleHashRouting);
+    };
   }, [products]);
 
   // 1. Automatic OAuth Catch & Forwarding
@@ -376,6 +403,15 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('ella_blogs', JSON.stringify(blogs));
   }, [blogs]);
+
+  // Sync promotions to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('ella_promotions', JSON.stringify(promotions));
+    } catch (e) {
+      console.warn('Failed saving promotions to localStorage:', e);
+    }
+  }, [promotions]);
 
   // 3. Fetch data from Supabase DB on mount
   useEffect(() => {
@@ -735,8 +771,8 @@ export const StoreProvider = ({ children }) => {
     showToast('Signed out of Ella Creations', 'info');
   };
 
-  // Cart operations (Variant & Promotional Aware)
-  const addToCart = (product, quantity = 1, selectedVariant = null) => {
+  // Cart operations (Variant, Add-ons & Promotional Aware)
+  const addToCart = (product, quantity = 1, selectedVariant = null, selectedAddons = []) => {
     // Determine target variant or fallback to product baseline
     const variantObj = typeof selectedVariant === 'object' && selectedVariant !== null
       ? selectedVariant
@@ -749,23 +785,35 @@ export const StoreProvider = ({ children }) => {
 
     // Authoritative Promotional Pricing Calculation
     const pricing = calculateProductPricing(product, variantObj, activePromotions);
-    const itemPrice = pricing.finalPrice;
+    
+    // Extra charges for custom selected addons
+    const validAddons = Array.isArray(selectedAddons) ? selectedAddons : [];
+    const addonsExtraPerUnit = validAddons.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
+    const itemPrice = pricing.finalPrice + addonsExtraPerUnit;
+    const originalPrice = pricing.originalPrice + addonsExtraPerUnit;
 
     if (itemPrice <= 0 || itemStock <= 0) {
       showToast(`"${product.title}" (${variantName}) is currently out of stock`, 'error');
       return;
     }
 
+    const addonSignature = validAddons.map(a => a.id || a.name).sort().join('|');
+
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (item) => item.id === product.id && (item.variantId === variantObj?.id || item.finish === variantName)
+        (item) => item.id === product.id && 
+                  (item.variantId === variantObj?.id || item.finish === variantName) &&
+                  ((item.addonSignature || '') === addonSignature)
       );
 
       if (existingIndex > -1) {
         const updated = [...prevCart];
         updated[existingIndex].qty += quantity;
         updated[existingIndex].price = itemPrice;
-        updated[existingIndex].originalPrice = pricing.originalPrice;
+        updated[existingIndex].basePrice = pricing.finalPrice;
+        updated[existingIndex].addonsPrice = addonsExtraPerUnit;
+        updated[existingIndex].selectedAddons = validAddons;
+        updated[existingIndex].originalPrice = originalPrice;
         updated[existingIndex].hasPromo = pricing.hasPromo;
         updated[existingIndex].discountPercent = pricing.discountPercent;
         updated[existingIndex].campaignName = pricing.campaign?.name || null;
@@ -777,7 +825,11 @@ export const StoreProvider = ({ children }) => {
             id: product.id,
             title: product.title,
             price: itemPrice,
-            originalPrice: pricing.originalPrice,
+            basePrice: pricing.finalPrice,
+            addonsPrice: addonsExtraPerUnit,
+            selectedAddons: validAddons,
+            addonSignature,
+            originalPrice: originalPrice,
             hasPromo: pricing.hasPromo,
             discountPercent: pricing.discountPercent,
             campaignName: pricing.campaign?.name || null,
@@ -793,7 +845,8 @@ export const StoreProvider = ({ children }) => {
       }
     });
 
-    showToast(`Added "${product.title}" (${variantName}) to your cart!`);
+    const addonsNote = validAddons.length > 0 ? ` + ${validAddons.length} upgrade(s)` : '';
+    showToast(`Added "${product.title}" (${variantName}${addonsNote}) to your cart!`);
     setIsCartOpen(true);
   };
 
@@ -1354,38 +1407,52 @@ export const StoreProvider = ({ children }) => {
           });
         }
 
-        const mapped = promoData.map(p => ({
-          id: p.id,
-          name: p.name || 'Untitled Campaign',
-          headline: p.headline || '',
-          description: p.description || '',
-          discount_percentage: Number(p.discount_percentage || 0),
-          discountPercentage: Number(p.discount_percentage || 0),
-          start_at: p.start_at,
-          startAt: p.start_at,
-          end_at: p.end_at,
-          endAt: p.end_at,
-          is_enabled: p.is_enabled !== false,
-          isEnabled: p.is_enabled !== false,
-          priority: Number(p.priority || 1),
-          product_ids: productMap[p.id] || [],
-          productIds: productMap[p.id] || [],
-          cta_text: p.cta_text || 'SHOP THE SALE',
-          ctaText: p.cta_text || 'SHOP THE SALE',
-          cta_url: p.cta_url || '#sale',
-          ctaUrl: p.cta_url || '#sale',
-          image_url: p.image_url || null,
-          imageUrl: p.image_url || null,
-          popup_enabled: p.popup_enabled !== false,
-          popupEnabled: p.popup_enabled !== false,
-          popup_frequency: p.popup_frequency || 'once_per_session',
-          popupFrequency: p.popup_frequency || 'once_per_session',
-          created_at: p.created_at,
-          updated_at: p.updated_at
-        }));
+        const mapped = promoData.map(p => {
+          const junctionPids = productMap[p.id] || [];
+          const existing = (promotions || []).find(old => old.id === p.id);
+          const existingPids = existing?.product_ids || existing?.productIds || [];
+          const finalPids = junctionPids.length > 0 
+            ? junctionPids 
+            : (existingPids.length > 0 
+                ? existingPids 
+                : (Array.isArray(p.product_ids) ? p.product_ids : (Array.isArray(p.productIds) ? p.productIds : [])));
+
+          return {
+            id: p.id,
+            name: p.name || 'Untitled Campaign',
+            headline: p.headline || '',
+            description: p.description || '',
+            discount_percentage: Number(p.discount_percentage || p.discountPercentage || 0),
+            discountPercentage: Number(p.discount_percentage || p.discountPercentage || 0),
+            start_at: p.start_at || p.startAt,
+            startAt: p.start_at || p.startAt,
+            end_at: p.end_at || p.endAt,
+            endAt: p.end_at || p.endAt,
+            is_enabled: p.is_enabled !== false && p.isEnabled !== false,
+            isEnabled: p.is_enabled !== false && p.isEnabled !== false,
+            priority: Number(p.priority || 1),
+            product_ids: finalPids,
+            productIds: finalPids,
+            cta_text: p.cta_text || p.ctaText || 'SHOP THE SALE',
+            ctaText: p.cta_text || p.ctaText || 'SHOP THE SALE',
+            cta_url: p.cta_url || p.ctaUrl || '#sale',
+            ctaUrl: p.cta_url || p.ctaUrl || '#sale',
+            image_url: p.image_url || p.imageUrl || null,
+            imageUrl: p.image_url || p.imageUrl || null,
+            popup_enabled: p.popup_enabled !== false && p.popupEnabled !== false,
+            popupEnabled: p.popup_enabled !== false && p.popupEnabled !== false,
+            popup_frequency: p.popup_frequency || p.popupFrequency || 'once_per_session',
+            popupFrequency: p.popup_frequency || p.popupFrequency || 'once_per_session',
+            created_at: p.created_at || p.createdAt || new Date().toISOString(),
+            updated_at: p.updated_at || p.updatedAt || new Date().toISOString()
+          };
+        });
 
         if (mapped.length > 0) {
           setPromotions(mapped);
+          try {
+            localStorage.setItem('ella_promotions', JSON.stringify(mapped));
+          } catch (e) {}
         }
       }
     } catch (err) {
@@ -1394,14 +1461,23 @@ export const StoreProvider = ({ children }) => {
   };
 
   const addPromotion = async (promotionData) => {
+    const pids = promotionData.product_ids || promotionData.productIds || [];
     const newPromo = {
       ...promotionData,
       id: promotionData.id || `promo_${Date.now()}`,
+      product_ids: pids,
+      productIds: pids,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
 
-    setPromotions(prev => [newPromo, ...prev]);
+    setPromotions(prev => {
+      const updated = [newPromo, ...prev];
+      try {
+        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
     try {
       const { error: promoError } = await supabase.from('promotions').insert([{
@@ -1423,7 +1499,6 @@ export const StoreProvider = ({ children }) => {
 
       if (promoError) throw promoError;
 
-      const pids = newPromo.product_ids || newPromo.productIds || [];
       if (pids.length > 0) {
         const rows = pids.map(pid => ({
           promotion_id: newPromo.id,
@@ -1440,34 +1515,47 @@ export const StoreProvider = ({ children }) => {
   };
 
   const updatePromotion = async (updatedPromo) => {
-    setPromotions(prev => prev.map(p => p.id === updatedPromo.id ? updatedPromo : p));
+    const pids = updatedPromo.product_ids || updatedPromo.productIds || [];
+    const normalizedPromo = {
+      ...updatedPromo,
+      product_ids: pids,
+      productIds: pids,
+      updated_at: new Date().toISOString()
+    };
+
+    setPromotions(prev => {
+      const updated = prev.map(p => p.id === normalizedPromo.id ? normalizedPromo : p);
+      try {
+        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
     try {
       const { error: promoError } = await supabase.from('promotions').upsert([{
-        id: updatedPromo.id,
-        name: updatedPromo.name,
-        headline: updatedPromo.headline,
-        description: updatedPromo.description,
-        discount_percentage: updatedPromo.discount_percentage,
-        start_at: updatedPromo.start_at,
-        end_at: updatedPromo.end_at,
-        is_enabled: updatedPromo.is_enabled,
-        priority: updatedPromo.priority,
-        cta_text: updatedPromo.cta_text,
-        cta_url: updatedPromo.cta_url,
-        image_url: updatedPromo.image_url,
-        popup_enabled: updatedPromo.popup_enabled,
-        popup_frequency: updatedPromo.popup_frequency,
+        id: normalizedPromo.id,
+        name: normalizedPromo.name,
+        headline: normalizedPromo.headline,
+        description: normalizedPromo.description,
+        discount_percentage: normalizedPromo.discount_percentage,
+        start_at: normalizedPromo.start_at,
+        end_at: normalizedPromo.end_at,
+        is_enabled: normalizedPromo.is_enabled,
+        priority: normalizedPromo.priority,
+        cta_text: normalizedPromo.cta_text,
+        cta_url: normalizedPromo.cta_url,
+        image_url: normalizedPromo.image_url,
+        popup_enabled: normalizedPromo.popup_enabled,
+        popup_frequency: normalizedPromo.popup_frequency,
         updated_at: new Date().toISOString()
       }]);
 
       if (promoError) throw promoError;
 
-      await supabase.from('promotion_products').delete().eq('promotion_id', updatedPromo.id);
-      const pids = updatedPromo.product_ids || updatedPromo.productIds || [];
+      await supabase.from('promotion_products').delete().eq('promotion_id', normalizedPromo.id);
       if (pids.length > 0) {
         const rows = pids.map(pid => ({
-          promotion_id: updatedPromo.id,
+          promotion_id: normalizedPromo.id,
           product_id: pid
         }));
         await supabase.from('promotion_products').insert(rows);
@@ -1476,11 +1564,17 @@ export const StoreProvider = ({ children }) => {
       console.warn('Supabase DB promotion update notice:', err.message);
     }
 
-    showToast(`Campaign "${updatedPromo.name}" updated!`);
+    showToast(`Campaign "${normalizedPromo.name}" updated!`);
   };
 
   const deletePromotion = async (promotionId) => {
-    setPromotions(prev => prev.filter(p => p.id !== promotionId));
+    setPromotions(prev => {
+      const updated = prev.filter(p => p.id !== promotionId);
+      try {
+        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
     try {
       await supabase.from('promotion_products').delete().eq('promotion_id', promotionId);
@@ -1494,7 +1588,13 @@ export const StoreProvider = ({ children }) => {
 
   const togglePromotionStatus = async (promotionId, currentEnabled) => {
     const updatedEnabled = !currentEnabled;
-    setPromotions(prev => prev.map(p => p.id === promotionId ? { ...p, is_enabled: updatedEnabled, isEnabled: updatedEnabled } : p));
+    setPromotions(prev => {
+      const updated = prev.map(p => p.id === promotionId ? { ...p, is_enabled: updatedEnabled, isEnabled: updatedEnabled } : p);
+      try {
+        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
     try {
       await supabase.from('promotions').update({ is_enabled: updatedEnabled }).eq('id', promotionId);

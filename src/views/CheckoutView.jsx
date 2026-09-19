@@ -889,6 +889,16 @@ export default function CheckoutView() {
                       )}
                     </div>
                     <p className="text-[11px] text-stone-500">Finish: {item.finish} | Qty: {item.qty}</p>
+                    {item.selectedAddons && item.selectedAddons.length > 0 && (
+                      <div className="space-y-0.5 my-1">
+                        {item.selectedAddons.map((addon, aIdx) => (
+                          <div key={aIdx} className="text-[10px] text-stone-600 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded flex justify-between items-center">
+                            <span>+ {addon.name}</span>
+                            <span className="font-bold text-brand-rose font-sans">+{formatPrice(addon.price)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-xs font-bold text-brand-rose">{formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1))}</p>
                       {item.isPromotional && item.originalPrice && (
