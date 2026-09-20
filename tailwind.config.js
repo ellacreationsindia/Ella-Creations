@@ -22,7 +22,9 @@ export default {
       },
       fontFamily: {
         serif: ['Playfair Display', 'serif'],
+        editorial: ['Cormorant Garamond', 'Playfair Display', 'serif'],
         sans: ['Montserrat', 'sans-serif'],
+        script: ['Alex Brush', 'cursive'],
       },
       backgroundImage: {
         'gold-gradient': 'linear-gradient(135deg, #CFA45C 0%, #E9D097 50%, #B3873E 100%)',

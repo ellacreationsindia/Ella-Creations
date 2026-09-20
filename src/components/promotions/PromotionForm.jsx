@@ -16,13 +16,14 @@ import {
 } from 'lucide-react';
 import { useStore, formatPrice } from '../../context/StoreContext';
 import { uploadProductPhotoToSupabase, compressImageDataUrl } from '../../lib/supabase';
-import { toISTInputString, parseCampaignDateTime } from '../../utils/pricing';
+import { toISTInputString, parseCampaignDateTime, formatToIsoFromIST } from '../../utils/pricing';
 import PromotionProductSelector from './PromotionProductSelector';
 import PromotionPreview from './PromotionPreview';
 
 export default function PromotionForm({
   isOpen = false,
   editingCampaign = null,
+  initialTab = 'details',
   onClose = () => {},
   onSave = () => {}
 }) {
@@ -37,6 +38,7 @@ export default function PromotionForm({
     endAt: '',
     isEnabled: true,
     priority: 1,
+    allProducts: false,
     productIds: [],
     ctaText: 'SHOP THE SALE',
     ctaUrl: '#sale',
@@ -48,7 +50,7 @@ export default function PromotionForm({
   const [formErrors, setFormErrors] = useState({});
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('details'); // 'details' | 'products' | 'popup'
+  const [activeTab, setActiveTab] = useState(initialTab || 'details'); // 'details' | 'products' | 'popup'
 
   // Initialize or reset form data when opened
   useEffect(() => {
@@ -64,6 +66,7 @@ export default function PromotionForm({
         endAt: toISTInputString(editingCampaign.end_at || editingCampaign.endAt),
         isEnabled: editingCampaign.is_enabled !== false && editingCampaign.isEnabled !== false,
         priority: Number(editingCampaign.priority || 1),
+        allProducts: Boolean(editingCampaign.all_products || editingCampaign.allProducts),
         productIds: editingCampaign.product_ids || editingCampaign.productIds || [],
         ctaText: editingCampaign.cta_text || editingCampaign.ctaText || 'SHOP THE SALE',
         ctaUrl: editingCampaign.cta_url || editingCampaign.ctaUrl || '#sale',
@@ -85,6 +88,7 @@ export default function PromotionForm({
         endAt: toISTInputString(inSevenDays),
         isEnabled: true,
         priority: 1,
+        allProducts: false,
         productIds: [],
         ctaText: 'SHOP THE SALE',
         ctaUrl: '#sale',
@@ -94,8 +98,8 @@ export default function PromotionForm({
       });
     }
     setFormErrors({});
-    setActiveTab('details');
-  }, [isOpen, editingCampaign]);
+    setActiveTab(initialTab || 'details');
+  }, [isOpen, editingCampaign, initialTab]);
 
   if (!isOpen) return null;
 
@@ -156,11 +160,19 @@ export default function PromotionForm({
       }
     }
 
-    if (formData.productIds.length === 0) {
-      errors.productIds = 'Please select at least one product for this promotion.';
+    if (!formData.allProducts && formData.productIds.length === 0) {
+      errors.productIds = 'Please select at least one product or enable "Apply to All Products".';
     }
 
     setFormErrors(errors);
+
+    // Auto-navigate to whichever tab contains errors so user immediately sees what is needed
+    if (errors.name || errors.headline || errors.discountPercentage || errors.startAt || errors.endAt) {
+      setActiveTab('details');
+    } else if (errors.productIds) {
+      setActiveTab('products');
+    }
+
     return Object.keys(errors).length === 0;
   };
 
@@ -171,8 +183,8 @@ export default function PromotionForm({
       return;
     }
 
-    const startIso = new Date(`${formData.startAt}:00+05:30`).toISOString();
-    const endIso = new Date(`${formData.endAt}:00+05:30`).toISOString();
+    const startIso = formatToIsoFromIST(formData.startAt);
+    const endIso = formatToIsoFromIST(formData.endAt);
 
     const payload = {
       id: editingCampaign?.id || `promo_${Date.now()}`,
@@ -188,8 +200,10 @@ export default function PromotionForm({
       is_enabled: Boolean(formData.isEnabled),
       isEnabled: Boolean(formData.isEnabled),
       priority: Number(formData.priority) || 1,
-      product_ids: formData.productIds,
-      productIds: formData.productIds,
+      all_products: Boolean(formData.allProducts),
+      allProducts: Boolean(formData.allProducts),
+      product_ids: formData.allProducts ? [] : formData.productIds,
+      productIds: formData.allProducts ? [] : formData.productIds,
       cta_text: formData.ctaText.trim() || 'SHOP THE SALE',
       ctaText: formData.ctaText.trim() || 'SHOP THE SALE',
       cta_url: formData.ctaUrl.trim() || '#sale',
@@ -211,8 +225,8 @@ export default function PromotionForm({
     ...formData,
     id: editingCampaign?.id || 'preview_id',
     discount_percentage: Number(formData.discountPercentage),
-    start_at: formData.startAt ? new Date(`${formData.startAt}:00+05:30`).toISOString() : null,
-    end_at: formData.endAt ? new Date(`${formData.endAt}:00+05:30`).toISOString() : null,
+    start_at: formatToIsoFromIST(formData.startAt),
+    end_at: formatToIsoFromIST(formData.endAt),
     image_url: formData.imageUrl
   };
 
@@ -486,6 +500,28 @@ export default function PromotionForm({
             {/* TAB 2: PRODUCT SELECTION */}
             {activeTab === 'products' && (
               <div className="space-y-4">
+                {/* Storewide vs Specific Product Scope Toggle */}
+                <div className="p-4 rounded-2xl bg-stone-950 border border-stone-800 flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+                      <span>Storewide Promotion (All Products)</span>
+                    </h4>
+                    <p className="text-[11px] text-stone-400 mt-0.5">
+                      When enabled, the discount applies automatically to all current and future jewelry items in the catalog.
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.allProducts}
+                      onChange={(e) => setFormData({ ...formData, allProducts: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-stone-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-rose" />
+                  </label>
+                </div>
+
                 {formErrors.productIds && (
                   <div className="p-3 bg-rose-950/60 border border-rose-800/50 rounded-xl text-xs text-rose-300 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" />
@@ -493,12 +529,24 @@ export default function PromotionForm({
                   </div>
                 )}
 
-                <PromotionProductSelector
-                  products={products}
-                  selectedProductIds={formData.productIds}
-                  onChange={(newIds) => setFormData({ ...formData, productIds: newIds })}
-                  discountPercentage={formData.discountPercentage}
-                />
+                {formData.allProducts ? (
+                  <div className="p-6 bg-stone-950/80 rounded-2xl border border-brand-gold/30 text-center space-y-2">
+                    <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Storewide Discount Activated</h4>
+                    <p className="text-xs text-stone-400 max-w-md mx-auto">
+                      All {products.length} products across all categories will automatically receive the {formData.discountPercentage}% discount during this campaign.
+                    </p>
+                  </div>
+                ) : (
+                  <PromotionProductSelector
+                    products={products}
+                    selectedProductIds={formData.productIds}
+                    onChange={(newIds) => setFormData({ ...formData, productIds: newIds })}
+                    discountPercentage={formData.discountPercentage}
+                  />
+                )}
               </div>
             )}
 

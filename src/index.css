@@ -13,7 +13,9 @@
   --color-brand-card: #FDF8F5;
 
   --font-serif: 'Playfair Display', serif;
+  --font-editorial: 'Cormorant Garamond', 'Playfair Display', serif;
   --font-sans: 'Montserrat', sans-serif;
+  --font-script: 'Alex Brush', cursive;
 }
 
 @layer base {

@@ -28,30 +28,41 @@ export default function PromotionPopup({
       return;
     }
 
-    // Check frequency setting
-    const campaignKey = `ella_promo_seen_${activeCampaign.id}`;
-    const frequency = activeCampaign.popup_frequency || 'once_per_session';
+    // Check frequency setting using versioned key so updates immediately display to users
+    const campaignVersion = activeCampaign.updated_at || activeCampaign.updatedAt || activeCampaign.headline || 'v1';
+    const campaignKey = `ella_promo_seen_${activeCampaign.id}_${campaignVersion}`;
+    const frequency = activeCampaign.popup_frequency || activeCampaign.popupFrequency || 'once_per_session';
 
     if (frequency === 'once_per_session') {
       const alreadySeen = sessionStorage.getItem(campaignKey);
       if (!alreadySeen) {
-        // Small delay for elegant entry on initial page load
-        const timer = setTimeout(() => setIsOpen(true), 1200);
+        const timer = setTimeout(() => setIsOpen(true), 1000);
         return () => clearTimeout(timer);
       }
     } else if (frequency === 'once_per_day') {
       const lastSeenTime = localStorage.getItem(campaignKey);
       const oneDayMs = 24 * 60 * 60 * 1000;
       if (!lastSeenTime || Date.now() - Number(lastSeenTime) > oneDayMs) {
-        const timer = setTimeout(() => setIsOpen(true), 1200);
+        const timer = setTimeout(() => setIsOpen(true), 1000);
         return () => clearTimeout(timer);
       }
     } else {
       // 'every_visit'
-      const timer = setTimeout(() => setIsOpen(true), 1000);
+      const timer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(timer);
     }
   }, [activeCampaign, preview]);
+
+  // Listen for admin panel test / trigger events to instantly show popup
+  useEffect(() => {
+    const handleTrigger = () => {
+      setIsOpen(true);
+      setIsClosing(false);
+    };
+
+    window.addEventListener('ella_trigger_promo_popup', handleTrigger);
+    return () => window.removeEventListener('ella_trigger_promo_popup', handleTrigger);
+  }, []);
 
   const handleClose = useCallback(() => {
     setIsClosing(true);
@@ -61,7 +72,8 @@ export default function PromotionPopup({
       if (preview && onClosePreview) {
         onClosePreview();
       } else if (activeCampaign) {
-        const campaignKey = `ella_promo_seen_${activeCampaign.id}`;
+        const campaignVersion = activeCampaign.updated_at || activeCampaign.updatedAt || activeCampaign.headline || 'v1';
+        const campaignKey = `ella_promo_seen_${activeCampaign.id}_${campaignVersion}`;
         sessionStorage.setItem(campaignKey, 'true');
         localStorage.setItem(campaignKey, Date.now().toString());
       }

@@ -1460,16 +1460,88 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
-  const addPromotion = async (promotionData) => {
-    const pids = promotionData.product_ids || promotionData.productIds || [];
-    const newPromo = {
-      ...promotionData,
-      id: promotionData.id || `promo_${Date.now()}`,
+  const clearPromoSeenCaches = (promoId = null) => {
+    try {
+      if (typeof window === 'undefined') return;
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('ella_promo_seen_')) {
+          if (!promoId || key.includes(promoId)) {
+            sessionStorage.removeItem(key);
+          }
+        }
+      });
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('ella_promo_seen_')) {
+          if (!promoId || key.includes(promoId)) {
+            localStorage.removeItem(key);
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Could not clear promo seen caches:', e);
+    }
+  };
+
+  const triggerPromotionPopup = (promoId = null) => {
+    clearPromoSeenCaches(promoId);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_trigger_promo_popup', { detail: { promoId } }));
+    }
+  };
+
+  const normalizePromo = (promo) => {
+    const pids = promo.product_ids || promo.productIds || [];
+    const disc = Number(promo.discount_percentage ?? promo.discountPercentage ?? 0);
+    const start = promo.start_at || promo.startAt;
+    const end = promo.end_at || promo.endAt;
+    const isEnabled = promo.is_enabled !== false && promo.isEnabled !== false;
+    const popupEnabled = promo.popup_enabled !== false && promo.popupEnabled !== false;
+    const popupFreq = promo.popup_frequency || promo.popupFrequency || 'once_per_session';
+    const ctaTxt = promo.cta_text || promo.ctaText || 'SHOP THE SALE';
+    const ctaLink = promo.cta_url || promo.ctaUrl || '#sale';
+    const img = promo.image_url || promo.imageUrl || null;
+    const allProds = Boolean(promo.all_products || promo.allProducts);
+
+    return {
+      ...promo,
+      id: promo.id || `promo_${Date.now()}`,
+      name: promo.name || 'Promotional Campaign',
+      headline: promo.headline || '',
+      description: promo.description || '',
+      discount_percentage: disc,
+      discountPercentage: disc,
+      start_at: start,
+      startAt: start,
+      end_at: end,
+      endAt: end,
+      is_enabled: isEnabled,
+      isEnabled: isEnabled,
+      priority: Number(promo.priority || 1),
+      all_products: allProds,
+      allProducts: allProds,
       product_ids: pids,
       productIds: pids,
-      created_at: new Date().toISOString(),
+      cta_text: ctaTxt,
+      ctaText: ctaTxt,
+      cta_url: ctaLink,
+      ctaUrl: ctaLink,
+      image_url: img,
+      imageUrl: img,
+      popup_enabled: popupEnabled,
+      popupEnabled: popupEnabled,
+      popup_frequency: popupFreq,
+      popupFrequency: popupFreq,
       updated_at: new Date().toISOString()
     };
+  };
+
+  const addPromotion = async (promotionData) => {
+    const newPromo = normalizePromo({
+      ...promotionData,
+      created_at: new Date().toISOString()
+    });
+
+    clearPromoSeenCaches(newPromo.id);
 
     setPromotions(prev => {
       const updated = [newPromo, ...prev];
@@ -1478,6 +1550,10 @@ export const StoreProvider = ({ children }) => {
       } catch (e) {}
       return updated;
     });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: newPromo }));
+    }
 
     try {
       const { error: promoError } = await supabase.from('promotions').insert([{
@@ -1499,8 +1575,8 @@ export const StoreProvider = ({ children }) => {
 
       if (promoError) throw promoError;
 
-      if (pids.length > 0) {
-        const rows = pids.map(pid => ({
+      if (newPromo.product_ids.length > 0) {
+        const rows = newPromo.product_ids.map(pid => ({
           promotion_id: newPromo.id,
           product_id: pid
         }));
@@ -1515,13 +1591,9 @@ export const StoreProvider = ({ children }) => {
   };
 
   const updatePromotion = async (updatedPromo) => {
-    const pids = updatedPromo.product_ids || updatedPromo.productIds || [];
-    const normalizedPromo = {
-      ...updatedPromo,
-      product_ids: pids,
-      productIds: pids,
-      updated_at: new Date().toISOString()
-    };
+    const normalizedPromo = normalizePromo(updatedPromo);
+
+    clearPromoSeenCaches(normalizedPromo.id);
 
     setPromotions(prev => {
       const updated = prev.map(p => p.id === normalizedPromo.id ? normalizedPromo : p);
@@ -1530,6 +1602,10 @@ export const StoreProvider = ({ children }) => {
       } catch (e) {}
       return updated;
     });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: normalizedPromo }));
+    }
 
     try {
       const { error: promoError } = await supabase.from('promotions').upsert([{
@@ -1553,8 +1629,8 @@ export const StoreProvider = ({ children }) => {
       if (promoError) throw promoError;
 
       await supabase.from('promotion_products').delete().eq('promotion_id', normalizedPromo.id);
-      if (pids.length > 0) {
-        const rows = pids.map(pid => ({
+      if (normalizedPromo.product_ids.length > 0) {
+        const rows = normalizedPromo.product_ids.map(pid => ({
           promotion_id: normalizedPromo.id,
           product_id: pid
         }));
@@ -1565,9 +1641,11 @@ export const StoreProvider = ({ children }) => {
     }
 
     showToast(`Campaign "${normalizedPromo.name}" updated!`);
+    return normalizedPromo;
   };
 
   const deletePromotion = async (promotionId) => {
+    clearPromoSeenCaches(promotionId);
     setPromotions(prev => {
       const updated = prev.filter(p => p.id !== promotionId);
       try {
@@ -1588,13 +1666,23 @@ export const StoreProvider = ({ children }) => {
 
   const togglePromotionStatus = async (promotionId, currentEnabled) => {
     const updatedEnabled = !currentEnabled;
+    clearPromoSeenCaches(promotionId);
     setPromotions(prev => {
-      const updated = prev.map(p => p.id === promotionId ? { ...p, is_enabled: updatedEnabled, isEnabled: updatedEnabled } : p);
+      const updated = prev.map(p => p.id === promotionId ? { 
+        ...p, 
+        is_enabled: updatedEnabled, 
+        isEnabled: updatedEnabled, 
+        updated_at: new Date().toISOString() 
+      } : p);
       try {
         localStorage.setItem('ella_promotions', JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: { id: promotionId, is_enabled: updatedEnabled } }));
+    }
 
     try {
       await supabase.from('promotions').update({ is_enabled: updatedEnabled }).eq('id', promotionId);
@@ -1603,6 +1691,35 @@ export const StoreProvider = ({ children }) => {
     }
 
     showToast(`Campaign is now ${updatedEnabled ? 'Enabled' : 'Disabled'}`);
+  };
+
+  const togglePopupEnabled = async (promotionId, currentPopupEnabled) => {
+    const updatedPopup = !currentPopupEnabled;
+    clearPromoSeenCaches(promotionId);
+    setPromotions(prev => {
+      const updated = prev.map(p => p.id === promotionId ? { 
+        ...p, 
+        popup_enabled: updatedPopup, 
+        popupEnabled: updatedPopup, 
+        updated_at: new Date().toISOString() 
+      } : p);
+      try {
+        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: { id: promotionId, popup_enabled: updatedPopup } }));
+    }
+
+    try {
+      await supabase.from('promotions').update({ popup_enabled: updatedPopup }).eq('id', promotionId);
+    } catch (err) {
+      console.warn('Supabase DB popup toggle notice:', err.message);
+    }
+
+    showToast(`Visitor popup is now ${updatedPopup ? 'Active' : 'Disabled'}`);
   };
 
   const verifiedCartData = verifyCartPricing(cart, products, activePromotions);
@@ -1690,6 +1807,9 @@ export const StoreProvider = ({ children }) => {
         updatePromotion,
         deletePromotion,
         togglePromotionStatus,
+        togglePopupEnabled,
+        triggerPromotionPopup,
+        clearPromoSeenCaches,
         recentlyViewed,
         recordProductView,
         slugify,

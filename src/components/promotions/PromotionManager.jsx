@@ -16,7 +16,10 @@ import {
   Layers,
   ArrowUpRight,
   Search,
-  Filter
+  Filter,
+  ExternalLink,
+  Play,
+  Sliders
 } from 'lucide-react';
 import { useStore, formatPrice } from '../../context/StoreContext';
 import { getCampaignStatus, formatISTDateTime, getActivePromotions } from '../../utils/pricing';
@@ -27,19 +30,27 @@ export default function PromotionManager() {
   const { 
     promotions = [], 
     products = [],
+    activePopupCampaign,
     addPromotion, 
     updatePromotion, 
     deletePromotion, 
     togglePromotionStatus,
+    togglePopupEnabled,
+    triggerPromotionPopup,
     showToast,
     navigateTo
   } = useStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formInitialTab, setFormInitialTab] = useState('details');
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [previewCampaign, setPreviewCampaign] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All'); // 'All' | 'Active' | 'Scheduled' | 'Expired' | 'Disabled'
+
+  // Identify current popup campaign
+  const currentPopupCampaign = activePopupCampaign || promotions.find(p => p.popup_enabled !== false && p.popupEnabled !== false) || promotions[0] || null;
+  const isPopupLive = Boolean(activePopupCampaign && (activePopupCampaign.popup_enabled !== false && activePopupCampaign.popupEnabled !== false));
 
   // Calculate Metrics
   const activeList = getActivePromotions(promotions);
@@ -64,11 +75,13 @@ export default function PromotionManager() {
 
   const handleOpenCreate = () => {
     setEditingCampaign(null);
+    setFormInitialTab('details');
     setIsFormOpen(true);
   };
 
-  const handleOpenEdit = (campaign) => {
+  const handleOpenEdit = (campaign, tab = 'details') => {
     setEditingCampaign(campaign);
+    setFormInitialTab(tab);
     setIsFormOpen(true);
   };
 
@@ -86,6 +99,13 @@ export default function PromotionManager() {
     if (window.confirm(`Are you sure you want to delete "${campaign.name}"? This action cannot be undone.`)) {
       await deletePromotion(campaign.id);
     }
+  };
+
+  const handleTestOnWebsite = (campaign) => {
+    if (!campaign) return;
+    triggerPromotionPopup(campaign.id);
+    showToast('🚀 Opening website with fresh promotional pop-up active!', 'success');
+    navigateTo('home');
   };
 
   const getStatusBadge = (status) => {
@@ -151,6 +171,125 @@ export default function PromotionManager() {
           <Plus className="w-4 h-4" />
           <span>Create Promotion</span>
         </button>
+      </div>
+
+      {/* STOREFRONT PROMOTIONAL POP-UP QUICK CONTROL CARD */}
+      <div className="bg-stone-900 border border-brand-gold/40 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+          
+          {/* Left: Info & Live Status */}
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full border border-brand-gold/30 flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
+                Storefront Promotional Pop-up Hub
+              </span>
+
+              {isPopupLive ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-800 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  Live on Website
+                </span>
+              ) : currentPopupCampaign ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-800 text-stone-400 border border-stone-700">
+                  <Power className="w-3 h-3" />
+                  Pop-up Inactive / Disabled
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-800 text-stone-400 border border-stone-700">
+                  No Campaign Configured
+                </span>
+              )}
+
+              {currentPopupCampaign && (
+                <span className="text-[10px] font-medium text-stone-400 bg-stone-950 px-2.5 py-1 rounded-full border border-stone-800">
+                  Frequency: <strong className="text-stone-300 capitalize">{String(currentPopupCampaign.popup_frequency || currentPopupCampaign.popupFrequency || 'once_per_session').replace(/_/g, ' ')}</strong>
+                </span>
+              )}
+            </div>
+
+            {currentPopupCampaign ? (
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
+                    {currentPopupCampaign.headline || currentPopupCampaign.name}
+                  </h3>
+                  <span className="text-xs font-black text-brand-gold bg-brand-gold/15 px-2.5 py-0.5 rounded-lg border border-brand-gold/30">
+                    FLAT {currentPopupCampaign.discount_percentage || currentPopupCampaign.discountPercentage || 0}% OFF
+                  </span>
+                </div>
+                <p className="text-xs text-stone-300 max-w-2xl line-clamp-2">
+                  {currentPopupCampaign.description || 'Exclusive luxury artificial jewelry promotional offer shown to storefront visitors.'}
+                </p>
+                <div className="flex items-center gap-4 text-[11px] text-stone-400 pt-1 flex-wrap">
+                  <span>Campaign: <strong className="text-stone-300">{currentPopupCampaign.name}</strong></span>
+                  <span>CTA: <code className="text-brand-gold font-mono">{currentPopupCampaign.cta_text || 'SHOP THE SALE'}</code></span>
+                  {currentPopupCampaign.end_at && (
+                    <span>Valid Till: <strong className="text-stone-300">{formatISTDateTime(currentPopupCampaign.end_at)}</strong></span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-stone-400">
+                You currently have no promotional campaigns set up. Create a campaign to show an automated luxury pop-up to store visitors.
+              </p>
+            )}
+          </div>
+
+          {/* Right: Quick Action Controls */}
+          {currentPopupCampaign && (
+            <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
+              {/* Quick Toggle Switch */}
+              <button
+                type="button"
+                onClick={() => togglePopupEnabled(currentPopupCampaign.id, currentPopupCampaign.popup_enabled !== false && currentPopupCampaign.popupEnabled !== false)}
+                className={`text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer border ${
+                  isPopupLive
+                    ? 'bg-rose-950/60 text-rose-300 border-rose-800/60 hover:bg-rose-900/70'
+                    : 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/70'
+                }`}
+                title={isPopupLive ? 'Disable pop-up on website' : 'Enable pop-up on website'}
+              >
+                <Power className="w-3.5 h-3.5" />
+                <span>{isPopupLive ? 'Disable Pop-up' : 'Enable Pop-up'}</span>
+              </button>
+
+              {/* Edit Pop-up Details */}
+              <button
+                type="button"
+                onClick={() => handleOpenEdit(currentPopupCampaign, 'popup')}
+                className="text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 hover:text-white px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer border border-stone-700"
+              >
+                <Sliders className="w-3.5 h-3.5 text-brand-gold" />
+                <span>Edit Pop-up Details</span>
+              </button>
+
+              {/* Live Preview */}
+              <button
+                type="button"
+                onClick={() => setPreviewCampaign(currentPopupCampaign)}
+                className="text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-brand-gold px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer border border-stone-700"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Preview</span>
+              </button>
+
+              {/* Test / View Live on Website */}
+              <button
+                type="button"
+                onClick={() => handleTestOnWebsite(currentPopupCampaign)}
+                className="text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-brand-gold to-amber-500 hover:from-amber-400 hover:to-amber-600 text-stone-950 px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-gold-glow hover:scale-105"
+                title="Immediately opens storefront and blooms the promotional popup"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Test on Website</span>
+              </button>
+            </div>
+          )}
+
+        </div>
       </div>
 
       {/* Summary Analytics Metrics */}
@@ -400,6 +539,7 @@ export default function PromotionManager() {
       <PromotionForm
         isOpen={isFormOpen}
         editingCampaign={editingCampaign}
+        initialTab={formInitialTab}
         onClose={() => { setIsFormOpen(false); setEditingCampaign(null); }}
         onSave={handleSaveCampaign}
       />

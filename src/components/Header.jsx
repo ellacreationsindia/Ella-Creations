@@ -105,7 +105,7 @@ export default function Header() {
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin flex-shrink-0" style={{ animationDuration: '6s' }} />
             <span className="truncate max-w-[90vw] sm:max-w-none">
-              <strong className="text-amber-300 font-bold uppercase tracking-wider">{activePopupCampaign.headline || activePopupCampaign.name}: FLAT {activePopupCampaign.discount_percentage}% OFF</strong>
+              <strong className="text-amber-300 font-bold uppercase tracking-wider">{activePopupCampaign.headline || activePopupCampaign.name}: FLAT {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF</strong>
               <span className="hidden sm:inline text-stone-300"> — TAP TO EXPLORE FESTIVE SALE</span>
             </span>
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin flex-shrink-0" style={{ animationDuration: '6s' }} />
@@ -169,7 +169,7 @@ export default function Header() {
                   <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
                   <span>Sale</span>
                   <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                    {activePopupCampaign.discount_percentage}% OFF
+                    {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF
                   </span>
                 </button>
               )}
@@ -416,7 +416,7 @@ export default function Header() {
                       <span>Promotional Sale</span>
                     </div>
                     <span className="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                      FLAT {activePopupCampaign.discount_percentage}% OFF
+                      FLAT {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF
                     </span>
                   </button>
                 )}

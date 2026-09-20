@@ -26,22 +26,36 @@ export function parseCampaignDateTime(dateStr) {
   if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr.getTime();
   if (typeof dateStr !== 'string') return null;
   
+  const trimmed = dateStr.trim();
+  if (!trimmed) return null;
+
   // If it's already an ISO string with Z or timezone offset (+XX:XX)
-  if (dateStr.includes('Z') || dateStr.includes('+') || (dateStr.includes('-') && dateStr.lastIndexOf('-') > 10)) {
-    const d = new Date(dateStr);
+  if (trimmed.includes('Z') || trimmed.includes('+') || (trimmed.includes('-') && trimmed.lastIndexOf('-') > 10)) {
+    const d = new Date(trimmed);
     return isNaN(d.getTime()) ? null : d.getTime();
   }
 
-  // Handle local datetime string "YYYY-MM-DDTHH:mm" or "YYYY-MM-DD HH:mm"
-  // Assuming it's in IST (Asia/Kolkata)
-  const normalized = dateStr.replace(' ', 'T');
-  const d = new Date(`${normalized}:00+05:30`);
+  // Handle local datetime string "YYYY-MM-DDTHH:mm" or "YYYY-MM-DD HH:mm" or with seconds
+  // Assuming it's in IST (Asia/Kolkata, offset +05:30)
+  const normalized = trimmed.replace(' ', 'T');
+  const withSeconds = normalized.length === 16 ? `${normalized}:00` : normalized;
+  const withOffset = withSeconds.includes('+') ? withSeconds : `${withSeconds}+05:30`;
+  const d = new Date(withOffset);
   if (!isNaN(d.getTime())) {
     return d.getTime();
   }
 
-  const fallback = new Date(dateStr);
+  const fallback = new Date(trimmed);
   return isNaN(fallback.getTime()) ? null : fallback.getTime();
+}
+
+/**
+ * Converts any date string or IST input string reliably into an ISO string.
+ */
+export function formatToIsoFromIST(dateInput) {
+  if (!dateInput) return new Date().toISOString();
+  const ms = parseCampaignDateTime(dateInput);
+  return ms ? new Date(ms).toISOString() : new Date().toISOString();
 }
 
 /**

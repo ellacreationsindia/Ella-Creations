@@ -20,7 +20,8 @@ import {
   Crown, 
   ChevronRight,
   ChevronDown,
-  HelpCircle
+  HelpCircle,
+  Gem
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
@@ -65,105 +66,184 @@ export default function HomeView() {
   return (
     <div className="space-y-6 sm:space-y-8 lg:space-y-10 pb-6 sm:pb-10">
       
-      {/* Hero Banner Section (Compact & Visually Balanced Layout) */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-brand-sand/70 via-brand-cream/60 to-brand-pink/30 backdrop-blur-sm py-5 sm:py-8 lg:py-10 border-b border-brand-gold/20">
+      {/* Option 1 Premium Editorial Jewelry Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b lg:bg-gradient-to-r from-[#FAF4EE] via-[#F8EFE7] to-[#F5E8E4] border-b border-[#DFCBB9]/30 pt-4 sm:pt-6 lg:pt-0">
         
-        {/* Background Decorative Gold Vines & Ornaments */}
-        <div className="absolute top-10 right-10 opacity-15 pointer-events-none">
-          <Sparkles className="w-48 sm:w-64 h-48 sm:h-64 text-brand-gold animate-pulse-slow" />
-        </div>
-        <div className="absolute bottom-5 left-5 opacity-10 pointer-events-none">
-          <img src="/logo.png" alt="Watermark Logo" className="w-64 sm:w-96 h-64 sm:h-96 object-contain" />
+        {/* Background Architectural Arches & Soft Dappled Sunlight */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+          {/* Architectural Arch Silhouette 1 (Visible on tablet & desktop) */}
+          <div className="absolute right-[20%] top-4 w-60 sm:w-72 lg:w-96 h-[560px] rounded-t-full border border-[#DFCBB9]/35 bg-gradient-to-b from-white/35 to-transparent hidden sm:block" />
+          {/* Architectural Arch Silhouette 2 */}
+          <div className="absolute right-[3%] top-10 w-52 sm:w-64 lg:w-80 h-[500px] rounded-t-full border border-[#DFCBB9]/25 bg-gradient-to-b from-white/25 to-transparent hidden sm:block" />
+          {/* Soft warm radial glow behind models */}
+          <div className="absolute right-[8%] top-1/4 w-80 sm:w-[540px] lg:w-[650px] h-80 sm:h-[540px] lg:h-[650px] rounded-full bg-[#F5DFD5]/45 blur-3xl" />
+          
+          {/* Top Left Organic Dappled Shadow (Gentle warm sunlight filtering through botanical leaves) */}
+          <div className="absolute -top-12 -left-12 w-72 sm:w-96 lg:w-[480px] h-72 sm:h-96 lg:h-[480px] opacity-[0.07] blur-[2px] pointer-events-none">
+            <svg viewBox="0 0 200 200" className="w-full h-full text-[#6E5D4F] fill-current">
+              <path d="M40,-65C52,-58,62,-47,68,-34C74,-21,76,-6,73,8C70,22,62,35,52,46C42,57,30,66,16,70C2,74,-14,73,-28,67C-42,61,-54,50,-62,37C-70,24,-74,9,-72,-6C-70,-21,-62,-36,-51,-45C-40,-54,-26,-57,-12,-63C2,-69,28,-72,40,-65Z" transform="translate(100 100)" />
+            </svg>
+          </div>
+          {/* Delicate leaf silhouette */}
+          <div className="absolute top-16 left-56 w-44 h-44 opacity-[0.04] blur-[3px] pointer-events-none hidden lg:block">
+            <svg viewBox="0 0 200 200" className="w-full h-full text-[#6E5D4F] fill-current">
+              <path d="M48,-59C62,-49,73,-34,76,-17C79,0,74,19,65,35C56,51,43,64,28,70C13,76,-4,75,-21,70C-38,65,-55,56,-65,42C-75,28,-78,9,-74,-9C-70,-27,-59,-44,-45,-55C-31,-66,-15,-71,1,-72C17,-73,34,-69,48,-59Z" transform="translate(100 100)" />
+            </svg>
+          </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+        {/* Main Content Layout */}
+        <div className="max-w-[1580px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[500px] sm:min-h-[560px] lg:min-h-[660px] xl:min-h-[740px] 2xl:min-h-[800px] pt-4 sm:pt-6 lg:pt-0 pb-0">
             
-            {/* Left Copy */}
-            <div className="lg:col-span-7 space-y-3 sm:space-y-5 text-center lg:text-left">
+            {/* LEFT SIDE: Editorial Typography, CTAs & Trust Badges */}
+            <div className="lg:col-span-5 xl:col-span-5 space-y-3.5 sm:space-y-5 lg:space-y-6 z-20 py-2 sm:py-6 lg:py-10 text-center lg:text-left mx-auto lg:mx-0 max-w-lg lg:max-w-none">
               
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-brand-gold/40 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold shadow-sm">
-                <Sparkles className="w-3 h-3 text-brand-gold" />
-                Handcrafted Luxury Artificial Jewelry
+              {/* Eyebrow */}
+              <div className="inline-block">
+                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-[#9E7D58]">
+                  ARTIFICIAL JEWELRY INDIA
+                </p>
               </div>
 
-              <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-stone-900 leading-tight">
-                Timeless Beauty & <br className="hidden sm:inline" />
-                <span className="rose-gradient-text">Sparkle in Every Moment</span>
+              {/* Headline */}
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[58px] xl:text-[70px] 2xl:text-[78px] font-bold tracking-tight text-[#1A1A1A] leading-[1.06]">
+                Jewelry for <br />
+                <span className="text-[#B87080] font-serif font-normal inline-block">
+                  Every You
+                </span>
               </h1>
 
-              <p className="text-stone-600 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
-                Ella Creations is designed for the modern, confident, and elegant woman. Discover our handcrafted Kundan, Cubic Zirconia crystal drops, and gold-polished statement pieces.
+              {/* Supporting Paragraph */}
+              <p className="text-[#5C5552] text-xs sm:text-sm lg:text-[15px] font-normal leading-relaxed max-w-xs sm:max-w-md mx-auto lg:mx-0">
+                Timeless designs. Modern moments.<br className="hidden sm:inline" />{' '}
+                Handcrafted pieces for the confident, elegant you.
               </p>
 
-              {/* Gold Divider Motif */}
-              <div className="gold-divider max-w-xs mx-auto lg:mx-0 my-2 sm:my-4">
-                <Sparkles className="w-3.5 h-3.5" />
-              </div>
-
-              {/* Mobile-Friendly CTAs */}
-              <div className="flex flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-4 pt-1">
+              {/* Pill-Shaped CTA Buttons: Vertical Stack on Mobile, Row on Desktop */}
+              <div className="flex flex-col sm:flex-col lg:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 lg:gap-4 pt-1 sm:pt-2 w-full max-w-xs sm:max-w-sm lg:max-w-none mx-auto lg:mx-0">
                 <button
                   onClick={() => navigateTo('shop')}
-                  className="flex-1 sm:flex-initial bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold py-3 sm:py-3.5 px-4 sm:px-7 rounded-full shadow-soft-rose transition-all transform active:scale-95 flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider min-h-[44px]"
+                  className="w-full lg:w-auto bg-[#B87080] hover:bg-[#A55E6E] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-6 sm:px-8 rounded-full shadow-sm hover:shadow-md transition-all transform active:scale-95 flex items-center justify-center gap-2 min-h-[44px]"
                 >
-                  <span>Explore Catalog</span> <ArrowRight className="w-3.5 h-3.5" />
+                  <span>SHOP COLLECTIONS</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 
                 <button
-                  onClick={() => navigateTo('shop', null, 'Sale')}
-                  className="flex-1 sm:flex-initial bg-white/95 hover:bg-white text-stone-800 font-semibold py-3 sm:py-3.5 px-4 sm:px-7 rounded-full border border-brand-gold/40 hover:border-brand-gold transition-all text-xs uppercase tracking-wider shadow-sm min-h-[44px]"
+                  onClick={() => navigateTo('shop', null, 'New')}
+                  className="w-full lg:w-auto bg-[#FDF7F2]/60 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-6 sm:px-8 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 min-h-[44px] text-center"
                 >
-                  Promotional Sale
+                  <span>EXPLORE NEW ARRIVALS</span>
                 </button>
               </div>
 
-              {/* Quick Trust Badges in Mobile 3-Col Layout */}
-              <div className="pt-2 sm:pt-4 grid grid-cols-3 gap-2 sm:gap-6 text-[10px] sm:text-xs text-stone-600 font-medium text-center border-t border-brand-gold/15 lg:border-0 lg:text-left">
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-1 sm:gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                  <span>Handcrafted Quality</span>
+              {/* Three Value / Trust Indicators: Centered with subtle vertical dividers on Mobile */}
+              <div className="flex items-center justify-center lg:justify-start gap-2.5 sm:gap-4 lg:gap-8 pt-3 sm:pt-4 text-[#5C5552]">
+                <div className="flex items-center gap-1.5 sm:gap-2 pr-2.5 sm:pr-4 border-r border-[#DFCBB9]/60 lg:border-r-0">
+                  <Gem className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
+                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                    <span className="font-medium text-[#2E2A28] block">Premium</span>
+                    <span className="text-[#7A736F]">Quality</span>
+                  </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-1 sm:gap-1.5">
-                  <Gift className="w-4 h-4 text-brand-rose flex-shrink-0" />
-                  <span>Insured Packaging</span>
+
+                <div className="flex items-center gap-1.5 sm:gap-2 pr-2.5 sm:pr-4 border-r border-[#DFCBB9]/60 lg:border-r-0">
+                  <Gift className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
+                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                    <span className="font-medium text-[#2E2A28] block">Elegant</span>
+                    <span className="text-[#7A736F]">Packaging</span>
+                  </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-1 sm:gap-1.5">
-                  <Award className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                  <span>AAA+ Crystals</span>
+
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Heart className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
+                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                    <span className="font-medium text-[#2E2A28] block">Designed</span>
+                    <span className="text-[#7A736F]">for You</span>
+                  </div>
                 </div>
               </div>
 
             </div>
 
-            {/* Right Hero Image Card (Mobile Proportionate Spotlight) */}
-            <div className="lg:col-span-5 relative mt-2 lg:mt-0">
-              <div className="relative mx-auto max-w-[260px] sm:max-w-xs lg:max-w-none">
-                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white bg-gradient-to-b from-stone-50 via-brand-cream/50 to-white p-2.5 sm:p-4 relative group flex items-center justify-center">
-                  <img
-                    src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000"
-                    alt="Royal Kundan Choker Model"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950/85 via-stone-900/40 to-transparent p-3 sm:p-6 text-white rounded-b-3xl">
-                    <span className="text-[8px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-pink bg-brand-rose/20 px-2 py-0.5 sm:py-1 rounded-full border border-brand-pink/30">Signature Piece</span>
-                    <h3 className="font-serif text-sm sm:text-xl font-bold mt-1">Royal Kundan & Pearl Choker</h3>
-                  </div>
-                </div>
-
-                {/* Floating Emblem Tag */}
-                <div className="absolute -bottom-3 -left-3 bg-white p-2 sm:p-3 rounded-2xl shadow-xl border border-brand-gold/30 items-center gap-2 hidden sm:flex">
-                  <img src="/logo.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-                  <div>
-                    <h4 className="font-serif text-xs font-bold text-stone-900">Ella Creations</h4>
-                    <p className="text-[9px] sm:text-[10px] text-brand-rose font-medium">Handcrafted Artificial Jewelry</p>
+            {/* RIGHT SIDE: Five Models Showcase */}
+            <div className="lg:col-span-7 xl:col-span-7 relative flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-end h-full mt-2 lg:mt-0">
+              
+              {/* Mobile Only: 'Shine Your Way ♡' floating on right above the models */}
+              <div className="lg:hidden w-full flex justify-end pr-3 sm:pr-6 -mb-4 sm:-mb-6 z-20 pointer-events-none select-none">
+                <div className="text-right">
+                  <p className="font-script text-2xl sm:text-3xl text-[#B87080] leading-none transform -rotate-6 tracking-wide drop-shadow-sm">
+                    Shine<br />Your Way
+                  </p>
+                  <div className="flex justify-end mt-0.5 pr-1 text-[#B87080]">
+                    <svg className="w-3.5 h-3.5 transform -rotate-12" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
                   </div>
                 </div>
               </div>
+
+              {/* Models Image Container: On Desktop, enlarged to cover the whole section */}
+              <div className="relative w-full lg:w-[118%] xl:w-[126%] 2xl:w-[134%] max-w-none lg:-mr-8 xl:-mr-16 2xl:-mr-24 flex items-end justify-center lg:justify-end">
+                
+                {/* Five-Model Photographic Asset */}
+                <img
+                  src="/hero-models.png"
+                  alt="Five Models Showcasing Ella Creations Handcrafted Luxury Jewelry"
+                  className="w-full h-auto max-h-[380px] sm:max-h-[460px] lg:max-h-[680px] xl:max-h-[760px] 2xl:max-h-[840px] object-contain object-bottom select-none drop-shadow-sm scale-100 lg:scale-105 xl:scale-110 2xl:scale-115 origin-bottom-right"
+                  style={{
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 100%)',
+                  }}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+
+                {/* Subtle base vignette so models blend seamlessly at bottom */}
+                <div className="absolute inset-x-0 bottom-0 h-8 sm:h-12 bg-gradient-to-t from-[#F8EFE7]/80 via-transparent to-transparent pointer-events-none" />
+
+                {/* Mobile Carousel Dots (4 dots at bottom center of models as in mobile reference) */}
+                <div className="lg:hidden absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 pointer-events-none">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#B87080] ring-2 ring-white/80 shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
+                </div>
+
+                {/* Desktop Only: Handwritten 'Shine Your Way ♡' */}
+                <div className="hidden lg:block absolute top-4 xl:top-8 right-4 xl:right-10 text-right select-none pointer-events-none z-20">
+                  <p className="font-script text-3xl xl:text-4xl text-[#B87080] leading-none transform -rotate-6 tracking-wide drop-shadow-sm">
+                    Shine<br />Your Way
+                  </p>
+                  <div className="flex justify-end mt-1 pr-1 text-[#B87080]">
+                    <svg className="w-4 h-4 xl:w-5 xl:h-5 transform -rotate-12" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Desktop Only: Vertical carousel indicator dots on far right edge */}
+                <div className="hidden lg:flex absolute right-0 xl:right-2 top-1/2 -translate-y-1/2 flex-col gap-2.5 z-20 pointer-events-none">
+                  <span className="w-2 h-2 rounded-full bg-[#B87080] shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-white/80 border border-[#B87080]/30"></span>
+                  <span className="w-2 h-2 rounded-full bg-white/80 border border-[#B87080]/30"></span>
+                </div>
+
+                {/* Desktop Only: Bottom Right Corner 'More Than Jewelry / A Feeling' */}
+                <div className="hidden lg:block absolute bottom-3 xl:bottom-5 right-4 xl:right-10 text-right pointer-events-none z-20">
+                  <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.2em] text-[#7A736F] font-serif">More Than Jewelry</p>
+                  <p className="text-xs xl:text-sm italic text-[#B87080] font-editorial">A Feeling</p>
+                </div>
+
+              </div>
+
             </div>
 
           </div>
         </div>
+
       </section>
 
       {/* Category Collections Section (Small Round Fitted Shapes for 7 Categories) */}
