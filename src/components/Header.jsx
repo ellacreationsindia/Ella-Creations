@@ -38,8 +38,13 @@ export default function Header() {
     signOutUser,
     showToast,
     activePopupCampaign,
+    activePromotions = [],
+    promotions = [],
     selectedCategory
   } = useStore();
+
+  const primaryPromotion = activePopupCampaign || (activePromotions && activePromotions[0]) || (promotions && promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)) || null;
+  const promoDiscount = primaryPromotion ? (primaryPromotion.discount_percentage || primaryPromotion.discountPercentage || 0) : 0;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileShopOpen, setIsMobileShopOpen] = useState(true);
@@ -98,15 +103,27 @@ export default function Header() {
       
       {/* Top Announcement Bar */}
       <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-[10px] sm:text-xs py-2 px-2.5 sm:px-3 text-center tracking-wider font-medium flex items-center justify-center gap-1.5 sm:gap-2 leading-tight">
-        {activePopupCampaign ? (
+        {primaryPromotion ? (
           <button
             onClick={() => navigateTo('shop', null, 'Sale')}
             className="hover:text-amber-200 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer w-full text-center"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin flex-shrink-0" style={{ animationDuration: '6s' }} />
             <span className="truncate max-w-[90vw] sm:max-w-none">
-              <strong className="text-amber-300 font-bold uppercase tracking-wider">{activePopupCampaign.headline || activePopupCampaign.name}: FLAT {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF</strong>
-              <span className="hidden sm:inline text-stone-300"> — TAP TO EXPLORE FESTIVE SALE</span>
+              <strong className="text-amber-300 font-bold uppercase tracking-wider">
+                {(() => {
+                  const headline = primaryPromotion.headline || '';
+                  const name = primaryPromotion.name || 'Special Promotional Sale';
+                  if (headline) {
+                    if (/\b\d+%\s*OFF\b/i.test(headline)) {
+                      return headline;
+                    }
+                    return `${headline} — FLAT ${promoDiscount}% OFF`;
+                  }
+                  return `${name}: FLAT ${promoDiscount}% OFF`;
+                })()}
+              </strong>
+              <span className="hidden sm:inline text-stone-300"> — TAP TO EXPLORE SALE</span>
             </span>
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin flex-shrink-0" style={{ animationDuration: '6s' }} />
           </button>
@@ -157,7 +174,7 @@ export default function Header() {
               >
                 Shop Collections
               </button>
-              {activePopupCampaign && (
+              {primaryPromotion && (
                 <button 
                   onClick={() => navigateTo('shop', null, 'Sale')} 
                   className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
@@ -169,7 +186,7 @@ export default function Header() {
                   <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
                   <span>Sale</span>
                   <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                    {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF
+                    {promoDiscount}% OFF
                   </span>
                 </button>
               )}
@@ -406,17 +423,17 @@ export default function Header() {
                 </button>
 
                 {/* Active Promotional Sale Ribbon Item */}
-                {activePopupCampaign && (
+                {primaryPromotion && (
                   <button
                     onClick={() => { navigateTo('shop', null, 'Sale'); setIsMobileMenuOpen(false); }}
                     className="w-full text-left px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-brand-rose text-white font-bold transition-all shadow-sm flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-                      <span>Promotional Sale</span>
+                      <span>{primaryPromotion.name || 'Promotional Sale'}</span>
                     </div>
                     <span className="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                      FLAT {activePopupCampaign.discount_percentage || activePopupCampaign.discountPercentage || 0}% OFF
+                      FLAT {promoDiscount}% OFF
                     </span>
                   </button>
                 )}

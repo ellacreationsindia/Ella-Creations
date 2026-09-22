@@ -146,16 +146,16 @@ export default function PromotionManager() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       
       {/* Top Banner & Action */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 p-6 rounded-3xl border border-brand-gold/30 shadow-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 p-4 sm:p-5 rounded-2xl border border-brand-gold/30 shadow-lg">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-brand-rose/20 border border-brand-rose/30 flex items-center justify-center text-brand-rose">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-brand-rose/20 border border-brand-rose/30 flex items-center justify-center text-brand-rose">
+              <Sparkles className="w-3.5 h-3.5" />
             </div>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
+            <h2 className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
               Sales & Promotions Engine
             </h2>
           </div>
@@ -166,7 +166,7 @@ export default function PromotionManager() {
 
         <button
           onClick={handleOpenCreate}
-          className="bg-gradient-to-r from-brand-rose to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white font-semibold px-5 py-2.5 rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-soft-rose flex items-center gap-2 cursor-pointer shrink-0"
+          className="bg-gradient-to-r from-brand-rose to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white font-semibold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-soft-rose flex items-center gap-2 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Create Promotion</span>

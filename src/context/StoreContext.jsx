@@ -399,6 +399,37 @@ export const StoreProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Realtime cross-tab & window promotions sync
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ella_promotions' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setPromotions(parsed);
+          }
+        } catch (err) {}
+      }
+    };
+
+    const handleCustomUpdate = () => {
+      try {
+        const saved = localStorage.getItem('ella_promotions');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) setPromotions(parsed);
+        }
+      } catch (err) {}
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('ella_promo_updated', handleCustomUpdate);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('ella_promo_updated', handleCustomUpdate);
+    };
+  }, []);
+
   // Sync blogs to localStorage
   useEffect(() => {
     localStorage.setItem('ella_blogs', JSON.stringify(blogs));
@@ -431,7 +462,8 @@ export const StoreProvider = ({ children }) => {
         return;
       }
       if (data && Array.isArray(data) && data.length > 0) {
-        const mapped = data.map((p) => ({
+        const validProducts = data.filter((p) => p && p.id && !String(p.id).startsWith('__system_'));
+        const mapped = validProducts.map((p) => ({
           id: p.id,
           title: p.title || 'Untitled Product',
           category: p.category || 'Jewelry',
@@ -1381,6 +1413,26 @@ export const StoreProvider = ({ children }) => {
     showToast('Thank you! Your product review has been published.');
   };
 
+  // Supabase Promotion Cloud Backup & Synchronization
+  const syncPromotionsCloudBackup = async (promotionsList) => {
+    try {
+      if (!Array.isArray(promotionsList)) return;
+      await supabase.from('products').upsert([{
+        id: '__system_promotions__',
+        title: '__SYSTEM_PROMOTIONS_METADATA__',
+        category: '__SYSTEM__',
+        price: 0,
+        sku: 'SYSTEM-PROMO',
+        images: [],
+        description: JSON.stringify(promotionsList),
+        details: ['System metadata backup for promotional campaigns'],
+        created_at: new Date().toISOString()
+      }]);
+    } catch (err) {
+      console.warn('Supabase cloud backup promotions error:', err.message);
+    }
+  };
+
   // Supabase Promotion Campaign Handlers
   const fetchPromotionsFromSupabase = async () => {
     try {
@@ -1389,12 +1441,37 @@ export const StoreProvider = ({ children }) => {
         .select('*')
         .order('priority', { ascending: true });
 
-      if (promoError) {
-        console.warn('Supabase DB promotions fetch notice:', promoError.message);
+      // If promotions table does not exist or returned empty, fallback to system metadata row in products
+      if (promoError || !promoData || promoData.length === 0) {
+        if (promoError) {
+          console.info('Supabase promotions table notice, checking system metadata:', promoError.message);
+        }
+
+        const { data: sysData } = await supabase
+          .from('products')
+          .select('description')
+          .eq('id', '__system_promotions__')
+          .maybeSingle();
+
+        if (sysData && sysData.description) {
+          try {
+            const parsed = JSON.parse(sysData.description);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const mapped = parsed.map(normalizePromo);
+              setPromotions(mapped);
+              try {
+                localStorage.setItem('ella_promotions', JSON.stringify(mapped));
+              } catch (e) {}
+              return;
+            }
+          } catch (pe) {
+            console.warn('Error parsing __system_promotions__ payload:', pe);
+          }
+        }
         return;
       }
 
-      if (promoData && Array.isArray(promoData)) {
+      if (promoData && Array.isArray(promoData) && promoData.length > 0) {
         const { data: junctionData } = await supabase
           .from('promotion_products')
           .select('*');
@@ -1417,35 +1494,10 @@ export const StoreProvider = ({ children }) => {
                 ? existingPids 
                 : (Array.isArray(p.product_ids) ? p.product_ids : (Array.isArray(p.productIds) ? p.productIds : [])));
 
-          return {
-            id: p.id,
-            name: p.name || 'Untitled Campaign',
-            headline: p.headline || '',
-            description: p.description || '',
-            discount_percentage: Number(p.discount_percentage || p.discountPercentage || 0),
-            discountPercentage: Number(p.discount_percentage || p.discountPercentage || 0),
-            start_at: p.start_at || p.startAt,
-            startAt: p.start_at || p.startAt,
-            end_at: p.end_at || p.endAt,
-            endAt: p.end_at || p.endAt,
-            is_enabled: p.is_enabled !== false && p.isEnabled !== false,
-            isEnabled: p.is_enabled !== false && p.isEnabled !== false,
-            priority: Number(p.priority || 1),
-            product_ids: finalPids,
-            productIds: finalPids,
-            cta_text: p.cta_text || p.ctaText || 'SHOP THE SALE',
-            ctaText: p.cta_text || p.ctaText || 'SHOP THE SALE',
-            cta_url: p.cta_url || p.ctaUrl || '#sale',
-            ctaUrl: p.cta_url || p.ctaUrl || '#sale',
-            image_url: p.image_url || p.imageUrl || null,
-            imageUrl: p.image_url || p.imageUrl || null,
-            popup_enabled: p.popup_enabled !== false && p.popupEnabled !== false,
-            popupEnabled: p.popup_enabled !== false && p.popupEnabled !== false,
-            popup_frequency: p.popup_frequency || p.popupFrequency || 'once_per_session',
-            popupFrequency: p.popup_frequency || p.popupFrequency || 'once_per_session',
-            created_at: p.created_at || p.createdAt || new Date().toISOString(),
-            updated_at: p.updated_at || p.updatedAt || new Date().toISOString()
-          };
+          return normalizePromo({
+            ...p,
+            product_ids: finalPids
+          });
         });
 
         if (mapped.length > 0) {
@@ -1453,6 +1505,7 @@ export const StoreProvider = ({ children }) => {
           try {
             localStorage.setItem('ella_promotions', JSON.stringify(mapped));
           } catch (e) {}
+          syncPromotionsCloudBackup(mapped);
         }
       }
     } catch (err) {
@@ -1543,17 +1596,21 @@ export const StoreProvider = ({ children }) => {
 
     clearPromoSeenCaches(newPromo.id);
 
+    let updatedList = [];
     setPromotions(prev => {
-      const updated = [newPromo, ...prev];
+      updatedList = [newPromo, ...prev];
       try {
-        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+        localStorage.setItem('ella_promotions', JSON.stringify(updatedList));
       } catch (e) {}
-      return updated;
+      return updatedList;
     });
 
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: newPromo }));
     }
+
+    // Always sync cloud backup
+    syncPromotionsCloudBackup(updatedList.length > 0 ? updatedList : [newPromo, ...promotions]);
 
     try {
       const { error: promoError } = await supabase.from('promotions').insert([{
@@ -1595,17 +1652,21 @@ export const StoreProvider = ({ children }) => {
 
     clearPromoSeenCaches(normalizedPromo.id);
 
+    let updatedList = [];
     setPromotions(prev => {
-      const updated = prev.map(p => p.id === normalizedPromo.id ? normalizedPromo : p);
+      updatedList = prev.map(p => p.id === normalizedPromo.id ? normalizedPromo : p);
       try {
-        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+        localStorage.setItem('ella_promotions', JSON.stringify(updatedList));
       } catch (e) {}
-      return updated;
+      return updatedList;
     });
 
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: normalizedPromo }));
     }
+
+    // Always sync cloud backup
+    syncPromotionsCloudBackup(updatedList.length > 0 ? updatedList : promotions.map(p => p.id === normalizedPromo.id ? normalizedPromo : p));
 
     try {
       const { error: promoError } = await supabase.from('promotions').upsert([{
@@ -1646,13 +1707,16 @@ export const StoreProvider = ({ children }) => {
 
   const deletePromotion = async (promotionId) => {
     clearPromoSeenCaches(promotionId);
+    let updatedList = [];
     setPromotions(prev => {
-      const updated = prev.filter(p => p.id !== promotionId);
+      updatedList = prev.filter(p => p.id !== promotionId);
       try {
-        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+        localStorage.setItem('ella_promotions', JSON.stringify(updatedList));
       } catch (e) {}
-      return updated;
+      return updatedList;
     });
+
+    syncPromotionsCloudBackup(updatedList);
 
     try {
       await supabase.from('promotion_products').delete().eq('promotion_id', promotionId);
@@ -1667,18 +1731,21 @@ export const StoreProvider = ({ children }) => {
   const togglePromotionStatus = async (promotionId, currentEnabled) => {
     const updatedEnabled = !currentEnabled;
     clearPromoSeenCaches(promotionId);
+    let updatedList = [];
     setPromotions(prev => {
-      const updated = prev.map(p => p.id === promotionId ? { 
+      updatedList = prev.map(p => p.id === promotionId ? { 
         ...p, 
         is_enabled: updatedEnabled, 
         isEnabled: updatedEnabled, 
         updated_at: new Date().toISOString() 
       } : p);
       try {
-        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+        localStorage.setItem('ella_promotions', JSON.stringify(updatedList));
       } catch (e) {}
-      return updated;
+      return updatedList;
     });
+
+    syncPromotionsCloudBackup(updatedList);
 
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: { id: promotionId, is_enabled: updatedEnabled } }));
@@ -1696,18 +1763,21 @@ export const StoreProvider = ({ children }) => {
   const togglePopupEnabled = async (promotionId, currentPopupEnabled) => {
     const updatedPopup = !currentPopupEnabled;
     clearPromoSeenCaches(promotionId);
+    let updatedList = [];
     setPromotions(prev => {
-      const updated = prev.map(p => p.id === promotionId ? { 
+      updatedList = prev.map(p => p.id === promotionId ? { 
         ...p, 
         popup_enabled: updatedPopup, 
         popupEnabled: updatedPopup, 
         updated_at: new Date().toISOString() 
       } : p);
       try {
-        localStorage.setItem('ella_promotions', JSON.stringify(updated));
+        localStorage.setItem('ella_promotions', JSON.stringify(updatedList));
       } catch (e) {}
-      return updated;
+      return updatedList;
     });
+
+    syncPromotionsCloudBackup(updatedList);
 
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: { id: promotionId, popup_enabled: updatedPopup } }));

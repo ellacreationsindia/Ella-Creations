@@ -81,7 +81,7 @@ export default function PromotionForm({
       
       setFormData({
         name: 'Festive Season Sale',
-        headline: 'Festive Sale — Flat 50% OFF',
+        headline: 'Festive Season Grand Sale',
         description: 'Celebrate the festive season with exclusive offers on selected Ella Creations handcrafted jewelry.',
         discountPercentage: '50',
         startAt: toISTInputString(now),
@@ -346,7 +346,16 @@ export default function PromotionForm({
                         min="1"
                         max="99"
                         value={formData.discountPercentage}
-                        onChange={(e) => setFormData({ ...formData, discountPercentage: e.target.value })}
+                        onChange={(e) => {
+                          const newDisc = e.target.value;
+                          setFormData(prev => {
+                            const updated = { ...prev, discountPercentage: newDisc };
+                            if (prev.headline && /\b\d+%\s*OFF\b/i.test(prev.headline)) {
+                              updated.headline = prev.headline.replace(/\b\d+%\s*OFF\b/i, `${newDisc || '0'}% OFF`);
+                            }
+                            return updated;
+                          });
+                        }}
                         placeholder="50"
                         className="w-full bg-stone-950 text-white text-xs pl-3.5 pr-8 py-2.5 rounded-xl border border-stone-800 focus:border-brand-gold outline-none font-bold"
                       />

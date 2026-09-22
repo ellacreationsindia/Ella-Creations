@@ -867,7 +867,7 @@ export default function AdminView() {
     <div className="min-h-screen bg-stone-900 text-stone-100 flex flex-col font-sans">
       
       {/* Top Shopify Admin Header Bar with Enlarged Logo */}
-      <header className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-4 flex items-center justify-between">
+      <header className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -875,8 +875,8 @@ export default function AdminView() {
           >
             {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <img src="/logo.png" alt="Logo" className="h-12 w-auto filter drop-shadow" />
-          <span className="font-serif text-lg sm:text-2xl font-bold text-white tracking-wider">Ella Admin</span>
+          <img src="/logo.png" alt="Logo" className="h-9 sm:h-10 w-auto filter drop-shadow" />
+          <span className="font-serif text-lg sm:text-xl font-bold text-white tracking-wider">Ella Admin</span>
           <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
             <Crown className="w-3.5 h-3.5" /> Real Database Telemetry
           </span>
@@ -995,11 +995,11 @@ export default function AdminView() {
         </aside>
 
         {/* Dashboard Content Region */}
-        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-8 overflow-y-auto max-h-[calc(100vh-64px)]">
+        <main className="flex-1 p-3 sm:p-5 md:p-6 space-y-5 overflow-y-auto max-h-[calc(100vh-56px)]">
           
           {/* TAB 1: REAL OVERVIEW ANALYTICS */}
           {activeTab === 'overview' && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               
               {/* Header */}
               <div>

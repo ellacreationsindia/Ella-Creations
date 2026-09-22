@@ -170,19 +170,6 @@ export default function HomeView() {
             {/* RIGHT SIDE: Five Models Showcase */}
             <div className="lg:col-span-7 xl:col-span-7 relative flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-end h-full mt-2 lg:mt-0">
               
-              {/* Mobile Only: 'Shine Your Way ♡' floating on right above the models */}
-              <div className="lg:hidden w-full flex justify-end pr-3 sm:pr-6 -mb-4 sm:-mb-6 z-20 pointer-events-none select-none">
-                <div className="text-right">
-                  <p className="font-script text-2xl sm:text-3xl text-[#B87080] leading-none transform -rotate-6 tracking-wide drop-shadow-sm">
-                    Shine<br />Your Way
-                  </p>
-                  <div className="flex justify-end mt-0.5 pr-1 text-[#B87080]">
-                    <svg className="w-3.5 h-3.5 transform -rotate-12" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
 
               {/* Models Image Container: On Desktop, enlarged to cover the whole section */}
               <div className="relative w-full lg:w-[118%] xl:w-[126%] 2xl:w-[134%] max-w-none lg:-mr-8 xl:-mr-16 2xl:-mr-24 flex items-end justify-center lg:justify-end">
@@ -212,17 +199,6 @@ export default function HomeView() {
                   <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
                 </div>
 
-                {/* Desktop Only: Handwritten 'Shine Your Way ♡' */}
-                <div className="hidden lg:block absolute top-4 xl:top-8 right-4 xl:right-10 text-right select-none pointer-events-none z-20">
-                  <p className="font-script text-3xl xl:text-4xl text-[#B87080] leading-none transform -rotate-6 tracking-wide drop-shadow-sm">
-                    Shine<br />Your Way
-                  </p>
-                  <div className="flex justify-end mt-1 pr-1 text-[#B87080]">
-                    <svg className="w-4 h-4 xl:w-5 xl:h-5 transform -rotate-12" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                </div>
 
                 {/* Desktop Only: Vertical carousel indicator dots on far right edge */}
                 <div className="hidden lg:flex absolute right-0 xl:right-2 top-1/2 -translate-y-1/2 flex-col gap-2.5 z-20 pointer-events-none">

@@ -15,6 +15,9 @@ export default function ShopView() {
     recentlyViewed
   } = useStore();
 
+  const primaryPromotion = activePopupCampaign || (activePromotions && activePromotions[0]) || (promotions && promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)) || null;
+  const promoDiscount = primaryPromotion ? (primaryPromotion.discount_percentage || primaryPromotion.discountPercentage || 0) : 0;
+
   // Detailed & Relevant Jewelry Filters
   const [selectedOccasion, setSelectedOccasion] = useState('All');
   const [selectedPolish, setSelectedPolish] = useState('All');
@@ -572,28 +575,18 @@ export default function ShopView() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400/20 to-rose-400/20 border border-amber-300/40 text-amber-200 text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
                 <span>
-                  {activePopupCampaign?.name || 
-                   promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.name || 
-                   'Festive Seasonal Sale'}
+                  {primaryPromotion?.name || 'Promotional Sale'}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 <span>
-                  FLAT {activePopupCampaign?.discount_percentage || 
-                        activePopupCampaign?.discountPercentage || 
-                        promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.discount_percentage || 
-                        promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.discountPercentage || 
-                        50}% OFF
+                  FLAT {promoDiscount}% OFF
                 </span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-brand-cream">
-                {activePopupCampaign?.headline || 
-                 promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.headline || 
-                 'Exclusive Promotional Jewelry Sale'}
+                {primaryPromotion?.headline || primaryPromotion?.name || 'Exclusive Promotional Jewelry Sale'}
               </h1>
               <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-                {activePopupCampaign?.description || 
-                 promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)?.description || 
-                 'Celebrate with our handcrafted artificial fine jewelry at exclusive celebratory pricing. Hand-set Kundan, Cubic Zirconia, and bridal heirlooms with complimentary insured dispatch across India.'}
+                {primaryPromotion?.description || 'Celebrate with our handcrafted artificial fine jewelry at exclusive celebratory pricing. Hand-set Kundan, Cubic Zirconia, and bridal heirlooms with complimentary insured dispatch across India.'}
               </p>
             </div>
 
@@ -613,19 +606,19 @@ export default function ShopView() {
         </div>
       ) : (
         <>
-          {activePopupCampaign && (
+          {primaryPromotion && (
             <div className="bg-gradient-to-r from-stone-900 via-rose-950 to-stone-900 text-white px-4 py-3 rounded-2xl border border-brand-gold/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
               <div className="flex items-center gap-2.5 text-xs text-center sm:text-left">
                 <Sparkles className="w-4 h-4 text-brand-gold shrink-0 animate-pulse" />
                 <span>
-                  <strong className="text-amber-200">{activePopupCampaign.headline}</strong> — Limited-time promotional discounts applied on selected items.
+                  <strong className="text-amber-200">{primaryPromotion.headline || primaryPromotion.name}</strong> — Limited-time promotional discounts applied on selected items.
                 </span>
               </div>
               <button
                 onClick={() => setSelectedCategory('Sale')}
                 className="bg-brand-rose hover:bg-rose-700 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-xl uppercase tracking-wider shadow-sm shrink-0 transition-colors cursor-pointer"
               >
-                Shop {activePopupCampaign.discount_percentage}% OFF Sale &rarr;
+                Shop {promoDiscount}% OFF Sale &rarr;
               </button>
             </div>
           )}

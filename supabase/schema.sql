@@ -175,6 +175,7 @@ CREATE TABLE IF NOT EXISTS public.promotions (
   end_at TIMESTAMP WITH TIME ZONE NOT NULL,
   is_enabled BOOLEAN DEFAULT true,
   priority INTEGER DEFAULT 1,
+  all_products BOOLEAN DEFAULT false,
   cta_text TEXT DEFAULT 'SHOP THE SALE',
   cta_url TEXT DEFAULT '#sale',
   image_url TEXT,

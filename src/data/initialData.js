@@ -417,8 +417,8 @@ export const INITIAL_PROMOTIONS = [
   {
     id: "promo_festive_50",
     name: "Festive Season Sale",
-    headline: "Festive Sale — Flat 50% OFF",
-    description: "Celebrate the festive season with exclusive 50% savings on selected Ella Creations handcrafted jewelry.",
+    headline: "Festive Season Grand Celebration",
+    description: "Celebrate with exclusive promotional savings on selected Ella Creations handcrafted jewelry.",
     discount_percentage: 50,
     discountPercentage: 50,
     start_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
