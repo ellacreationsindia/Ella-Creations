@@ -36,7 +36,7 @@ export const getProductUrl = (product) => {
   if (!product) return typeof window !== 'undefined' ? window.location.origin : 'https://ella-creations.com';
   const slug = getProductSlug(product);
   const base = typeof window !== 'undefined' ? window.location.origin : 'https://ella-creations.com';
-  return `${base}/#product/${slug}`;
+  return `${base}/product/${slug}`;
 };
 
 const ADMIN_EMAIL = 'ellacreationsindia@gmail.com';
@@ -149,7 +149,22 @@ export const StoreProvider = ({ children }) => {
   const [selectedBlogId, setSelectedBlogId] = useState('');
 
   // UI state
-  const [currentView, setCurrentView] = useState('home');
+  const getInitialView = () => {
+    if (typeof window === 'undefined') return 'home';
+    const path = window.location.pathname.replace(/^\//, '').trim();
+    if (!path || path === 'home' || path === 'index.html') return 'home';
+    if (path.startsWith('product/')) return 'product';
+    if (path.startsWith('blog/')) return 'blog-detail';
+    if (path === 'blog' || path === 'blogs') return 'blog';
+    if (path === 'shop') return 'shop';
+    if (['terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(path)) return path;
+    const hash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (hash === 'shop') return 'shop';
+    if (hash.startsWith('product')) return 'product';
+    if (hash.startsWith('blog')) return hash.startsWith('blog-') ? 'blog-detail' : 'blog';
+    return 'home';
+  };
+  const [currentView, setCurrentView] = useState(getInitialView);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
@@ -220,58 +235,64 @@ export const StoreProvider = ({ children }) => {
       setSelectedCategory(category);
     }
 
-    // Synchronize window.location.hash for shareable links, deep linking & SEO crawlability
+    // Synchronize HTML5 pushState canonical URLs for clean search engine crawlability & indexing
     if (typeof window !== 'undefined') {
-      let targetHash = '';
+      let targetPath = '/';
       if (view === 'home') {
-        targetHash = '';
+        targetPath = '/';
       } else if (view === 'shop') {
-        targetHash = category && category === 'Sale'
-          ? '#sale'
-          : (category && category !== 'All' 
-              ? `#${slugify(category)}` 
-              : '#shop');
+        if (category && category === 'Sale') {
+          targetPath = '/shop?category=Sale';
+        } else if (category && category !== 'All') {
+          targetPath = `/shop?category=${encodeURIComponent(category)}`;
+        } else {
+          targetPath = '/shop';
+        }
       } else if (view === 'product') {
         const rawTarget = itemId || selectedProductId;
         const targetProd = products.find(p => p.id === rawTarget || slugify(p.title) === slugify(rawTarget)) || 
                            products.find(p => p.id === selectedProductId) ||
                            products[0];
-        targetHash = targetProd ? `#product/${getProductSlug(targetProd)}` : '#shop';
+        targetPath = targetProd ? `/product/${getProductSlug(targetProd)}` : '/shop';
       } else if (view === 'blog') {
-        targetHash = '#blog';
+        targetPath = '/blog';
       } else if (view === 'blog-detail') {
         const targetBlog = itemId || selectedBlogId;
-        targetHash = targetBlog ? `#blog-${targetBlog}` : '#blog';
+        targetPath = targetBlog ? `/blog/${targetBlog}` : '/blog';
       } else {
-        targetHash = `#${view}`;
+        targetPath = `/${view}`;
       }
 
-      if (window.location.hash !== targetHash) {
-        if (!targetHash) {
-          window.history.pushState(null, '', window.location.pathname + window.location.search);
-        } else {
-          window.location.hash = targetHash;
-        }
+      const currentPathWithSearch = window.location.pathname + window.location.search;
+      if (currentPathWithSearch !== targetPath || window.location.hash) {
+        window.history.pushState({ view, itemId, category }, '', targetPath);
       }
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Deep Link, Pathname & Hash Routing Initializer / Listener
+  // Deep Link, Pathname & Clean URL Routing Initializer / Listener
   useEffect(() => {
-    const handleHashRouting = () => {
+    const handleUrlRouting = () => {
       if (typeof window === 'undefined') return;
       const rawHash = window.location.hash || '';
       if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
 
-      let routePath = rawHash.replace(/^#\/?/, '').trim();
-      // If no hash present, inspect pathname for clean canonical URLs
-      if (!routePath && window.location.pathname && window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
-        routePath = window.location.pathname.replace(/^\//, '').trim();
+      let routePath = window.location.pathname.replace(/^\//, '').trim();
+      const queryParams = new URLSearchParams(window.location.search);
+
+      // Handle legacy hash navigation and migrate immediately to clean path
+      if (rawHash && (rawHash.startsWith('#/') || rawHash.startsWith('#'))) {
+        const legacyHash = rawHash.replace(/^#\/?/, '').trim();
+        if (legacyHash) {
+          routePath = legacyHash;
+          const cleanCanonical = legacyHash === 'home' ? '/' : `/${legacyHash}`;
+          window.history.replaceState(null, '', cleanCanonical);
+        }
       }
 
-      if (!routePath || routePath === 'home') {
+      if (!routePath || routePath === 'home' || routePath === 'index.html') {
         setCurrentView('home');
       } else if (routePath.startsWith('product/') || routePath.startsWith('product-')) {
         const param = routePath.startsWith('product/') ? routePath.replace('product/', '') : routePath.replace('product-', '');
@@ -313,8 +334,7 @@ export const StoreProvider = ({ children }) => {
         setSelectedCategory('Sale');
       } else if (routePath === 'shop') {
         setCurrentView('shop');
-        const searchParams = new URLSearchParams(window.location.search);
-        const cat = searchParams.get('category');
+        const cat = queryParams.get('category');
         if (cat) {
           setSelectedCategory(decodeURIComponent(cat));
         } else {
@@ -341,17 +361,27 @@ export const StoreProvider = ({ children }) => {
       } else if (routePath === 'others') {
         setCurrentView('shop');
         setSelectedCategory('Others');
+      } else if (routePath === 'terms-of-service') {
+        setCurrentView('terms');
+      } else if (routePath === 'privacy-policy') {
+        setCurrentView('privacy');
+      } else if (routePath === 'returns-refunds' || routePath === 'refunds') {
+        setCurrentView('refund-policy');
+      } else if (routePath === 'jewelry-care') {
+        setCurrentView('brand-guidelines');
       } else if (['terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(routePath)) {
         setCurrentView(routePath);
+      } else {
+        setCurrentView('404');
       }
     };
 
-    handleHashRouting();
-    window.addEventListener('hashchange', handleHashRouting);
-    window.addEventListener('popstate', handleHashRouting);
+    handleUrlRouting();
+    window.addEventListener('popstate', handleUrlRouting);
+    window.addEventListener('hashchange', handleUrlRouting);
     return () => {
-      window.removeEventListener('hashchange', handleHashRouting);
-      window.removeEventListener('popstate', handleHashRouting);
+      window.removeEventListener('popstate', handleUrlRouting);
+      window.removeEventListener('hashchange', handleUrlRouting);
     };
   }, [products]);
 

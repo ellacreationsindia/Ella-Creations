@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Heart, Eye, ShoppingBag, Sparkles, Ban, Share2, Check } from 'lucide-react';
-import { useStore, formatPrice } from '../context/StoreContext';
+import { useStore, formatPrice, getProductSlug } from '../context/StoreContext';
 
 export default function ProductCard({ product }) {
   const { 
@@ -30,6 +30,8 @@ export default function ProductCard({ product }) {
   const discountPercent = product.comparePrice && product.comparePrice > product.price 
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) 
     : 0;
+
+  const productPath = `/product/${getProductSlug(product)}`;
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-soft-rose transition-all duration-300 flex flex-col relative h-full">
@@ -120,9 +122,13 @@ export default function ProductCard({ product }) {
       </button>
 
       {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}
-      <div 
-        onClick={() => navigateTo('product', product.id)}
-        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-2.5 sm:p-4 lg:p-6 cursor-pointer group flex items-center justify-center border-b border-stone-100"
+      <a 
+        href={productPath}
+        onClick={(e) => {
+          e.preventDefault();
+          navigateTo('product', product.id);
+        }}
+        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-2.5 sm:p-4 lg:p-6 cursor-pointer group flex items-center justify-center border-b border-stone-100 block"
       >
         {/* Photo Count Indicator (Desktop) */}
         {product.images && product.images.length > 1 && (
@@ -181,7 +187,7 @@ export default function ProductCard({ product }) {
             </button>
           )}
         </div>
-      </div>
+      </a>
 
       {/* Product Content Details */}
       <div className="p-3 sm:p-4 lg:p-5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3 lg:space-y-4">
@@ -194,11 +200,19 @@ export default function ProductCard({ product }) {
 
           {/* Title */}
           <h3 
-            onClick={() => navigateTo('product', product.id)}
-            className="font-serif text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-stone-900 line-clamp-1 lg:line-clamp-2 hover:text-brand-rose cursor-pointer transition-colors leading-snug"
+            className="font-serif text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-stone-900 line-clamp-1 lg:line-clamp-2 leading-snug"
             title={product.title}
           >
-            {product.title}
+            <a 
+              href={productPath}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('product', product.id);
+              }}
+              className="hover:text-brand-rose transition-colors"
+            >
+              {product.title}
+            </a>
           </h3>
 
           {/* Rating */}

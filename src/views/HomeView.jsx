@@ -66,19 +66,19 @@ export default function HomeView() {
   return (
     <div className="space-y-6 sm:space-y-8 lg:space-y-10 pb-6 sm:pb-10">
       
-      {/* Option 1 Premium Editorial Jewelry Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b lg:bg-gradient-to-r from-[#FAF4EE] via-[#F8EFE7] to-[#F5E8E4] border-b border-[#DFCBB9]/30 pt-4 sm:pt-6 lg:pt-0">
+      {/* Premium Editorial Jewelry Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b lg:bg-gradient-to-r from-[#FAF4EE] via-[#F8EFE7] to-[#F5E8E4] border-b border-[#DFCBB9]/30">
         
         {/* Background Architectural Arches & Soft Dappled Sunlight */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
           {/* Architectural Arch Silhouette 1 (Visible on tablet & desktop) */}
-          <div className="absolute right-[20%] top-4 w-60 sm:w-72 lg:w-96 h-[560px] rounded-t-full border border-[#DFCBB9]/35 bg-gradient-to-b from-white/35 to-transparent hidden sm:block" />
+          <div className="absolute right-[22%] top-4 w-60 sm:w-72 lg:w-96 h-[560px] rounded-t-full border border-[#DFCBB9]/35 bg-gradient-to-b from-white/35 to-transparent hidden sm:block" />
           {/* Architectural Arch Silhouette 2 */}
-          <div className="absolute right-[3%] top-10 w-52 sm:w-64 lg:w-80 h-[500px] rounded-t-full border border-[#DFCBB9]/25 bg-gradient-to-b from-white/25 to-transparent hidden sm:block" />
+          <div className="absolute right-[4%] top-10 w-52 sm:w-64 lg:w-80 h-[500px] rounded-t-full border border-[#DFCBB9]/25 bg-gradient-to-b from-white/25 to-transparent hidden sm:block" />
           {/* Soft warm radial glow behind models */}
           <div className="absolute right-[8%] top-1/4 w-80 sm:w-[540px] lg:w-[650px] h-80 sm:h-[540px] lg:h-[650px] rounded-full bg-[#F5DFD5]/45 blur-3xl" />
           
-          {/* Top Left Organic Dappled Shadow (Gentle warm sunlight filtering through botanical leaves) */}
+          {/* Top Left Organic Dappled Shadow */}
           <div className="absolute -top-12 -left-12 w-72 sm:w-96 lg:w-[480px] h-72 sm:h-96 lg:h-[480px] opacity-[0.07] blur-[2px] pointer-events-none">
             <svg viewBox="0 0 200 200" className="w-full h-full text-[#6E5D4F] fill-current">
               <path d="M40,-65C52,-58,62,-47,68,-34C74,-21,76,-6,73,8C70,22,62,35,52,46C42,57,30,66,16,70C2,74,-14,73,-28,67C-42,61,-54,50,-62,37C-70,24,-74,9,-72,-6C-70,-21,-62,-36,-51,-45C-40,-54,-26,-57,-12,-63C2,-69,28,-72,40,-65Z" transform="translate(100 100)" />
@@ -92,129 +92,157 @@ export default function HomeView() {
           </div>
         </div>
 
-        {/* Main Content Layout */}
-        <div className="max-w-[1580px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[500px] sm:min-h-[560px] lg:min-h-[660px] xl:min-h-[740px] 2xl:min-h-[800px] pt-4 sm:pt-6 lg:pt-0 pb-0">
+        {/* 1. MOBILE-OPTIMIZED COMPACT HERO (Visible on mobile & small tablets < lg) */}
+        {/* Specially tuned to ~200px height so both Hero & Category section fit above fold without scrolling */}
+        <div className="lg:hidden relative z-10 px-3.5 sm:px-6 py-3.5 sm:py-5 min-h-[195px] sm:min-h-[230px] flex items-center justify-between overflow-hidden">
+          {/* Left Text & CTA */}
+          <div className="w-[56%] sm:w-[52%] z-20 space-y-1.5 sm:space-y-2 pr-1">
+            <p className="text-[8px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#9E7D58]">
+              ARTIFICIAL JEWELRY INDIA
+            </p>
+            <h1 className="font-serif text-[22px] sm:text-[28px] font-bold tracking-tight text-[#1A1A1A] leading-[1.08]">
+              Jewelry for <br />
+              <span className="text-[#B87080] font-serif font-normal">Every You</span>
+            </h1>
+            <p className="text-[#5C5552] text-[10px] sm:text-xs leading-tight line-clamp-1">
+              Handcrafted Kundan & CZ crystal heirlooms.
+            </p>
+            <div className="pt-0.5">
+              <a
+                href="/shop"
+                onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}
+                className="inline-flex items-center gap-1.5 bg-[#B87080] hover:bg-[#A55E6E] text-white text-[10px] sm:text-xs font-semibold uppercase tracking-wider py-1.5 px-3.5 sm:py-2 sm:px-4 rounded-full shadow-xs active:scale-95 transition-all"
+              >
+                <span>Shop Now</span>
+                <ArrowRight className="w-3 h-3" />
+              </a>
+            </div>
+            {/* Compact trust pill */}
+            <div className="flex items-center gap-2 pt-0.5 text-[8.5px] sm:text-[9.5px] text-[#6E5D4F]">
+              <span className="flex items-center gap-0.5"><Gem className="w-2.5 h-2.5 text-[#B87080]" /> Pure Brass</span>
+              <span>•</span>
+              <span className="flex items-center gap-0.5"><Gift className="w-2.5 h-2.5 text-[#B87080]" /> Gift Box</span>
+            </div>
+          </div>
+
+          {/* Right Image: Aligned to the right side, seamless mask */}
+          <div className="w-[50%] sm:w-[50%] absolute right-0 bottom-0 top-0 flex items-end justify-end pointer-events-none z-10">
+            <img
+              src="/hero-models.png"
+              alt="Ella Creations Handcrafted Luxury Jewelry"
+              className="h-[96%] w-auto max-w-none object-contain object-right-bottom scale-110 sm:scale-105 origin-bottom-right select-none drop-shadow-sm"
+              style={{
+                maskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 100%)',
+              }}
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
+        </div>
+
+        {/* 2. DESKTOP HERO LAYOUT (Visible on lg screens and up) */}
+        {/* Image aligned all the way to right side, enlarged to cover the full hero area */}
+        <div className="hidden lg:block relative z-10 pl-8 xl:pl-14 2xl:pl-20 pr-0 max-w-[1720px] mx-auto">
+          <div className="grid grid-cols-12 items-center min-h-[580px] xl:min-h-[660px] 2xl:min-h-[720px]">
             
-            {/* LEFT SIDE: Editorial Typography, CTAs & Trust Badges */}
-            <div className="lg:col-span-5 xl:col-span-5 space-y-3.5 sm:space-y-5 lg:space-y-6 z-20 py-2 sm:py-6 lg:py-10 text-center lg:text-left mx-auto lg:mx-0 max-w-lg lg:max-w-none">
-              
-              {/* Eyebrow */}
+            {/* LEFT SIDE: Editorial Typography, CTAs & Badges */}
+            <div className="col-span-5 xl:col-span-5 space-y-4 xl:space-y-6 z-20 py-8 xl:py-12 text-left max-w-xl">
               <div className="inline-block">
-                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-[#9E7D58]">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#9E7D58]">
                   ARTIFICIAL JEWELRY INDIA
                 </p>
               </div>
 
-              {/* Headline */}
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[58px] xl:text-[70px] 2xl:text-[78px] font-bold tracking-tight text-[#1A1A1A] leading-[1.06]">
+              <h1 className="font-serif text-5xl xl:text-[68px] 2xl:text-[76px] font-bold tracking-tight text-[#1A1A1A] leading-[1.05]">
                 Jewelry for <br />
                 <span className="text-[#B87080] font-serif font-normal inline-block">
                   Every You
                 </span>
               </h1>
 
-              {/* Supporting Paragraph */}
-              <p className="text-[#5C5552] text-xs sm:text-sm lg:text-[15px] font-normal leading-relaxed max-w-xs sm:max-w-md mx-auto lg:mx-0">
-                Timeless designs. Modern moments.<br className="hidden sm:inline" />{' '}
+              <p className="text-[#5C5552] text-sm xl:text-base font-normal leading-relaxed max-w-md">
+                Timeless designs. Modern moments.<br />
                 Handcrafted pieces for the confident, elegant you.
               </p>
 
-              {/* Pill-Shaped CTA Buttons: Vertical Stack on Mobile, Row on Desktop */}
-              <div className="flex flex-col sm:flex-col lg:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 lg:gap-4 pt-1 sm:pt-2 w-full max-w-xs sm:max-w-sm lg:max-w-none mx-auto lg:mx-0">
-                <button
-                  onClick={() => navigateTo('shop')}
-                  className="w-full lg:w-auto bg-[#B87080] hover:bg-[#A55E6E] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-6 sm:px-8 rounded-full shadow-sm hover:shadow-md transition-all transform active:scale-95 flex items-center justify-center gap-2 min-h-[44px]"
+              {/* CTAs */}
+              <div className="flex items-center gap-3.5 pt-2">
+                <a
+                  href="/shop"
+                  onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}
+                  className="bg-[#B87080] hover:bg-[#A55E6E] text-white text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-8 rounded-full shadow-sm hover:shadow-md transition-all transform active:scale-95 flex items-center justify-center gap-2"
                 >
                   <span>SHOP COLLECTIONS</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                </a>
 
-                <button
-                  onClick={() => navigateTo('shop', null, 'New')}
-                  className="w-full lg:w-auto bg-[#FDF7F2]/60 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-6 sm:px-8 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 min-h-[44px] text-center"
+                <a
+                  href="/shop?category=Sale"
+                  onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Sale'); }}
+                  className="bg-[#FDF7F2]/80 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-7 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 text-center"
                 >
-                  <span>EXPLORE NEW ARRIVALS</span>
-                </button>
+                  <span>EXPLORE SALE</span>
+                </a>
               </div>
 
-              {/* Three Value / Trust Indicators: Centered with subtle vertical dividers on Mobile */}
-              <div className="flex items-center justify-center lg:justify-start gap-2.5 sm:gap-4 lg:gap-8 pt-3 sm:pt-4 text-[#5C5552]">
-                <div className="flex items-center gap-1.5 sm:gap-2 pr-2.5 sm:pr-4 border-r border-[#DFCBB9]/60 lg:border-r-0">
+              {/* Value Badges */}
+              <div className="flex items-center gap-6 xl:gap-8 pt-4 text-[#5C5552]">
+                <div className="flex items-center gap-2">
                   <Gem className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
-                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                  <div className="text-[11px] leading-tight text-left">
                     <span className="font-medium text-[#2E2A28] block">Premium</span>
                     <span className="text-[#7A736F]">Quality</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 sm:gap-2 pr-2.5 sm:pr-4 border-r border-[#DFCBB9]/60 lg:border-r-0">
+                <div className="flex items-center gap-2">
                   <Gift className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
-                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                  <div className="text-[11px] leading-tight text-left">
                     <span className="font-medium text-[#2E2A28] block">Elegant</span>
                     <span className="text-[#7A736F]">Packaging</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-[#4A4543] flex-shrink-0" />
-                  <div className="text-[10px] sm:text-[11px] leading-tight text-left">
+                  <div className="text-[11px] leading-tight text-left">
                     <span className="font-medium text-[#2E2A28] block">Designed</span>
                     <span className="text-[#7A736F]">for You</span>
                   </div>
                 </div>
               </div>
-
             </div>
 
-            {/* RIGHT SIDE: Five Models Showcase */}
-            <div className="lg:col-span-7 xl:col-span-7 relative flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-end h-full mt-2 lg:mt-0">
-              
-
-              {/* Models Image Container: On Desktop, enlarged to cover the whole section */}
-              <div className="relative w-full lg:w-[118%] xl:w-[126%] 2xl:w-[134%] max-w-none lg:-mr-8 xl:-mr-16 2xl:-mr-24 flex items-end justify-center lg:justify-end">
-                
-                {/* Five-Model Photographic Asset */}
+            {/* RIGHT SIDE: Enlarged Image Covering Whole Right Hero Area */}
+            <div className="col-span-7 xl:col-span-7 relative h-full flex items-end justify-end self-stretch overflow-visible">
+              <div className="w-full h-full min-h-[580px] xl:min-h-[660px] 2xl:min-h-[720px] flex items-end justify-end relative">
                 <img
                   src="/hero-models.png"
                   alt="Five Models Showcasing Ella Creations Handcrafted Luxury Jewelry"
-                  className="w-full h-auto max-h-[380px] sm:max-h-[460px] lg:max-h-[680px] xl:max-h-[760px] 2xl:max-h-[840px] object-contain object-bottom select-none drop-shadow-sm scale-100 lg:scale-105 xl:scale-110 2xl:scale-115 origin-bottom-right"
+                  className="w-full h-full max-h-[680px] xl:max-h-[760px] 2xl:max-h-[820px] object-contain object-bottom-right lg:object-right-bottom scale-110 xl:scale-115 2xl:scale-120 origin-bottom-right select-none drop-shadow-md"
                   style={{
-                    maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 100%)',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 100%)',
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 100%)',
                   }}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
                 />
 
-                {/* Subtle base vignette so models blend seamlessly at bottom */}
-                <div className="absolute inset-x-0 bottom-0 h-8 sm:h-12 bg-gradient-to-t from-[#F8EFE7]/80 via-transparent to-transparent pointer-events-none" />
-
-                {/* Mobile Carousel Dots (4 dots at bottom center of models as in mobile reference) */}
-                <div className="lg:hidden absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 pointer-events-none">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#B87080] ring-2 ring-white/80 shadow-sm"></span>
-                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
-                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
-                  <span className="w-2 h-2 rounded-full bg-white/80 shadow-sm"></span>
-                </div>
-
-
-                {/* Desktop Only: Vertical carousel indicator dots on far right edge */}
-                <div className="hidden lg:flex absolute right-0 xl:right-2 top-1/2 -translate-y-1/2 flex-col gap-2.5 z-20 pointer-events-none">
+                {/* Vertical carousel dots on right */}
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20 pointer-events-none">
                   <span className="w-2 h-2 rounded-full bg-[#B87080] shadow-sm"></span>
                   <span className="w-2 h-2 rounded-full bg-white/80 border border-[#B87080]/30"></span>
                   <span className="w-2 h-2 rounded-full bg-white/80 border border-[#B87080]/30"></span>
                 </div>
 
-                {/* Desktop Only: Bottom Right Corner 'More Than Jewelry / A Feeling' */}
-                <div className="hidden lg:block absolute bottom-3 xl:bottom-5 right-4 xl:right-10 text-right pointer-events-none z-20">
+                {/* Bottom right corner tag */}
+                <div className="absolute bottom-4 right-8 text-right pointer-events-none z-20">
                   <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.2em] text-[#7A736F] font-serif">More Than Jewelry</p>
                   <p className="text-xs xl:text-sm italic text-[#B87080] font-editorial">A Feeling</p>
                 </div>
-
               </div>
-
             </div>
 
           </div>
@@ -222,18 +250,18 @@ export default function HomeView() {
 
       </section>
 
-      {/* Category Collections Section (Small Round Fitted Shapes for 7 Categories) */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="text-center space-y-1 sm:space-y-1.5 mb-3 sm:mb-5">
-          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">Curated Collections</span>
-          <h2 className="font-serif text-xl sm:text-3xl lg:text-4xl font-bold text-stone-900">Shop by Jewelry Category</h2>
-          <div className="gold-divider max-w-xs mx-auto my-1 sm:my-2">
-            <Sparkles className="w-3.5 h-3.5" />
+      {/* Category Collections Section (Compact and Fully Visible Above Fold on Mobile) */}
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-2.5 sm:mt-4 lg:mt-6">
+        <div className="text-center space-y-0.5 sm:space-y-1 mb-2.5 sm:mb-4">
+          <span className="text-[9px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">Curated Collections</span>
+          <h2 className="font-serif text-base sm:text-xl lg:text-3xl font-bold text-stone-900 leading-tight">Shop by Jewelry Category</h2>
+          <div className="gold-divider max-w-[140px] sm:max-w-xs mx-auto my-0.5 sm:my-1">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </div>
         </div>
 
-        {/* 7 Round Category Avatars: Mobile Single Row Horizontal Rail, Desktop 7-Col Grid */}
-        <div className="flex sm:grid sm:grid-cols-7 gap-3 sm:gap-4 md:gap-6 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-2 sm:pb-0 px-1 items-start justify-start sm:justify-items-center">
+        {/* 7 Round Category Avatars: Mobile Single Row Rail, Desktop 7-Col Grid */}
+        <div className="flex sm:grid sm:grid-cols-7 gap-2.5 sm:gap-4 md:gap-6 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-1 sm:pb-0 px-1 items-start justify-start sm:justify-items-center">
           {[
             { 
               title: "necklace", 
@@ -271,22 +299,26 @@ export default function HomeView() {
               image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=300" 
             }
           ].map((cat, idx) => (
-            <div
+            <a
               key={idx}
-              onClick={() => navigateTo('shop', null, cat.title)}
-              className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[74px] sm:w-full"
+              href={`/shop?category=${encodeURIComponent(cat.label)}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('shop', null, cat.title);
+              }}
+              className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[60px] sm:w-[72px] md:w-full"
             >
-              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-1 shadow-sm group-hover:shadow-soft-rose transition-all flex items-center justify-center">
+              <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-0.5 sm:p-1 shadow-xs group-hover:shadow-soft-rose transition-all flex items-center justify-center">
                 <img
                   src={cat.image}
                   alt={cat.label}
                   className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <span className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-semibold text-stone-800 tracking-tight leading-tight group-hover:text-brand-rose transition-colors line-clamp-2 w-full text-center">
+              <span className="mt-1 sm:mt-1.5 text-[9px] sm:text-[11px] font-semibold text-stone-800 tracking-tight leading-tight group-hover:text-brand-rose transition-colors line-clamp-1 w-full text-center">
                 {cat.label}
               </span>
-            </div>
+            </a>
           ))}
         </div>
       </section>

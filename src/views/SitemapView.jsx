@@ -96,12 +96,24 @@ export default function SitemapView() {
                           {link.label} <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
-                        <button
-                          onClick={() => navigateTo(link.view, link.itemId || null, link.category || null)}
-                          className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left"
+                        <a
+                          href={
+                            link.view === 'home'
+                              ? '/'
+                              : link.view === 'shop'
+                              ? (link.category ? `/shop?category=${encodeURIComponent(link.category)}` : '/shop')
+                              : link.view === 'blog-detail'
+                              ? `/blog/${link.itemId}`
+                              : `/${link.view}`
+                          }
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigateTo(link.view, link.itemId || null, link.category || null);
+                          }}
+                          className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left inline-block"
                         >
                           {link.label}
-                        </button>
+                        </a>
                       )}
                       <p className="text-[11px] text-stone-500">{link.desc}</p>
                     </div>

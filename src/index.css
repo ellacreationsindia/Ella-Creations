@@ -338,3 +338,156 @@ button, a, input, select, textarea, [role="button"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==============================================================
+   Admin Panel Light Theme (Active Only After Authenticated Login)
+   ============================================================== */
+.admin-light-theme {
+  background-color: #F8F9FA !important;
+  color: #18181B !important;
+}
+
+.admin-light-theme header {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  color: #18181B !important;
+}
+
+.admin-light-theme aside {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+
+.admin-light-theme .bg-stone-950 {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  color: #18181B !important;
+}
+
+.admin-light-theme .bg-stone-900 {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  color: #18181B !important;
+}
+
+.admin-light-theme .bg-stone-850 {
+  background-color: #F3F4F6 !important;
+  border-color: #E5E7EB !important;
+  color: #18181B !important;
+}
+
+.admin-light-theme .bg-stone-800 {
+  background-color: #F3F4F6 !important;
+  border-color: #E5E7EB !important;
+  color: #374151 !important;
+}
+
+.admin-light-theme .border-stone-800 {
+  border-color: #E5E7EB !important;
+}
+
+.admin-light-theme .border-stone-700 {
+  border-color: #D1D5DB !important;
+}
+
+.admin-light-theme .border-stone-600 {
+  border-color: #D1D5DB !important;
+}
+
+.admin-light-theme .text-white {
+  color: #111827 !important;
+}
+
+.admin-light-theme .text-stone-100 {
+  color: #18181B !important;
+}
+
+.admin-light-theme .text-stone-200 {
+  color: #27272A !important;
+}
+
+.admin-light-theme .text-stone-300 {
+  color: #3F3F46 !important;
+}
+
+.admin-light-theme .text-stone-400 {
+  color: #52525B !important;
+}
+
+.admin-light-theme .text-stone-500 {
+  color: #6B7280 !important;
+}
+
+.admin-light-theme input,
+.admin-light-theme select,
+.admin-light-theme textarea {
+  background-color: #FFFFFF !important;
+  border-color: #D1D5DB !important;
+  color: #111827 !important;
+}
+
+.admin-light-theme input::placeholder,
+.admin-light-theme textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+.admin-light-theme input:focus,
+.admin-light-theme select:focus,
+.admin-light-theme textarea:focus {
+  border-color: #D49AA5 !important;
+  box-shadow: 0 0 0 1px #D49AA5 !important;
+  outline: none !important;
+}
+
+.admin-light-theme .hover\:bg-stone-900:hover {
+  background-color: #F3F4F6 !important;
+  color: #111827 !important;
+}
+
+.admin-light-theme .hover\:bg-stone-800:hover {
+  background-color: #E5E7EB !important;
+  color: #111827 !important;
+}
+
+.admin-light-theme .hover\:bg-stone-700:hover {
+  background-color: #E5E7EB !important;
+  color: #111827 !important;
+}
+
+/* Ensure active tab in admin keeps its crisp rose styling and white text */
+.admin-light-theme .bg-brand-rose,
+.admin-light-theme .bg-brand-rose * {
+  color: #FFFFFF !important;
+}
+
+.admin-light-theme button.bg-brand-rose,
+.admin-light-theme a.bg-brand-rose {
+  background-color: #D49AA5 !important;
+  color: #FFFFFF !important;
+}
+
+/* Primary buttons with rose / action gradients preserve white text */
+.admin-light-theme [class*="bg-gradient-to-r"][class*="from-brand-rose"],
+.admin-light-theme [class*="bg-gradient-to-r"][class*="from-brand-rose"] * {
+  color: #FFFFFF !important;
+}
+
+.admin-light-theme [class*="bg-rose-900"],
+.admin-light-theme [class*="bg-rose-950"] {
+  background-color: #FEE2E2 !important;
+  color: #991B1B !important;
+  border-color: #FCA5A5 !important;
+}
+
+.admin-light-theme [class*="bg-emerald-950"] {
+  background-color: #D1FAE5 !important;
+  color: #065F46 !important;
+  border-color: #A7F3D0 !important;
+}
+
+.admin-light-theme [class*="bg-amber-950"] {
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  border-color: #FDE68A !important;
+}
+

@@ -162,21 +162,24 @@ export default function Header() {
 
             {/* Desktop Nav Links */}
             <nav className="hidden lg:flex items-center space-x-6 font-medium text-xs uppercase tracking-wider text-stone-700">
-              <button 
-                onClick={() => navigateTo('home')} 
+              <a 
+                href="/"
+                onClick={(e) => { e.preventDefault(); navigateTo('home'); }} 
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Home
-              </button>
-              <button 
-                onClick={() => navigateTo('shop', null, 'All')} 
+              </a>
+              <a 
+                href="/shop"
+                onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'All'); }} 
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' && selectedCategory !== 'Sale' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Shop Collections
-              </button>
+              </a>
               {primaryPromotion && (
-                <button 
-                  onClick={() => navigateTo('shop', null, 'Sale')} 
+                <a 
+                  href="/shop?category=Sale"
+                  onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Sale'); }} 
                   className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
                     currentView === 'shop' && selectedCategory === 'Sale'
                       ? 'text-rose-600 border-b-2 border-rose-600'
@@ -188,39 +191,47 @@ export default function Header() {
                   <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                     {promoDiscount}% OFF
                   </span>
-                </button>
+                </a>
               )}
-              <button 
-                onClick={() => navigateTo('shop', null, 'Necklaces')} 
+              <a 
+                href="/shop?category=Necklace"
+                onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Necklace'); }} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Necklaces
-              </button>
-              <button 
-                onClick={() => navigateTo('shop', null, 'Earrings')} 
+              </a>
+              <a 
+                href="/shop?category=Earring"
+                onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Earring'); }} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Earrings
-              </button>
-              <button 
-                onClick={() => navigateTo('shop', null, 'Bridal Sets')} 
+              </a>
+              <a 
+                href="/shop?category=Bridal+Sets"
+                onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Bridal Sets'); }} 
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Bridal Sets
-              </button>
-              <button 
-                onClick={() => navigateTo('blog')} 
+              </a>
+              <a 
+                href="/blog"
+                onClick={(e) => { e.preventDefault(); navigateTo('blog'); }} 
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'blog' || currentView === 'blog-detail' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Ella Journal
-              </button>
+              </a>
             </nav>
           </div>
 
           {/* CENTER COLUMN: PERFECTLY STRUCTURED CENTERED BRAND LOGO */}
           <div className="flex flex-col items-center justify-center text-center px-1 flex-shrink-0">
-            <div 
-              onClick={handleLogoClick} 
+            <a 
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogoClick();
+              }} 
               className="cursor-pointer flex flex-col items-center group"
               title="Ella Creations Monogram (Click 4 times continuously to open Admin Portal)"
             >
@@ -235,7 +246,7 @@ export default function Header() {
               <span className="text-[7px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-brand-gold font-bold leading-none">
                 Artificial Jewelry India
               </span>
-            </div>
+            </a>
           </div>
 
           {/* RIGHT COLUMN: User Action Icons (Wishlist, Cart Drawer, Search on Desktop, Profile) */}
@@ -412,20 +423,22 @@ export default function Header() {
               <nav className="p-4 space-y-1.5 text-xs font-semibold">
                 
                 {/* Home */}
-                <button
-                  onClick={() => { navigateTo('home'); setIsMobileMenuOpen(false); }}
+                <a
+                  href="/"
+                  onClick={(e) => { e.preventDefault(); navigateTo('home'); setIsMobileMenuOpen(false); }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
                     currentView === 'home' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-800 hover:bg-brand-cream'
                   }`}
                 >
                   <span>Home</span>
                   <ChevronRight className="w-4 h-4 opacity-50" />
-                </button>
+                </a>
 
                 {/* Active Promotional Sale Ribbon Item */}
                 {primaryPromotion && (
-                  <button
-                    onClick={() => { navigateTo('shop', null, 'Sale'); setIsMobileMenuOpen(false); }}
+                  <a
+                    href="/shop?category=Sale"
+                    onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Sale'); setIsMobileMenuOpen(false); }}
                     className="w-full text-left px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-brand-rose text-white font-bold transition-all shadow-sm flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
@@ -435,7 +448,7 @@ export default function Header() {
                     <span className="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
                       FLAT {promoDiscount}% OFF
                     </span>
-                  </button>
+                  </a>
                 )}
 
                 {/* Expandable Shop Collections Section */}
@@ -452,38 +465,41 @@ export default function Header() {
 
                   {isMobileShopOpen && (
                     <div className="pl-6 pr-2 py-1 space-y-1 bg-brand-cream/30 rounded-xl my-1 border-l-2 border-brand-rose/40">
-                      <button
-                        onClick={() => { navigateTo('shop', null, 'All'); setIsMobileMenuOpen(false); }}
+                      <a
+                        href="/shop"
+                        onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'All'); setIsMobileMenuOpen(false); }}
                         className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
                       >
                         <span>All Jewelry</span>
                         <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                      </button>
+                      </a>
                       {[
-                        { label: 'Necklace', cat: 'Necklace' },
-                        { label: 'Pendant Set', cat: 'Pendant Set' },
-                        { label: 'Rings', cat: 'Rings' },
-                        { label: 'Earring', cat: 'Earring' },
-                        { label: 'Bridal Sets', cat: 'Bridal Sets' },
-                        { label: 'Bracelets / Bangles', cat: 'Bracelets/Bangles' },
-                        { label: 'Others', cat: 'Others' }
+                        { label: 'Necklace', cat: 'Necklace', href: '/shop?category=Necklace' },
+                        { label: 'Pendant Set', cat: 'Pendant Set', href: '/shop?category=Pendant%20Set' },
+                        { label: 'Rings', cat: 'Rings', href: '/shop?category=Rings' },
+                        { label: 'Earring', cat: 'Earring', href: '/shop?category=Earring' },
+                        { label: 'Bridal Sets', cat: 'Bridal Sets', href: '/shop?category=Bridal%20Sets' },
+                        { label: 'Bracelets / Bangles', cat: 'Bracelets/Bangles', href: '/shop?category=Bracelets%2FBangles' },
+                        { label: 'Others', cat: 'Others', href: '/shop?category=Others' }
                       ].map((item) => (
-                        <button
+                        <a
                           key={item.cat}
-                          onClick={() => { navigateTo('shop', null, item.cat); setIsMobileMenuOpen(false); }}
+                          href={item.href}
+                          onClick={(e) => { e.preventDefault(); navigateTo('shop', null, item.cat); setIsMobileMenuOpen(false); }}
                           className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
                         >
                           <span>{item.label}</span>
                           <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-                        </button>
+                        </a>
                       ))}
                     </div>
                   )}
                 </div>
 
                 {/* Ella Journal */}
-                <button
-                  onClick={() => { navigateTo('blog'); setIsMobileMenuOpen(false); }}
+                <a
+                  href="/blog"
+                  onClick={(e) => { e.preventDefault(); navigateTo('blog'); setIsMobileMenuOpen(false); }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
                     currentView === 'blog' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-800 hover:bg-brand-cream'
                   }`}
@@ -492,31 +508,33 @@ export default function Header() {
                     <span>📖</span> Ella Journal & Styling Advice
                   </span>
                   <ChevronRight className="w-4 h-4 opacity-50" />
-                </button>
+                </a>
 
                 {/* Divider */}
                 <div className="border-t border-stone-200 my-2 pt-2" />
 
                 {/* Account & Orders Links */}
-                <button
-                  onClick={() => { navigateTo('account'); setIsMobileMenuOpen(false); }}
+                <a
+                  href="/account"
+                  onClick={(e) => { e.preventDefault(); navigateTo('account'); setIsMobileMenuOpen(false); }}
                   className="w-full text-left px-3.5 py-2.5 rounded-xl text-stone-800 hover:bg-brand-cream transition-colors flex items-center justify-between"
                 >
                   <span className="flex items-center gap-2">
                     <Package className="w-4 h-4 text-brand-rose" /> My Orders & Live Tracking
                   </span>
                   <ChevronRight className="w-4 h-4 opacity-50" />
-                </button>
+                </a>
 
-                <button
-                  onClick={() => { navigateTo('account'); setIsMobileMenuOpen(false); }}
+                <a
+                  href="/account"
+                  onClick={(e) => { e.preventDefault(); navigateTo('account'); setIsMobileMenuOpen(false); }}
                   className="w-full text-left px-3.5 py-2.5 rounded-xl text-stone-800 hover:bg-brand-cream transition-colors flex items-center justify-between"
                 >
                   <span className="flex items-center gap-2">
                     <Heart className="w-4 h-4 text-brand-rose" /> Saved Wishlist ({wishlist.length})
                   </span>
                   <ChevronRight className="w-4 h-4 opacity-50" />
-                </button>
+                </a>
 
                 {!user ? (
                   <button

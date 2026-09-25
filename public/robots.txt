@@ -2,31 +2,41 @@
 # Handcrafted Luxury Artificial & Bridal Jewelry India
 
 # -------------------------------------------------------------
-# 1. Standard Web Search Crawlers
+# 1. Standard Web Search Crawlers (Google, Bing, Yahoo, etc.)
 # -------------------------------------------------------------
 User-agent: *
 Allow: /
 Allow: /shop
 Allow: /product/
 Allow: /blog
-Allow: /about
-Allow: /contact
-Allow: /privacy-policy
+Allow: /terms
+Allow: /privacy
+Allow: /refund-policy
 Allow: /shipping-policy
-Allow: /terms-of-service
-Allow: /returns-refunds
+Allow: /brand-guidelines
+Allow: /sitemap
+Allow: /llms.txt
 Disallow: /admin
-Disallow: /admin/*
 Disallow: /checkout
 Disallow: /account
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 
-# Google Search & Google Images
+# Google Search & Image Crawler
 User-agent: Googlebot
 Allow: /
+Allow: /shop
+Allow: /product/
+Allow: /blog
+Allow: /terms
+Allow: /privacy
+Allow: /refund-policy
+Allow: /shipping-policy
+Allow: /brand-guidelines
+Allow: /sitemap
 Disallow: /admin
 Disallow: /checkout
+Disallow: /account
 
 User-agent: Googlebot-Image
 Allow: /
@@ -37,13 +47,14 @@ Allow: /*.jpeg
 Allow: /*.png
 Allow: /*.webp
 
-# Bing & Yahoo
+# Bingbot
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /checkout
+Disallow: /account
 
-# Social Crawlers
+# Social Preview Crawlers
 User-agent: Pinterestbot
 Allow: /
 
@@ -54,22 +65,26 @@ User-agent: facebookexternalhit
 Allow: /
 
 # -------------------------------------------------------------
-# 2. Agentic Browsing & AI Search Agents (Explicitly Enabled)
+# 2. AI Crawlers & Agentic Search Engines
 # -------------------------------------------------------------
 # OpenAI ChatGPT & SearchGPT
 User-agent: GPTBot
 Allow: /
+Allow: /llms.txt
 Disallow: /admin
 Disallow: /checkout
+Disallow: /account
 
 User-agent: ChatGPT-User
 Allow: /
 
-# Anthropic Claude & Agentic Tools
+# Anthropic Claude
 User-agent: ClaudeBot
 Allow: /
+Allow: /llms.txt
 Disallow: /admin
 Disallow: /checkout
+Disallow: /account
 
 User-agent: Claude-Web
 Allow: /
@@ -80,33 +95,30 @@ Allow: /
 # Perplexity AI Search
 User-agent: PerplexityBot
 Allow: /
+Allow: /llms.txt
 Disallow: /admin
 Disallow: /checkout
+Disallow: /account
 
 # Google Gemini & Extended AI
 User-agent: Google-Extended
 Allow: /
 
-# Apple Intelligence & Safari Siri Suggestions
+# Apple Intelligence & Safari
 User-agent: Applebot
 Allow: /
 
 User-agent: Applebot-Extended
 Allow: /
 
-# Amazon Rufus & AI Shopping
+# Amazon Rufus
 User-agent: Amazonbot
 Allow: /
 
-# Meta AI & Llama Web Agents
+# Meta AI & Open Crawlers
 User-agent: Meta-ExternalAgent
 Allow: /
 
-# Cohere AI
-User-agent: Cohere-ai
-Allow: /
-
-# Common Crawl & Open Web Crawlers
 User-agent: CCBot
 Allow: /
 
@@ -114,7 +126,7 @@ User-agent: Diffbot
 Allow: /
 
 # -------------------------------------------------------------
-# 3. Sitemaps & Agentic Documentation
+# 3. Sitemaps & LLM Manifest
 # -------------------------------------------------------------
 Sitemap: https://ella-creations.com/sitemap.xml
-# Agentic Browsing Manifest: https://ella-creations.com/llms.txt
+# LLM Manifest: https://ella-creations.com/llms.txt

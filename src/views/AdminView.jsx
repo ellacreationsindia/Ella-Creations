@@ -98,8 +98,8 @@ function SalesAreaChart({ data }) {
         const val = Math.round(maxVal * ratio);
         return (
           <g key={idx}>
-            <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#27272a" strokeDasharray="3 3" />
-            <text x={paddingLeft - 10} y={y + 4} fill="#a1a1aa" fontSize="10" textAnchor="end" fontFamily="monospace">
+            <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#E5E7EB" strokeDasharray="3 3" />
+            <text x={paddingLeft - 10} y={y + 4} fill="#6B7280" fontSize="10" textAnchor="end" fontFamily="monospace">
               ₹{val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val}
             </text>
           </g>
@@ -120,8 +120,8 @@ function SalesAreaChart({ data }) {
       {/* Interactive Hover Dots */}
       {points.map((pt, idx) => (
         <g key={idx} className="cursor-pointer group" onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
-          <circle cx={pt.x} cy={pt.y} r="5" fill="#18181b" stroke="#D49AA5" strokeWidth="2.5" className="transition-transform group-hover:scale-125" />
-          <text x={pt.x} y={height - 10} fill="#a1a1aa" fontSize="10" textAnchor="middle" fontFamily="sans-serif">
+          <circle cx={pt.x} cy={pt.y} r="5" fill="#FFFFFF" stroke="#D49AA5" strokeWidth="2.5" className="transition-transform group-hover:scale-125" />
+          <text x={pt.x} y={height - 10} fill="#6B7280" fontSize="10" textAnchor="middle" fontFamily="sans-serif">
             {pt.name}
           </text>
         </g>
@@ -130,7 +130,7 @@ function SalesAreaChart({ data }) {
       {/* Hover Tooltip */}
       {hoveredPoint && (
         <g transform={`translate(${hoveredPoint.x}, ${hoveredPoint.y - 35})`}>
-          <rect x="-45" y="-18" width="90" height="24" rx="6" fill="#09090b" stroke="#CFA45C" strokeWidth="1" />
+          <rect x="-45" y="-18" width="90" height="24" rx="6" fill="#18181B" stroke="#CFA45C" strokeWidth="1" />
           <text x="0" y="-2" fill="#FFFFFF" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
             {formatPrice(hoveredPoint.sales)}
           </text>
@@ -864,28 +864,28 @@ export default function AdminView() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-900 text-stone-100 flex flex-col font-sans">
+    <div className="admin-light-theme min-h-screen bg-[#F8F9FA] text-stone-900 flex flex-col font-sans">
       
-      {/* Top Shopify Admin Header Bar with Enlarged Logo */}
-      <header className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
+      {/* Top Shopify Admin Header Bar with Clean Light Theme */}
+      <header className="bg-white border-b border-stone-200 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-            className="md:hidden text-stone-400 hover:text-white p-1"
+            className="md:hidden text-stone-600 hover:text-stone-900 p-1"
           >
             {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <img src="/logo.png" alt="Logo" className="h-9 sm:h-10 w-auto filter drop-shadow" />
-          <span className="font-serif text-lg sm:text-xl font-bold text-white tracking-wider">Ella Admin</span>
-          <span className="bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
-            <Crown className="w-3.5 h-3.5" /> Real Database Telemetry
+          <img src="/logo.png" alt="Logo" className="h-9 sm:h-10 w-auto filter drop-shadow-xs" />
+          <span className="font-serif text-lg sm:text-xl font-bold text-stone-900 tracking-wider">Ella Admin</span>
+          <span className="bg-brand-gold/15 text-stone-900 border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
+            <Crown className="w-3.5 h-3.5 text-brand-gold" /> Real Database Telemetry
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigateTo('home')}
-            className="flex items-center gap-1.5 text-xs font-semibold text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 px-3.5 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
           >
             <Store className="w-4 h-4 text-brand-gold" />
             <span className="hidden sm:inline">Storefront View</span>
@@ -897,13 +897,13 @@ export default function AdminView() {
       <div className="flex-1 flex flex-col md:flex-row relative">
         
         {/* Shopify Sidebar Navigation (Mobile Responsive Drawer) */}
-        <aside className={`w-full md:w-64 bg-stone-950 border-r border-stone-800 p-4 space-y-2 ${isMobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
-          <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-widest px-3 mb-2">Main Navigation</div>
+        <aside className={`w-full md:w-64 bg-white border-r border-stone-200 p-4 space-y-2 ${isMobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
+          <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest px-3 mb-2">Main Navigation</div>
           
           <button
             onClick={() => { setActiveTab('overview'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'overview' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'overview' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <LayoutDashboard className="w-4 h-4" /> Real Analytics Dashboard
@@ -911,20 +911,20 @@ export default function AdminView() {
 
           <button
             onClick={() => { setActiveTab('products'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'products' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'products' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
               <Package className="w-4 h-4" /> Products Catalog
             </div>
-            <span className="bg-stone-800 text-stone-300 text-[10px] px-2 py-0.5 rounded-full">{products.length}</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-700'}`}>{products.length}</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('orders'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'orders' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'orders' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
@@ -935,62 +935,62 @@ export default function AdminView() {
 
           <button
             onClick={() => { setActiveTab('reviews'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'reviews' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'reviews' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
               <Sparkles className="w-4 h-4" /> Reviews Moderation
             </div>
-            <span className="bg-stone-800 text-stone-300 text-[10px] px-2 py-0.5 rounded-full">{reviews.length}</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === 'reviews' ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-700'}`}>{reviews.length}</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('promotions'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'promotions' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'promotions' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
               <Percent className="w-4 h-4 text-brand-gold" /> Sales & Promotions
             </div>
-            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{promotions.length}</span>
+            <span className="bg-brand-gold text-stone-900 font-bold text-[10px] px-2 py-0.5 rounded-full">{promotions.length}</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('coupons'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'coupons' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'coupons' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
               <Ticket className="w-4 h-4 text-brand-gold" /> Coupons Generator
             </div>
-            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{coupons.length}</span>
+            <span className="bg-brand-gold text-stone-900 font-bold text-[10px] px-2 py-0.5 rounded-full">{coupons.length}</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('subscribers'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'subscribers' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'subscribers' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-emerald-400" /> VIP Subscribers
+              <Mail className="w-4 h-4 text-emerald-600" /> VIP Subscribers
             </div>
-            <span className="bg-emerald-950 text-emerald-400 font-bold text-[10px] px-2 py-0.5 rounded-full border border-emerald-800">{subscribers?.length || 0}</span>
+            <span className="bg-emerald-100 text-emerald-800 font-bold text-[10px] px-2 py-0.5 rounded-full border border-emerald-200">{subscribers?.length || 0}</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('blogs'); setIsMobileSidebarOpen(false); }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-              activeTab === 'blogs' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-400 hover:bg-stone-900 hover:text-white'
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              activeTab === 'blogs' ? 'bg-brand-rose text-white shadow-soft-rose font-bold' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
           >
             <div className="flex items-center gap-3">
               <BookOpen className="w-4 h-4 text-brand-gold" /> Blog Journal
             </div>
-            <span className="bg-brand-gold text-stone-950 font-bold text-[10px] px-2 py-0.5 rounded-full">{blogs?.length || 0}</span>
+            <span className="bg-brand-gold text-stone-900 font-bold text-[10px] px-2 py-0.5 rounded-full">{blogs?.length || 0}</span>
           </button>
         </aside>
 
