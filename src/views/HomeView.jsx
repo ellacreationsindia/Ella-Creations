@@ -311,7 +311,7 @@ export default function HomeView() {
               <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-0.5 sm:p-1 shadow-xs group-hover:shadow-soft-rose transition-all flex items-center justify-center">
                 <img
                   src={cat.image}
-                  alt={cat.label}
+                  alt={`Handcrafted ${cat.label} Collection - Ella Creations`}
                   className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
@@ -476,7 +476,7 @@ export default function HomeView() {
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
                     <img
                       src={blog.coverImage}
-                      alt={blog.title}
+                      alt={`${blog.title} - Jewelry Styling & Care Editorial | Ella Journal`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <span className="absolute top-2.5 left-2.5 bg-stone-950/80 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border border-white/20">

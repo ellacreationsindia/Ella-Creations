@@ -126,7 +126,9 @@ User-agent: Diffbot
 Allow: /
 
 # -------------------------------------------------------------
-# 3. Sitemaps & LLM Manifest
+# 3. Sitemaps & Agentic Browsing Manifests
 # -------------------------------------------------------------
 Sitemap: https://ella-creations.com/sitemap.xml
-# LLM Manifest: https://ella-creations.com/llms.txt
+# AI Agent Directives & Manifests:
+# https://ella-creations.com/llms.txt
+# https://ella-creations.com/llms-full.txt

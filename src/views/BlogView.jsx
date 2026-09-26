@@ -97,7 +97,7 @@ export default function BlogView() {
             <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-sm border border-stone-200">
               <img
                 src={activeBlog.coverImage}
-                alt={activeBlog.title}
+                alt={`${activeBlog.title} - Jewelry Styling & Care Guide | Ella Journal`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -223,7 +223,7 @@ export default function BlogView() {
           <div className="lg:col-span-7 aspect-[16/10] lg:aspect-auto overflow-hidden relative">
             <img
               src={featuredBlog.coverImage}
-              alt={featuredBlog.title}
+              alt={`${featuredBlog.title} - Featured Jewelry Editorial Story | Ella Journal`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute top-4 left-4 bg-brand-rose text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
@@ -293,7 +293,7 @@ export default function BlogView() {
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
                     <img
                       src={blog.coverImage}
-                      alt={blog.title}
+                      alt={`${blog.title} - Jewelry Style Guide & Insights | Ella Journal`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <span className="absolute top-3 left-3 bg-stone-950/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full border border-white/20">

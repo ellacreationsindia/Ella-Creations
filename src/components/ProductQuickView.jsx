@@ -84,7 +84,7 @@ export default function ProductQuickView() {
           <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-inner mb-4 relative p-4 flex items-center justify-center border border-stone-100">
             <img
               src={selectedImage}
-              alt={quickViewProduct.title}
+              alt={`${quickViewProduct.title} - Handcrafted Artificial Jewelry | Ella Creations`}
               className="w-full h-full object-contain"
             />
           </div>
@@ -100,7 +100,11 @@ export default function ProductQuickView() {
                     selectedImage === img ? 'border-brand-rose shadow-md' : 'border-stone-200 opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
+                  <img 
+                    src={img} 
+                    alt={`${quickViewProduct.title} preview angle ${idx + 1}`} 
+                    className="w-full h-full object-contain" 
+                  />
                 </button>
               ))}
             </div>

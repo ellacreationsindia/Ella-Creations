@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -9,21 +9,26 @@ import AuthModal from './components/AuthModal';
 import PromotionPopup from './components/PromotionPopup';
 import SEOHead from './components/SEOHead';
 import AnimatedBackground from './components/AnimatedBackground';
+import { PageViewSkeleton } from './components/SkeletonLoader';
+import { Sparkles, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
+
+// Core storefront views: Eagerly imported for instant first-load rendering
 import HomeView from './views/HomeView';
 import ShopView from './views/ShopView';
 import ProductDetailView from './views/ProductDetailView';
-import CheckoutView from './views/CheckoutView';
-import AdminView from './views/AdminView';
-import TermsView from './views/TermsView';
-import PrivacyView from './views/PrivacyView';
-import RefundPolicyView from './views/RefundPolicyView';
-import ShippingPolicyView from './views/ShippingPolicyView';
-import BrandGuidelinesView from './views/BrandGuidelinesView';
-import SitemapView from './views/SitemapView';
-import BlogView from './views/BlogView';
-import AccountView from './views/AccountView';
-import NotFoundView from './views/NotFoundView';
-import { Sparkles, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
+
+// Code-split auxiliary and heavier views to drastically reduce bundle size and eliminate lag
+const CheckoutView = lazy(() => import('./views/CheckoutView'));
+const AccountView = lazy(() => import('./views/AccountView'));
+const AdminView = lazy(() => import('./views/AdminView'));
+const BlogView = lazy(() => import('./views/BlogView'));
+const TermsView = lazy(() => import('./views/TermsView'));
+const PrivacyView = lazy(() => import('./views/PrivacyView'));
+const RefundPolicyView = lazy(() => import('./views/RefundPolicyView'));
+const ShippingPolicyView = lazy(() => import('./views/ShippingPolicyView'));
+const BrandGuidelinesView = lazy(() => import('./views/BrandGuidelinesView'));
+const SitemapView = lazy(() => import('./views/SitemapView'));
+const NotFoundView = lazy(() => import('./views/NotFoundView'));
 
 function AppContent() {
   const { currentView, toast, isAuthModalOpen, setIsAuthModalOpen } = useStore();
@@ -31,7 +36,7 @@ function AppContent() {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-transparent text-brand-charcoal relative selection:bg-brand-rose selection:text-white">
       
-      {/* Ambient Live Animated Gradient & Aurora Mesh Background */}
+      {/* Ambient Live Animated Gradient Background */}
       <AnimatedBackground />
 
       {/* Dynamic SEO Engine */}
@@ -40,26 +45,28 @@ function AppContent() {
       {/* Show Storefront Header on non-admin views */}
       {currentView !== 'admin' && <Header />}
 
-      {/* Main View Router with 404 Fallback */}
+      {/* Main View Router with Suspense Skeleton Fallback & 404 Protection */}
       <main className="flex-1">
-        {currentView === 'home' && <HomeView />}
-        {currentView === 'shop' && <ShopView />}
-        {currentView === 'product' && <ProductDetailView />}
-        {currentView === 'checkout' && <CheckoutView />}
-        {currentView === 'account' && <AccountView />}
-        {currentView === 'admin' && <AdminView />}
-        {(currentView === 'blog' || currentView === 'blog-detail') && <BlogView />}
-        {currentView === 'terms' && <TermsView />}
-        {currentView === 'privacy' && <PrivacyView />}
-        {currentView === 'refund-policy' && <RefundPolicyView />}
-        {currentView === 'shipping-policy' && <ShippingPolicyView />}
-        {currentView === 'brand-guidelines' && <BrandGuidelinesView />}
-        {currentView === 'sitemap' && <SitemapView />}
-        {currentView === '404' && <NotFoundView />}
-        {![
-          'home', 'shop', 'product', 'checkout', 'account', 'admin', 
-          'blog', 'blog-detail', 'terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', '404'
-        ].includes(currentView) && <NotFoundView />}
+        <Suspense fallback={<PageViewSkeleton />}>
+          {currentView === 'home' && <HomeView />}
+          {currentView === 'shop' && <ShopView />}
+          {currentView === 'product' && <ProductDetailView />}
+          {currentView === 'checkout' && <CheckoutView />}
+          {currentView === 'account' && <AccountView />}
+          {currentView === 'admin' && <AdminView />}
+          {(currentView === 'blog' || currentView === 'blog-detail') && <BlogView />}
+          {currentView === 'terms' && <TermsView />}
+          {currentView === 'privacy' && <PrivacyView />}
+          {currentView === 'refund-policy' && <RefundPolicyView />}
+          {currentView === 'shipping-policy' && <ShippingPolicyView />}
+          {currentView === 'brand-guidelines' && <BrandGuidelinesView />}
+          {currentView === 'sitemap' && <SitemapView />}
+          {currentView === '404' && <NotFoundView />}
+          {![
+            'home', 'shop', 'product', 'checkout', 'account', 'admin', 
+            'blog', 'blog-detail', 'terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', '404'
+          ].includes(currentView) && <NotFoundView />}
+        </Suspense>
       </main>
 
       {/* Show Storefront Footer on non-admin views */}
@@ -72,7 +79,7 @@ function AppContent() {
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       {currentView !== 'admin' && <PromotionPopup />}
 
-      {/* Floating Global Toast Notification (Success, Error & Info with Safe Area) */}
+      {/* Floating Global Toast Notification */}
       {toast && (
         <div className="fixed bottom-4 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 z-[99999] flex justify-center sm:justify-end pointer-events-none">
           <div className={`pointer-events-auto flex items-center gap-2.5 sm:gap-3 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold border backdrop-blur-md transition-all animate-bounce ${

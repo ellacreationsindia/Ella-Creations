@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Canonical Domain Redirection: Instantly forward Vercel deployment domain to main domain
+      (function() {
+        if (typeof window !== 'undefined' && window.location.hostname === 'ella-creations.vercel.app') {
+          var target = 'https://ella-creations.com' + window.location.pathname + window.location.search + window.location.hash;
+          window.location.replace(target);
+        }
+      })();
+    </script>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />

@@ -875,7 +875,7 @@ export default function AdminView() {
           >
             {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <img src="/logo.png" alt="Logo" className="h-9 sm:h-10 w-auto filter drop-shadow-xs" />
+          <img src="/logo.png" alt="Ella Creations Admin Logo" className="h-9 sm:h-10 w-auto filter drop-shadow-xs" />
           <span className="font-serif text-lg sm:text-xl font-bold text-stone-900 tracking-wider">Ella Admin</span>
           <span className="bg-brand-gold/15 text-stone-900 border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
             <Crown className="w-3.5 h-3.5 text-brand-gold" /> Real Database Telemetry
@@ -1262,7 +1262,7 @@ export default function AdminView() {
                         <div className="relative aspect-square bg-stone-900 overflow-hidden">
                           <img
                             src={primaryImage}
-                            alt={p.title}
+                            alt={`${p.title} - Product Catalog Management`}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-black/30 pointer-events-none" />
@@ -1408,7 +1408,7 @@ export default function AdminView() {
                             <td className="p-4 flex items-center gap-3">
                               <img
                                 src={(Array.isArray(p.images) && p.images[0]) || '/logo.png'}
-                                alt={p.title || 'Product'}
+                                alt={`${p.title || 'Product'} - Inventory Preview`}
                                 className="w-12 h-12 object-cover rounded-xl border border-stone-800 flex-shrink-0"
                               />
                               <div>
@@ -1651,7 +1651,7 @@ export default function AdminView() {
                     <h4 className="font-semibold text-xs text-brand-gold">{rev.title}</h4>
                     <p className="text-xs text-stone-400">{rev.comment}</p>
                     {rev.photo && (
-                      <img src={rev.photo} alt="Review attachment" className="w-16 h-16 object-cover rounded-lg border border-stone-700" />
+                      <img src={rev.photo} alt={`Review attachment from ${rev.author || 'verified buyer'}`} className="w-16 h-16 object-cover rounded-lg border border-stone-700" />
                     )}
                   </div>
                 ))}
@@ -1930,7 +1930,7 @@ export default function AdminView() {
                     <div className="space-y-3">
                       {blog.coverImage && (
                         <div className="aspect-video rounded-xl overflow-hidden bg-stone-900">
-                          <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover" />
+                          <img src={blog.coverImage} alt={`${blog.title} - Blog Article Cover`} className="w-full h-full object-cover" />
                         </div>
                       )}
                       
@@ -2628,7 +2628,7 @@ export default function AdminView() {
 
                             {/* Image Thumbnail */}
                             <div className="aspect-square w-full bg-stone-950 overflow-hidden">
-                              <img src={img} alt={`Showcase ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                              <img src={img} alt={`Showcase Gallery Thumbnail ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                             </div>
 
                             {/* Action Control Buttons */}

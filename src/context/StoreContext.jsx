@@ -27,7 +27,8 @@ export const slugify = (text) => {
 
 export const getProductSlug = (product) => {
   if (!product) return '';
-  const cleanTitle = slugify(product.title);
+  const shortTitle = (product.title || '').trim().split(/\s+/).slice(0, 4).join(' ');
+  const cleanTitle = slugify(shortTitle) || 'product';
   const encryptedId = encryptId(product.id);
   return `${cleanTitle}--${encryptedId}`;
 };
@@ -49,13 +50,13 @@ export const StoreProvider = ({ children }) => {
   const [isSecretAdminModalOpen, setIsSecretAdminModalOpen] = useState(false);
   const [demoAdminOverride, setDemoAdminOverride] = useState(false);
 
-  // Promotions State (Loaded from localStorage or initial curated festive promotion)
+  // Promotions State (Loaded from localStorage or initial state)
   const [promotions, setPromotions] = useState(() => {
     try {
       const saved = localStorage.getItem('ella_promotions');
-      if (saved) {
+      if (saved !== null) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch (e) {
       console.warn('Failed parsing saved promotions:', e);
@@ -367,7 +368,7 @@ export const StoreProvider = ({ children }) => {
         setCurrentView('privacy');
       } else if (routePath === 'returns-refunds' || routePath === 'refunds') {
         setCurrentView('refund-policy');
-      } else if (routePath === 'jewelry-care') {
+      } else if (routePath === 'jewelry-care' || routePath === 'about' || routePath === 'contact' || routePath === 'ring-size-guide') {
         setCurrentView('brand-guidelines');
       } else if (['terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(routePath)) {
         setCurrentView(routePath);
@@ -385,15 +386,11 @@ export const StoreProvider = ({ children }) => {
     };
   }, [products]);
 
-  // 1. Automatic OAuth Catch & Forwarding
+  // 1. Automatic Canonical Domain & OAuth Token Safety Catch
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const hasAuthHash = window.location.hash.includes('access_token') || window.location.search.includes('code=');
-      
-      // If landed on localhost with OAuth token while coming from Vercel
-      if (isLocalhost && hasAuthHash && document.referrer.includes('vercel.app')) {
-        window.location.href = 'https://ella-creations.vercel.app/' + window.location.hash + window.location.search;
+      if (window.location.hostname === 'ella-creations.vercel.app') {
+        window.location.replace('https://ella-creations.com' + window.location.pathname + window.location.search + window.location.hash);
       }
     }
   }, []);
@@ -432,10 +429,10 @@ export const StoreProvider = ({ children }) => {
   // Realtime cross-tab & window promotions sync
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (e.key === 'ella_promotions' && e.newValue) {
+      if (e.key === 'ella_promotions' && e.newValue !== null) {
         try {
           const parsed = JSON.parse(e.newValue);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             setPromotions(parsed);
           }
         } catch (err) {}
@@ -445,9 +442,9 @@ export const StoreProvider = ({ children }) => {
     const handleCustomUpdate = () => {
       try {
         const saved = localStorage.getItem('ella_promotions');
-        if (saved) {
+        if (saved !== null) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) setPromotions(parsed);
+          if (Array.isArray(parsed)) setPromotions(parsed);
         }
       } catch (err) {}
     };
@@ -772,8 +769,9 @@ export const StoreProvider = ({ children }) => {
   // Supabase Auth Actions
   const signInWithGoogle = async () => {
     try {
-      // Pass target origin dynamically
-      const redirectUrl = window.location.origin;
+      // Dynamic origin target: explicitly enforce canonical domain in production
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const redirectUrl = isLocal ? `${window.location.origin}/admin` : 'https://ella-creations.com/admin';
 
       const res = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -1471,37 +1469,40 @@ export const StoreProvider = ({ children }) => {
         .select('*')
         .order('priority', { ascending: true });
 
-      // If promotions table does not exist or returned empty, fallback to system metadata row in products
-      if (promoError || !promoData || promoData.length === 0) {
-        if (promoError) {
-          console.info('Supabase promotions table notice, checking system metadata:', promoError.message);
-        }
+      // If promotions table returned a clean response (even if empty [])
+      if (!promoError && Array.isArray(promoData)) {
+        if (promoData.length === 0) {
+          // Check system metadata row backup in products
+          const { data: sysData } = await supabase
+            .from('products')
+            .select('description')
+            .eq('id', '__system_promotions__')
+            .maybeSingle();
 
-        const { data: sysData } = await supabase
-          .from('products')
-          .select('description')
-          .eq('id', '__system_promotions__')
-          .maybeSingle();
-
-        if (sysData && sysData.description) {
-          try {
-            const parsed = JSON.parse(sysData.description);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              const mapped = parsed.map(normalizePromo);
-              setPromotions(mapped);
-              try {
-                localStorage.setItem('ella_promotions', JSON.stringify(mapped));
-              } catch (e) {}
-              return;
+          if (sysData && sysData.description) {
+            try {
+              const parsed = JSON.parse(sysData.description);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                const mapped = parsed.map(normalizePromo);
+                setPromotions(mapped);
+                try {
+                  localStorage.setItem('ella_promotions', JSON.stringify(mapped));
+                } catch (e) {}
+                return;
+              }
+            } catch (pe) {
+              console.warn('Error parsing __system_promotions__ payload:', pe);
             }
-          } catch (pe) {
-            console.warn('Error parsing __system_promotions__ payload:', pe);
           }
-        }
-        return;
-      }
 
-      if (promoData && Array.isArray(promoData) && promoData.length > 0) {
+          // Both promotions table and system backup indicate 0 active promotions
+          setPromotions([]);
+          try {
+            localStorage.setItem('ella_promotions', JSON.stringify([]));
+          } catch (e) {}
+          return;
+        }
+
         const { data: junctionData } = await supabase
           .from('promotion_products')
           .select('*');
@@ -1530,12 +1531,44 @@ export const StoreProvider = ({ children }) => {
           });
         });
 
-        if (mapped.length > 0) {
-          setPromotions(mapped);
+        setPromotions(mapped);
+        try {
+          localStorage.setItem('ella_promotions', JSON.stringify(mapped));
+        } catch (e) {}
+        syncPromotionsCloudBackup(mapped);
+        return;
+      }
+
+      // If promoError occurred (e.g. table does not exist), fallback to system metadata row
+      if (promoError) {
+        console.info('Supabase promotions table notice, checking system metadata:', promoError.message);
+        const { data: sysData } = await supabase
+          .from('products')
+          .select('description')
+          .eq('id', '__system_promotions__')
+          .maybeSingle();
+
+        if (sysData && sysData.description) {
           try {
-            localStorage.setItem('ella_promotions', JSON.stringify(mapped));
-          } catch (e) {}
-          syncPromotionsCloudBackup(mapped);
+            const parsed = JSON.parse(sysData.description);
+            if (Array.isArray(parsed)) {
+              if (parsed.length === 0) {
+                setPromotions([]);
+                try {
+                  localStorage.setItem('ella_promotions', JSON.stringify([]));
+                } catch (e) {}
+                return;
+              }
+              const mapped = parsed.map(normalizePromo);
+              setPromotions(mapped);
+              try {
+                localStorage.setItem('ella_promotions', JSON.stringify(mapped));
+              } catch (e) {}
+              return;
+            }
+          } catch (pe) {
+            console.warn('Error parsing __system_promotions__ payload:', pe);
+          }
         }
       }
     } catch (err) {
@@ -1746,7 +1779,11 @@ export const StoreProvider = ({ children }) => {
       return updatedList;
     });
 
-    syncPromotionsCloudBackup(updatedList);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ella_promo_updated', { detail: { deletedId: promotionId, remaining: updatedList } }));
+    }
+
+    await syncPromotionsCloudBackup(updatedList);
 
     try {
       await supabase.from('promotion_products').delete().eq('promotion_id', promotionId);

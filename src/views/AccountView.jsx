@@ -188,7 +188,7 @@ export default function AccountView() {
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-brand-rose to-brand-gold p-1 shadow-lg flex-shrink-0">
               {user.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                <img src={user.user_metadata.avatar_url} alt={`${user.user_metadata.full_name || 'Customer'} Profile Avatar`} className="w-full h-full rounded-full object-cover" />
               ) : (
                 <div className="w-full h-full rounded-full bg-stone-900 text-white flex items-center justify-center font-serif text-2xl font-bold">
                   {(user.email || 'U')[0].toUpperCase()}
@@ -424,7 +424,7 @@ export default function AccountView() {
                         {order.items?.map((item, idx) => (
                           <div key={idx} className="flex gap-4 items-center bg-stone-50/70 p-3 rounded-2xl border border-stone-200/80">
                             <div className="w-16 h-16 rounded-xl bg-white p-1 border border-stone-200 flex-shrink-0 flex items-center justify-center">
-                              <img src={item.image} alt={item.title} className="w-full h-full object-contain" />
+                              <img src={item.image} alt={`${item.title} - Purchased Jewelry Piece`} className="w-full h-full object-contain" />
                             </div>
 
                             <div className="flex-1 min-w-0">
@@ -689,7 +689,7 @@ export default function AccountView() {
                   <div className="aspect-square rounded-xl bg-gradient-to-b from-stone-50 to-brand-cream/30 overflow-hidden relative p-2 flex items-center justify-center">
                     <img 
                       src={product.images[0]} 
-                      alt={product.title} 
+                      alt={`${product.title} - Wishlist Jewelry Item`} 
                       className="w-full h-full object-contain cursor-pointer"
                       onClick={() => navigateTo('product', product.id)}
                     />

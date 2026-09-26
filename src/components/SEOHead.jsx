@@ -34,9 +34,10 @@ export default function SEOHead() {
         : `${domain}/shop`;
     } else if (currentView === 'product' && activeProduct) {
       const priceText = formatPrice(activeProduct.price);
-      title = `${activeProduct.title} - Buy Online ${priceText} | Ella Creations`;
-      description = activeProduct.description 
-        ? `${activeProduct.description.slice(0, 150)}... Handcrafted ${activeProduct.category} in India at ${priceText}. Insured shipping & luxury gift box.`
+      title = `${activeProduct.title} - Handcrafted ${activeProduct.category} | Ella Creations`;
+      const cleanSnippet = (activeProduct.description || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+      description = cleanSnippet 
+        ? `${activeProduct.title}: ${cleanSnippet}... Buy online at ${priceText}. Handcrafted ${activeProduct.category} with insured pan-India delivery.`
         : `Buy ${activeProduct.title} handcrafted in India with protective gold plating at ${priceText}. Exclusive artificial fine jewelry from Ella Creations.`;
       keywords = `${activeProduct.title}, ${activeProduct.category}, ${activeProduct.stoneType || 'artificial jewelry'}, buy ${activeProduct.title} online, kundan jewelry India, Ella Creations`;
       const prodSlug = getProductSlug(activeProduct);

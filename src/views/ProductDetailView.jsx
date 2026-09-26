@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
+import { ProductDetailSkeleton } from '../components/SkeletonLoader';
 
 export default function ProductDetailView() {
   const { 
@@ -293,6 +294,10 @@ export default function ProductDetailView() {
     setIsSubmittingReview(false);
   };
 
+  if (!product) {
+    return <ProductDetailSkeleton />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-20 lg:pb-12">
       
@@ -390,10 +395,36 @@ export default function ProductDetailView() {
                     <span className="text-[8px] sm:text-[9px] font-bold mt-1">VIDEO</span>
                   </div>
                 ) : (
-                  <img src={item.url} alt={`Media ${idx + 1}`} className="w-full h-full object-contain" />
+                  <img 
+                    src={item.url} 
+                    alt={`${product.title} - Handcrafted view ${idx + 1}`} 
+                    className="w-full h-full object-contain" 
+                  />
                 )}
               </button>
             ))}
+          </div>
+
+          {/* Desktop Only: Product Description & Craftsmanship Details below product images */}
+          <div className="hidden lg:block pt-4 space-y-4">
+            <div className="bg-white rounded-3xl p-6 border border-brand-gold/30 shadow-sm space-y-3">
+              <h3 className="font-serif text-base font-bold text-stone-900 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Sparkles className="w-4 h-4 text-brand-gold" /> Product Story & Description
+              </h3>
+              <div className="text-xs sm:text-sm text-stone-700 leading-relaxed whitespace-pre-wrap font-sans">
+                {product.description}
+              </div>
+              {product.details && (
+                <div className="pt-3 border-t border-stone-100">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 mb-2">
+                    Craftsmanship & Specifications
+                  </h4>
+                  <div className="text-xs text-stone-600 leading-relaxed whitespace-pre-wrap font-sans">
+                    {product.details}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -479,11 +510,6 @@ export default function ProductDetailView() {
               </div>
             </div>
           )}
-
-          {/* Product Description with Preserved Formatting */}
-          <div className="text-xs sm:text-sm text-stone-600 leading-relaxed font-normal whitespace-pre-wrap">
-            {product.description}
-          </div>
 
           {/* Custom Sections & Specifications per product */}
           {product.customSections && product.customSections.length > 0 && (
@@ -661,6 +687,16 @@ export default function ProductDetailView() {
             >
               Buy It Now (Express Checkout)
             </button>
+          </div>
+
+          {/* Product Description below Buy Now button */}
+          <div className="bg-brand-cream/40 p-4 sm:p-5 rounded-2xl border border-brand-gold/25 space-y-2">
+            <h3 className="font-serif text-sm font-bold text-stone-900 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-brand-gold" /> Product Description
+            </h3>
+            <div className="text-xs sm:text-sm text-stone-700 leading-relaxed font-normal whitespace-pre-wrap font-sans">
+              {product.description}
+            </div>
           </div>
 
           {/* Guarantee Badges */}
@@ -873,7 +909,11 @@ export default function ProductDetailView() {
 
                   {rev.photo && (
                     <div className="pt-1">
-                      <img src={rev.photo} alt="Customer attachment" className="w-20 h-20 object-cover rounded-xl border border-stone-200" />
+                      <img 
+                        src={rev.photo} 
+                        alt={`Customer review photo for ${product.title} by ${rev.author}`} 
+                        className="w-20 h-20 object-cover rounded-xl border border-stone-200" 
+                      />
                     </div>
                   )}
                 </div>
@@ -956,7 +996,11 @@ export default function ProductDetailView() {
                   />
                   {reviewForm.photo && (
                     <div className="mt-2 flex items-center gap-2">
-                      <img src={reviewForm.photo} alt="Preview" className="w-12 h-12 object-cover rounded-lg border" />
+                      <img 
+                        src={reviewForm.photo} 
+                        alt={`Customer review upload preview for ${product.title}`} 
+                        className="w-12 h-12 object-cover rounded-lg border" 
+                      />
                       <span className="text-[10px] text-emerald-600 font-bold">Photo Attached!</span>
                     </div>
                   )}
@@ -1118,7 +1162,7 @@ export default function ProductDetailView() {
 
             <img
               src={currentMedia.url || product.images[0]}
-              alt={product.title}
+              alt={`${product.title} - High-Resolution Zoomed View`}
               style={{ transform: `scale(${zoomScale})` }}
               className="max-w-full max-h-[75vh] object-contain transition-transform duration-200 cursor-zoom-in"
               onClick={() => setZoomScale((prev) => (prev > 1 ? 1 : 2))}

@@ -232,7 +232,7 @@ export default function PromotionProductSelector({
                   {/* Thumbnail */}
                   <img
                     src={thumb}
-                    alt=""
+                    alt={`${product.title} Thumbnail`}
                     className="w-10 h-10 object-contain rounded-lg bg-stone-900 border border-stone-800 shrink-0"
                   />
 

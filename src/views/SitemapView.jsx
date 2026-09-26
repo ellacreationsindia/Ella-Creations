@@ -36,15 +36,18 @@ export default function SitemapView() {
       ]
     },
     {
-      category: 'Legal, Policies & Machine Sitemaps',
+      category: 'Legal, Policies & Agentic Machine Sitemaps',
       icon: FileText,
       color: 'text-emerald-600',
       links: [
+        { label: 'Shipping & Delivery Policy', view: 'shipping-policy', desc: 'Express insured dispatch & pincode delivery' },
+        { label: 'Returns & Refund Policy', view: 'refund-policy', desc: '48-hour transit damage replacement guarantee' },
         { label: 'Terms & Conditions', view: 'terms', desc: 'Pricing, courier shipping & Indian jurisdiction' },
         { label: 'Privacy Policy', view: 'privacy', desc: 'DPDP compliance & Razorpay payment security' },
         { label: 'Brand Guidelines & Heritage', view: 'brand-guidelines', desc: 'Color palette, fonts & artisan story' },
-        { label: 'XML Sitemap (Google)', url: '/sitemap.xml', external: true, desc: 'Machine-readable XML image & URL sitemap' },
-        { label: 'LLMs.txt (AI Search Engines)', url: '/llms.txt', external: true, desc: 'AI search engine specification file' }
+        { label: 'XML Sitemap (Google & Bing)', url: '/sitemap.xml', external: true, desc: 'Machine-readable XML image & URL sitemap' },
+        { label: 'LLMs.txt (AI Browsing Summary)', url: '/llms.txt', external: true, desc: 'AI agent & LLM manifest specification' },
+        { label: 'LLMs-Full.txt (Full AI Catalog)', url: '/llms-full.txt', external: true, desc: 'Complete product catalog knowledge base for AI agents' }
       ]
     }
   ];
@@ -76,7 +79,12 @@ export default function SitemapView() {
         {siteStructure.map((group, idx) => {
           const IconComp = group.icon;
           return (
-            <div key={idx} className="bg-white p-6 rounded-3xl border border-brand-gold/20 shadow-sm space-y-4 flex flex-col justify-between">
+            <div 
+              key={idx} 
+              itemScope 
+              itemType="https://schema.org/SiteNavigationElement"
+              className="bg-white p-6 rounded-3xl border border-brand-gold/20 shadow-sm space-y-4 flex flex-col justify-between"
+            >
               <div className="space-y-4">
                 <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
                   <IconComp className={`w-5 h-5 ${group.color}`} />
@@ -88,15 +96,17 @@ export default function SitemapView() {
                     <div key={linkIdx} className="space-y-0.5">
                       {link.external ? (
                         <a
+                          itemProp="url"
                           href={link.url}
                           target="_blank"
                           rel="noreferrer"
                           className="text-xs font-bold text-brand-rose hover:underline flex items-center gap-1"
                         >
-                          {link.label} <ExternalLink className="w-3 h-3" />
+                          <span itemProp="name">{link.label}</span> <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
                         <a
+                          itemProp="url"
                           href={
                             link.view === 'home'
                               ? '/'
@@ -112,7 +122,7 @@ export default function SitemapView() {
                           }}
                           className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left inline-block"
                         >
-                          {link.label}
+                          <span itemProp="name">{link.label}</span>
                         </a>
                       )}
                       <p className="text-[11px] text-stone-500">{link.desc}</p>

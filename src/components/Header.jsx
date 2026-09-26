@@ -669,7 +669,7 @@ export default function Header() {
                     >
                       <img
                         src={product.images[0]}
-                        alt={product.title}
+                        alt={`${product.title} - Handcrafted Jewelry Match`}
                         className="w-14 h-14 object-contain p-1 rounded-xl border border-brand-gold/20 bg-white flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">

@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
 
   <!-- 1. Core Brand Landing Pages -->
   <url>
     <loc>https://ella-creations.com/</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/"/>
     <image:image>
       <image:loc>https://ella-creations.com/logo.png</image:loc>
       <image:title>Ella Creations - Handcrafted Luxury Artificial &amp; Bridal Jewelry India</image:title>
       <image:caption>Contemporary luxury artificial jewelry brand in India</image:caption>
     </image:image>
   </url>
-
   <url>
     <loc>https://ella-creations.com/shop</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop"/>
   </url>
 
   <!-- 2. Category Landing Pages -->
   <url>
     <loc>https://ella-creations.com/shop?category=Necklace</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Necklace"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Necklace"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Handcrafted Royal Kundan Chokers &amp; Rani Haars</image:title>
@@ -37,9 +43,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Earring</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Earring"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Earring"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>AAA+ Cubic Zirconia Drop Earrings &amp; Peacock Jhumkas</image:title>
@@ -47,9 +55,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Rings</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Rings"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Rings"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Solitaire &amp; Floral Statement Cocktail Rings</image:title>
@@ -57,9 +67,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Bracelets%2FBangles</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bracelets%2FBangles"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Bracelets%2FBangles"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Imperial Hand-Enameled Meenakari Bangles &amp; Cuffs</image:title>
@@ -67,9 +79,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Pendant%20Set</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Pendant%20Set"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Pendant%20Set"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Rose Gold &amp; Diamond Look CZ Pendant Sets</image:title>
@@ -77,9 +91,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Sets</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sets"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Sets"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Bridal &amp; Festive Jewelry Complete Sets</image:title>
@@ -87,9 +103,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Bridal%20Sets</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bridal%20Sets"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Bridal%20Sets"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Grand Wedding Bridal Troussau Ensembles</image:title>
@@ -97,9 +115,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Others</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Others"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Others"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1611591475819-79b8b4a742cd?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Accessories &amp; Special Jewelry Pieces</image:title>
@@ -107,9 +127,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Sale</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sale"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Sale"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Exclusive Festive Jewelry Deals &amp; Promotional Sale</image:title>
@@ -118,10 +140,12 @@
 
   <!-- 3. Individual Handcrafted Products (With Encrypted Canonical Slugs) -->
   <url>
-    <loc>https://ella-creations.com/product/royal-kundan-pearl-choker-set--e_4b8d6de8c47bac2a</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Royal Kundan &amp; Pearl Choker Set | Ella Creations</image:title>
@@ -139,10 +163,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/starlight-solitaire-cubic-zirconia-drop-earrings--e_4b8d6de8c478ad29</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Starlight Solitaire Cubic Zirconia Drop Earrings | Ella Creations</image:title>
@@ -155,10 +181,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/celestial-rose-gold-flower-ring--e_4b8d6de8c479ae28</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Celestial Rose Gold Flower Ring | Ella Creations</image:title>
@@ -171,10 +199,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/imperial-meenakari-gold-plated-bangles-set--e_4b8d6de8c47eaf2f</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Imperial Meenakari Gold Plated Bangles Set | Ella Creations</image:title>
@@ -187,10 +217,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/maharani-emerald-drop-kundan-choker-set--e_4b8d6de8c47fb02e</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Maharani Emerald Drop Kundan Choker Set | Ella Creations</image:title>
@@ -203,10 +235,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/silver-rhythm-cz-statement-cocktail-ring--e_4b8d6de8c47cb12d</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Silver Rhythm CZ Statement Cocktail Ring | Ella Creations</image:title>
@@ -219,10 +253,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/royal-peacock-feather-jhumka-earrings--e_4b8d6de8c47db22c</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Royal Peacock Feather Jhumka Earrings | Ella Creations</image:title>
@@ -235,10 +271,12 @@
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/regal-pearl-polki-layered-rani-haar-set--e_4b8d6de8c472b323</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Regal Pearl &amp; Polki Layered Rani Haar Set | Ella Creations</image:title>
@@ -254,15 +292,19 @@
   <!-- 4. Ella Journal & Styling Articles -->
   <url>
     <loc>https://ella-creations.com/blog</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/blog"/>
   </url>
   <url>
     <loc>https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
       <image:title>The Ultimate Guide to Choosing Bridal Kundan Jewelry for Your Big Day</image:title>
@@ -270,9 +312,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
       <image:title>How to Style Cubic Zirconia (CZ) Jewelry from Workday to Cocktail Glam</image:title>
@@ -280,9 +324,11 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
       <image:title>5 Essential Tips to Care for &amp; Store Your Artificial Jewelry</image:title>
@@ -291,45 +337,51 @@
 
   <!-- 5. Brand Information & Legal Policies -->
   <url>
-    <loc>https://ella-creations.com/about</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/brand-guidelines</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/brand-guidelines"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/brand-guidelines"/>
   </url>
   <url>
-    <loc>https://ella-creations.com/contact</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://ella-creations.com/sitemap</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/ring-size-guide</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/sitemap"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/sitemap"/>
   </url>
   <url>
     <loc>https://ella-creations.com/shipping-policy</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shipping-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shipping-policy"/>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/refund-policy</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/refund-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/refund-policy"/>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/terms</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/terms"/>
   </url>
   <url>
-    <loc>https://ella-creations.com/returns-refunds</loc>
-    <lastmod>2026-09-25</lastmod>
+    <loc>https://ella-creations.com/privacy</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/terms-of-service</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/privacy-policy</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/privacy"/>
   </url>
 </urlset>

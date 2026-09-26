@@ -3,54 +3,62 @@ import React, { memo } from 'react';
 /**
  * AnimatedBackground
  * High-performance, luxury ambient live gradient background for Ella Creations.
- * Features:
- * - Shifting multi-stop silk gradient mesh
- * - Fluid, GPU-accelerated floating luminous aurora orbs (Rose, Gold, Champagne, Blush)
- * - Subtle ambient stardust jewelry sparkles
- * - Ultra-fine satin noise texture overlay (anti-banding)
- * - Respects prefers-reduced-motion automatically
+ * Optimized for 60fps/120fps silky-smooth scrolling:
+ * - GPU-composited radial gradient mesh
+ * - Hardware-accelerated floating luminous aurora orbs
+ * - Lightweight ambient sparkles
+ * - Zero CPU-heavy SVG filter overhead
  */
 function AnimatedBackground() {
   return (
     <div 
       aria-hidden="true" 
       className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none"
+      style={{ contain: 'strict' }}
     >
       {/* 1. Base Multi-stop Animated Gradient Canvas */}
       <div className="absolute inset-0 live-gradient-base opacity-95" />
 
-      {/* 2. Floating Luminous Aurora Mesh Orbs */}
-      <div className="absolute inset-0 overflow-hidden filter blur-[80px] sm:blur-[110px] md:blur-[130px] opacity-75 sm:opacity-85 transform-gpu">
+      {/* 2. Floating Luminous Aurora Mesh Orbs (GPU composited) */}
+      <div className="absolute inset-0 overflow-hidden filter blur-[40px] sm:blur-[60px] opacity-75 sm:opacity-85 transform-gpu pointer-events-none">
         
-        {/* Orb 1: Royal Rose & Soft Blush (Top-Left to Center) */}
+        {/* Orb 1: Royal Rose & Soft Blush (Top-Left) */}
         <div 
-          className="absolute -top-[10%] -left-[10%] w-[55vw] h-[55vw] min-w-[320px] min-h-[320px] max-w-[750px] max-h-[750px] rounded-full animate-float-orb-1 opacity-70"
+          className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] min-w-[280px] min-h-[280px] max-w-[650px] max-h-[650px] rounded-full animate-float-orb-1 opacity-70"
           style={{
-            background: 'radial-gradient(circle at 40% 40%, rgba(212, 154, 165, 0.55) 0%, rgba(232, 190, 198, 0.35) 45%, rgba(255, 246, 238, 0) 75%)'
+            background: 'radial-gradient(circle at 40% 40%, rgba(212, 154, 165, 0.45) 0%, rgba(232, 190, 198, 0.25) 45%, rgba(255, 246, 238, 0) 75%)',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)'
           }}
         />
 
-        {/* Orb 2: Champagne & Antique Gold (Top-Right to Mid-Screen) */}
+        {/* Orb 2: Champagne & Antique Gold (Top-Right) */}
         <div 
-          className="absolute -top-[5%] -right-[10%] w-[50vw] h-[50vw] min-w-[300px] min-h-[300px] max-w-[700px] max-h-[700px] rounded-full animate-float-orb-2 opacity-65"
+          className="absolute -top-[5%] -right-[10%] w-[45vw] h-[45vw] min-w-[260px] min-h-[260px] max-w-[600px] max-h-[600px] rounded-full animate-float-orb-2 opacity-65"
           style={{
-            background: 'radial-gradient(circle at 60% 40%, rgba(207, 164, 92, 0.45) 0%, rgba(233, 208, 151, 0.3) 50%, rgba(255, 246, 238, 0) 75%)'
+            background: 'radial-gradient(circle at 60% 40%, rgba(207, 164, 92, 0.35) 0%, rgba(233, 208, 151, 0.2) 50%, rgba(255, 246, 238, 0) 75%)',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)'
           }}
         />
 
-        {/* Orb 3: Warm Peach & Apricot Glow (Bottom-Left to Center-Bottom) */}
+        {/* Orb 3: Warm Peach & Apricot Glow (Bottom-Left) */}
         <div 
-          className="absolute -bottom-[15%] -left-[5%] w-[58vw] h-[58vw] min-w-[340px] min-h-[340px] max-w-[800px] max-h-[800px] rounded-full animate-float-orb-3 opacity-60"
+          className="absolute -bottom-[15%] -left-[5%] w-[50vw] h-[50vw] min-w-[300px] min-h-[300px] max-w-[700px] max-h-[700px] rounded-full animate-float-orb-3 opacity-60"
           style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(254, 215, 170, 0.5) 0%, rgba(242, 196, 199, 0.3) 50%, rgba(255, 246, 238, 0) 80%)'
+            background: 'radial-gradient(circle at 50% 50%, rgba(254, 215, 170, 0.4) 0%, rgba(242, 196, 199, 0.2) 50%, rgba(255, 246, 238, 0) 80%)',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)'
           }}
         />
 
         {/* Orb 4: Radiant Rose Gold Highlight (Center Floating Aura) */}
         <div 
-          className="absolute top-[35%] right-[15%] w-[45vw] h-[45vw] min-w-[280px] min-h-[280px] max-w-[620px] max-h-[620px] rounded-full animate-float-orb-4 opacity-55"
+          className="absolute top-[35%] right-[15%] w-[40vw] h-[40vw] min-w-[250px] min-h-[250px] max-w-[550px] max-h-[550px] rounded-full animate-float-orb-4 opacity-55"
           style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(233, 208, 151, 0.4) 0%, rgba(212, 154, 165, 0.25) 50%, rgba(255, 246, 238, 0) 75%)'
+            background: 'radial-gradient(circle at 50% 50%, rgba(233, 208, 151, 0.3) 0%, rgba(212, 154, 165, 0.2) 50%, rgba(255, 246, 238, 0) 75%)',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)'
           }}
         />
 
@@ -108,39 +116,13 @@ function AnimatedBackground() {
             <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" />
           </svg>
         </div>
-
-        {/* Sparkle 6 */}
-        <div 
-          className="absolute top-[42%] right-[35%] animate-twinkle"
-          style={{ animationDuration: '8.5s', animationDelay: '2.8s' }}
-        >
-          <svg className="w-3.5 h-3.5 text-brand-gold-dark/35" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" />
-          </svg>
-        </div>
       </div>
 
-      {/* 4. Fine Satin Noise Filter (Banding Prevention & Editorial Paper Texture) */}
-      <svg 
-        className="absolute inset-0 w-full h-full opacity-[0.025] mix-blend-overlay pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <filter id="luxury-satin-noise">
-          <feTurbulence 
-            type="fractalNoise" 
-            baseFrequency="0.8" 
-            numOctaves="3" 
-            stitchTiles="stitch" 
-          />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#luxury-satin-noise)" />
-      </svg>
-
-      {/* 5. Delicate Edge Glow & Vignette */}
+      {/* 4. Delicate Luxury Edge Vignette */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none opacity-30"
         style={{
-          background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(207, 164, 92, 0.08) 100%)'
+          background: 'radial-gradient(ellipse at 50% 50%, transparent 65%, rgba(207, 164, 92, 0.05) 100%)'
         }}
       />
     </div>

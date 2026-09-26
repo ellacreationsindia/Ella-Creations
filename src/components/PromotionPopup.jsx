@@ -3,6 +3,14 @@ import { X, Sparkles, ArrowRight, Tag, Clock } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatISTDateTime } from '../utils/pricing';
 
+// Search Engine Crawler / Bot Guard:
+// Prevent intrusive interstitials from ever being rendered to Googlebot, Bingbot, or AI crawlers
+const isSearchEngineBot = () => {
+  if (typeof navigator === 'undefined' || !navigator.userAgent) return false;
+  const ua = navigator.userAgent.toLowerCase();
+  return /googlebot|google-inspectiontool|chrome-lighthouse|storebot-google|google-other|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|facebookexternalhit|ia_archiver|screaming frog|semrushbot|ahrefsbot|mj12bot|petalbot|gptbot|claudebot|perplexitybot|applebot|amazonbot|cohere-ai|bytespider/i.test(ua);
+};
+
 export default function PromotionPopup({ 
   preview = false, 
   previewCampaign = null, 
@@ -12,6 +20,7 @@ export default function PromotionPopup({
   const store = useStore();
   const activeCampaign = preview ? previewCampaign : store?.activePopupCampaign;
   const navigateTo = store?.navigateTo;
+  const currentView = store?.currentView;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -23,7 +32,18 @@ export default function PromotionPopup({
       return;
     }
 
+    // Immediately bail out for bots, crawlers, and Google Search Console inspection tools
+    if (isSearchEngineBot()) {
+      return;
+    }
+
     if (!activeCampaign) {
+      setIsOpen(false);
+      return;
+    }
+
+    // Suppress popup on admin, checkout, account, and policy/legal views
+    if (['admin', 'checkout', 'account', 'terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap'].includes(currentView)) {
       setIsOpen(false);
       return;
     }
@@ -33,25 +53,47 @@ export default function PromotionPopup({
     const campaignKey = `ella_promo_seen_${activeCampaign.id}_${campaignVersion}`;
     const frequency = activeCampaign.popup_frequency || activeCampaign.popupFrequency || 'once_per_session';
 
+    let canShow = false;
     if (frequency === 'once_per_session') {
       const alreadySeen = sessionStorage.getItem(campaignKey);
-      if (!alreadySeen) {
-        const timer = setTimeout(() => setIsOpen(true), 1000);
-        return () => clearTimeout(timer);
-      }
+      if (!alreadySeen) canShow = true;
     } else if (frequency === 'once_per_day') {
       const lastSeenTime = localStorage.getItem(campaignKey);
       const oneDayMs = 24 * 60 * 60 * 1000;
-      if (!lastSeenTime || Date.now() - Number(lastSeenTime) > oneDayMs) {
-        const timer = setTimeout(() => setIsOpen(true), 1000);
-        return () => clearTimeout(timer);
-      }
+      if (!lastSeenTime || Date.now() - Number(lastSeenTime) > oneDayMs) canShow = true;
     } else {
       // 'every_visit'
-      const timer = setTimeout(() => setIsOpen(true), 800);
-      return () => clearTimeout(timer);
+      canShow = true;
     }
-  }, [activeCampaign, preview]);
+
+    if (!canShow) return;
+
+    // Google Search & User Experience Best Practice:
+    // Trigger popup only after genuine visitor engagement (scroll past 150px OR 7 seconds elapsed)
+    let triggered = false;
+    let fallbackTimer = null;
+
+    const showModal = () => {
+      if (triggered) return;
+      triggered = true;
+      setIsOpen(true);
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+    const handleScroll = () => {
+      if (window.scrollY > 150) {
+        showModal();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    fallbackTimer = setTimeout(showModal, 7000);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+    };
+  }, [activeCampaign, preview, currentView]);
 
   // Listen for admin panel test / trigger events to instantly show popup
   useEffect(() => {
@@ -151,7 +193,7 @@ export default function PromotionPopup({
             {bannerImage ? (
               <img 
                 src={bannerImage} 
-                alt={campaignName} 
+                alt={`${campaignName || 'Promotional Offer'} - Ella Creations Exclusive Discount`} 
                 className="absolute inset-0 w-full h-full object-cover opacity-60"
               />
             ) : (
@@ -242,7 +284,7 @@ export default function PromotionPopup({
             {bannerImage ? (
               <img 
                 src={bannerImage} 
-                alt={campaignName} 
+                alt={`${campaignName || 'Festive Promotion'} - Ella Creations Special Jewelry Campaign`} 
                 className="absolute inset-0 w-full h-full object-cover opacity-50 filter brightness-90"
               />
             ) : (
@@ -250,7 +292,7 @@ export default function PromotionPopup({
             )}
 
             {/* Subtle Brand Watermark */}
-            <img src="/logo.png" alt="" className="w-24 h-24 opacity-10 absolute pointer-events-none" />
+            <img src="/logo.png" alt="Ella Creations Crest Monogram" className="w-24 h-24 opacity-10 absolute pointer-events-none" />
 
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-[0.25em] text-brand-gold bg-stone-900/90 px-3 py-1 rounded-full border border-brand-gold/40 shadow-sm">

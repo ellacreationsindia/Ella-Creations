@@ -641,7 +641,7 @@ export default function PromotionForm({
                       <div className="flex items-center gap-4">
                         {formData.imageUrl ? (
                           <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-brand-gold/40 bg-stone-900 shrink-0">
-                            <img src={formData.imageUrl} alt="Banner preview" className="w-full h-full object-cover" />
+                            <img src={formData.imageUrl} alt="Promotion Campaign Banner Preview" className="w-full h-full object-cover" />
                             <button
                               type="button"
                               onClick={() => setFormData({ ...formData, imageUrl: '' })}

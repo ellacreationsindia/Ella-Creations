@@ -108,7 +108,7 @@ export default function CartDrawer() {
                 >
                   <img
                     src={item.image}
-                    alt={item.title}
+                    alt={`${item.title} - Selected Shopping Bag Item`}
                     className="w-20 h-20 object-contain p-1 bg-white rounded-lg border border-brand-gold/20 flex-shrink-0"
                   />
                   <div className="flex-1 flex flex-col justify-between">

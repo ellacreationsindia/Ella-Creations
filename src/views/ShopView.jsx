@@ -3,6 +3,7 @@ import { Filter, SlidersHorizontal, Search, Sparkles, RefreshCw, X, Check, Tag, 
 import { useStore, formatPrice } from '../context/StoreContext';
 import { isProductInCampaign } from '../utils/pricing';
 import ProductCard from '../components/ProductCard';
+import { ProductGridSkeleton } from '../components/SkeletonLoader';
 
 export default function ShopView() {
   const { 
@@ -869,7 +870,9 @@ export default function ShopView() {
           </div>
 
           {/* Product Cards Grid: Mobile 2 cards per row, Desktop exactly 4 large cards per row */}
-          {filtered.length === 0 ? (
+          {!products || products.length === 0 ? (
+            <ProductGridSkeleton count={8} />
+          ) : filtered.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center space-y-4 border border-stone-200">
               <div className="w-16 h-16 rounded-full bg-brand-cream mx-auto flex items-center justify-center text-brand-rose">
                 <Filter className="w-8 h-8" />
@@ -886,7 +889,7 @@ export default function ShopView() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-6 xl:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-6 xl:gap-8 content-auto">
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
