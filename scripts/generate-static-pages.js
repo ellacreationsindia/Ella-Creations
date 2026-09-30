@@ -85,6 +85,14 @@ function writePage(relPath, htmlContent) {
   const targetDir = path.dirname(targetFile);
   fs.mkdirSync(targetDir, { recursive: true });
   fs.writeFileSync(targetFile, htmlContent, 'utf-8');
+
+  // Also write the flat .html file (e.g. dist/shop.html) for servers with cleanUrls enabled (Vercel, Netlify)
+  if (relPath !== '') {
+    const flatFile = path.join(distDir, `${relPath}.html`);
+    const flatDir = path.dirname(flatFile);
+    fs.mkdirSync(flatDir, { recursive: true });
+    fs.writeFileSync(flatFile, htmlContent, 'utf-8');
+  }
 }
 
 // Common Shared HTML Header for static rendering

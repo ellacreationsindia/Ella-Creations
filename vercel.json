@@ -3,5 +3,23 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/shop", "destination": "/shop/index.html" },
+    { "source": "/necklaces", "destination": "/necklaces/index.html" },
+    { "source": "/earrings", "destination": "/earrings/index.html" },
+    { "source": "/rings", "destination": "/rings/index.html" },
+    { "source": "/bridal-sets", "destination": "/bridal-sets/index.html" },
+    { "source": "/bracelets-bangles", "destination": "/bracelets-bangles/index.html" },
+    { "source": "/blog", "destination": "/blog/index.html" },
+    { "source": "/terms", "destination": "/terms/index.html" },
+    { "source": "/privacy", "destination": "/privacy/index.html" },
+    { "source": "/refund-policy", "destination": "/refund-policy/index.html" },
+    { "source": "/shipping-policy", "destination": "/shipping-policy/index.html" },
+    { "source": "/brand-guidelines", "destination": "/brand-guidelines/index.html" },
+    { "source": "/sitemap", "destination": "/sitemap/index.html" },
+    { "source": "/product/:slug*", "destination": "/product/:slug*/index.html" },
+    { "source": "/blog/:slug*", "destination": "/blog/:slug*/index.html" },
+    { "source": "/((?!assets/|.*\\..*).*)", "destination": "/index.html" }
+  ]
 }

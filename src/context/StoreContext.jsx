@@ -149,16 +149,35 @@ export const StoreProvider = ({ children }) => {
   });
   const [selectedBlogId, setSelectedBlogId] = useState('');
 
-  // UI state
+  // Clean pathname utility: handles leading/trailing slashes, .html extensions, and /index.html
+  const cleanRoutePath = (pathname) => {
+    if (!pathname) return '';
+    return pathname
+      .replace(/^\/+/, '')
+      .replace(/\/+$/, '')
+      .replace(/\/index\.html$/i, '')
+      .replace(/\.html$/i, '')
+      .trim();
+  };
+
+  // UI state initializer
   const getInitialView = () => {
     if (typeof window === 'undefined') return 'home';
-    const path = window.location.pathname.replace(/^\//, '').trim();
-    if (!path || path === 'home' || path === 'index.html') return 'home';
-    if (path.startsWith('product/')) return 'product';
-    if (path.startsWith('blog/')) return 'blog-detail';
-    if (path === 'blog' || path === 'blogs') return 'blog';
-    if (path === 'shop') return 'shop';
-    if (['terms', 'privacy', 'refund-policy', 'shipping-policy', 'brand-guidelines', 'sitemap', 'account', 'checkout', 'admin', '404'].includes(path)) return path;
+    const cleanRoute = cleanRoutePath(window.location.pathname);
+    if (!cleanRoute || cleanRoute === 'home' || cleanRoute === 'index') return 'home';
+    if (cleanRoute.startsWith('product/') || cleanRoute.startsWith('product-')) return 'product';
+    if (cleanRoute.startsWith('blog/') || cleanRoute.startsWith('blog-')) return 'blog-detail';
+    if (cleanRoute === 'blog' || cleanRoute === 'blogs') return 'blog';
+    if (cleanRoute === 'shop' || cleanRoute.startsWith('shop/')) return 'shop';
+    if (['necklace', 'necklaces', 'earring', 'earrings', 'rings', 'ring', 'bridal-sets', 'bridal', 'bracelets-bangles', 'bracelets', 'bangles', 'pendant-set', 'pendant', 'others', 'sale'].includes(cleanRoute)) return 'shop';
+    if (['terms', 'terms-of-service'].includes(cleanRoute)) return 'terms';
+    if (['privacy', 'privacy-policy'].includes(cleanRoute)) return 'privacy';
+    if (['refund-policy', 'returns-refunds', 'refunds'].includes(cleanRoute)) return 'refund-policy';
+    if (['shipping-policy', 'shipping'].includes(cleanRoute)) return 'shipping-policy';
+    if (['brand-guidelines', 'jewelry-care', 'about', 'contact', 'ring-size-guide'].includes(cleanRoute)) return 'brand-guidelines';
+    if (['sitemap', 'account', 'checkout', 'admin'].includes(cleanRoute)) return cleanRoute;
+    if (cleanRoute === '404') return '404';
+
     const hash = (window.location.hash || '').replace(/^#\/?/, '').trim();
     if (hash === 'shop') return 'shop';
     if (hash.startsWith('product')) return 'product';
@@ -280,12 +299,12 @@ export const StoreProvider = ({ children }) => {
       const rawHash = window.location.hash || '';
       if (rawHash.includes('access_token') || rawHash.includes('code=')) return;
 
-      let routePath = window.location.pathname.replace(/^\//, '').trim();
+      let routePath = cleanRoutePath(window.location.pathname);
       const queryParams = new URLSearchParams(window.location.search);
 
       // Handle legacy hash navigation and migrate immediately to clean path
       if (rawHash && (rawHash.startsWith('#/') || rawHash.startsWith('#'))) {
-        const legacyHash = rawHash.replace(/^#\/?/, '').trim();
+        const legacyHash = cleanRoutePath(rawHash.replace(/^#\/?/, ''));
         if (legacyHash) {
           routePath = legacyHash;
           const cleanCanonical = legacyHash === 'home' ? '/' : `/${legacyHash}`;
@@ -293,7 +312,7 @@ export const StoreProvider = ({ children }) => {
         }
       }
 
-      if (!routePath || routePath === 'home' || routePath === 'index.html') {
+      if (!routePath || routePath === 'home' || routePath === 'index') {
         setCurrentView('home');
       } else if (routePath.startsWith('product/') || routePath.startsWith('product-')) {
         const param = routePath.startsWith('product/') ? routePath.replace('product/', '') : routePath.replace('product-', '');
@@ -333,11 +352,19 @@ export const StoreProvider = ({ children }) => {
       } else if (routePath === 'sale') {
         setCurrentView('shop');
         setSelectedCategory('Sale');
-      } else if (routePath === 'shop') {
+      } else if (routePath === 'shop' || routePath.startsWith('shop/')) {
         setCurrentView('shop');
+        const sub = routePath.replace(/^shop\/?/, '').trim();
         const cat = queryParams.get('category');
         if (cat) {
           setSelectedCategory(decodeURIComponent(cat));
+        } else if (sub) {
+          if (sub === 'necklaces' || sub === 'necklace') setSelectedCategory('Necklace');
+          else if (sub === 'earrings' || sub === 'earring') setSelectedCategory('Earring');
+          else if (sub === 'rings' || sub === 'ring') setSelectedCategory('Rings');
+          else if (sub === 'bridal-sets' || sub === 'bridal') setSelectedCategory('Bridal Sets');
+          else if (sub.includes('bangles') || sub.includes('bracelets')) setSelectedCategory('Bracelets/Bangles');
+          else setSelectedCategory(decodeURIComponent(sub));
         } else {
           setSelectedCategory('All');
         }

@@ -164,12 +164,22 @@ export default function Header() {
             <nav className="hidden lg:flex items-center space-x-6 font-medium text-xs uppercase tracking-wider text-stone-700">
               <a 
                 href="/"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('home');
+                }}
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Home
               </a>
               <a 
                 href="/shop"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'All');
+                }}
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' && selectedCategory !== 'Sale' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Shop Collections
@@ -177,6 +187,11 @@ export default function Header() {
               {primaryPromotion && (
                 <a 
                   href="/shop?category=Sale"
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Sale');
+                  }}
                   className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
                     currentView === 'shop' && selectedCategory === 'Sale'
                       ? 'text-rose-600 border-b-2 border-rose-600'
@@ -192,24 +207,44 @@ export default function Header() {
               )}
               <a 
                 href="/shop?category=Necklace"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'Necklace');
+                }}
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Necklaces
               </a>
               <a 
                 href="/shop?category=Earring"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'Earring');
+                }}
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Earrings
               </a>
               <a 
                 href="/shop?category=Bridal+Sets"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'Bridal Sets');
+                }}
                 className="hover:text-brand-rose transition-colors py-1"
               >
                 Bridal Sets
               </a>
               <a 
                 href="/blog"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('blog');
+                }}
                 className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'blog' || currentView === 'blog-detail' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Ella Journal
@@ -418,6 +453,12 @@ export default function Header() {
                 {/* Home */}
                 <a
                   href="/"
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('home');
+                    setIsMobileMenuOpen(false);
+                  }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
                     currentView === 'home' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-800 hover:bg-brand-cream'
                   }`}
@@ -430,6 +471,12 @@ export default function Header() {
                 {primaryPromotion && (
                   <a
                     href="/shop?category=Sale"
+                    onClick={(e) => {
+                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                      e.preventDefault();
+                      navigateTo('shop', null, 'Sale');
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="w-full text-left px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-brand-rose text-white font-bold transition-all shadow-sm flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
@@ -458,6 +505,12 @@ export default function Header() {
                     <div className="pl-6 pr-2 py-1 space-y-1 bg-brand-cream/30 rounded-xl my-1 border-l-2 border-brand-rose/40">
                       <a
                         href="/shop"
+                        onClick={(e) => {
+                          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                          e.preventDefault();
+                          navigateTo('shop', null, 'All');
+                          setIsMobileMenuOpen(false);
+                        }}
                         className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
                       >
                         <span>All Jewelry</span>
@@ -475,6 +528,12 @@ export default function Header() {
                         <a
                           key={item.cat}
                           href={item.href}
+                          onClick={(e) => {
+                            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                            e.preventDefault();
+                            navigateTo('shop', null, item.cat);
+                            setIsMobileMenuOpen(false);
+                          }}
                           className="w-full text-left py-2 px-2 text-stone-700 hover:text-brand-rose text-xs font-medium flex items-center justify-between"
                         >
                           <span>{item.label}</span>
@@ -488,6 +547,12 @@ export default function Header() {
                 {/* Ella Journal */}
                 <a
                   href="/blog"
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('blog');
+                    setIsMobileMenuOpen(false);
+                  }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
                     currentView === 'blog' ? 'bg-brand-rose text-white shadow-soft-rose' : 'text-stone-800 hover:bg-brand-cream'
                   }`}
