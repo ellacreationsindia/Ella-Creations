@@ -136,11 +136,11 @@ export default function Header() {
         )}
       </div>
 
-      {/* Main Navigation Bar (3-Column Layout with Perfectly Contained Centered Logo) */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
-        <div className="flex items-center justify-between gap-1 sm:gap-2">
+      {/* Main Branding & Utilities Row (Row 1) */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           
-          {/* LEFT COLUMN: Mobile Hamburger & Search / Desktop Navigation Links */}
+          {/* LEFT COLUMN: Mobile Hamburger & Search / Desktop Live Search Trigger */}
           <div className="flex items-center justify-start flex-1 gap-1">
             {/* Mobile Menu Button (Accessible 44px touch target) */}
             <button
@@ -160,122 +160,22 @@ export default function Header() {
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Desktop Nav Links */}
-            <nav className="hidden lg:flex items-center space-x-6 font-medium text-xs uppercase tracking-wider text-stone-700">
-              <a 
-                href="/"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('home');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Home
-              </a>
-              <a 
-                href="/shop"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'All');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' && selectedCategory !== 'Sale' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Shop Collections
-              </a>
-              {primaryPromotion && (
-                <a 
-                  href="/shop?category=Sale"
-                  onClick={(e) => {
-                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                    e.preventDefault();
-                    navigateTo('shop', null, 'Sale');
-                  }}
-                  className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
-                    currentView === 'shop' && selectedCategory === 'Sale'
-                      ? 'text-rose-600 border-b-2 border-rose-600'
-                      : 'text-rose-600 hover:text-rose-700'
-                  }`}
-                >
-                  <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
-                  <span>Sale</span>
-                  <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                    {promoDiscount}% OFF
-                  </span>
-                </a>
-              )}
-              <a 
-                href="/necklaces"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'Necklace');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Necklace' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Necklaces
-              </a>
-              <a 
-                href="/earrings"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'Earring');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Earring' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Earrings
-              </a>
-              <a 
-                href="/rings"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'Rings');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Rings' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Rings
-              </a>
-              <a 
-                href="/bridal-sets"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'Bridal Sets');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bridal Sets' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Bridal Sets
-              </a>
-              <a 
-                href="/bracelets-bangles"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('shop', null, 'Bracelets/Bangles');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bracelets/Bangles' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Bangles
-              </a>
-              <a 
-                href="/blog"
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                  e.preventDefault();
-                  navigateTo('blog');
-                }}
-                className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'blog' || currentView === 'blog-detail' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
-              >
-                Ella Journal
-              </a>
-            </nav>
+            {/* Desktop Refined Search Bar Trigger */}
+            <div 
+              onClick={() => setIsSearchOpen(true)}
+              className="hidden lg:flex items-center gap-2.5 px-4 py-2 rounded-full bg-stone-100/90 hover:bg-stone-100 border border-stone-200 hover:border-brand-gold/50 cursor-pointer transition-all text-xs text-stone-500 w-64 xl:w-72 shadow-2xs group"
+              title="Search Jewelry Catalog"
+            >
+              <Search className="w-4 h-4 text-stone-400 group-hover:text-brand-rose transition-colors flex-shrink-0" />
+              <span className="truncate">Search necklaces, earrings, rings...</span>
+              <span className="ml-auto text-[10px] font-bold text-stone-400 bg-white px-2 py-0.5 rounded-full border border-stone-200">
+                Search
+              </span>
+            </div>
           </div>
 
           {/* CENTER COLUMN: PERFECTLY STRUCTURED CENTERED BRAND LOGO */}
-          <div className="flex flex-col items-center justify-center text-center px-1 flex-shrink-0">
+          <div className="flex flex-col items-center justify-center text-center px-2 flex-shrink-0">
             <a 
               href="/"
               onClick={(e) => {
@@ -283,17 +183,17 @@ export default function Header() {
                 handleLogoClick();
               }} 
               className="cursor-pointer flex flex-col items-center group"
-              title="Ella Creations Monogram (Click 4 times continuously to open Admin Portal)"
+              title="Ella Creations Monogram (Click 4 times to open Admin Portal)"
             >
               <img 
                 src="/logo.png" 
                 alt="Ella Creations Monogram Logo" 
-                className="h-8 sm:h-11 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-sm"
+                className="h-9 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-xs"
               />
-              <span className="font-serif text-base sm:text-xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors leading-tight mt-0.5">
+              <span className="font-serif text-lg sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors leading-tight mt-0.5">
                 Ella Creations
               </span>
-              <span className="text-[7px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-brand-gold font-bold leading-none">
+              <span className="text-[7.5px] sm:text-[9px] uppercase tracking-[0.22em] sm:tracking-[0.25em] text-brand-gold font-bold leading-none">
                 Artificial Jewelry India
               </span>
             </a>
@@ -434,6 +334,121 @@ export default function Header() {
           </div>
 
         </div>
+      </div>
+
+      {/* DEDICATED DESKTOP NAVIGATION ROW (Row 2 - Perfectly Centered, Spacious & Clean) */}
+      <div className="hidden lg:block border-t border-brand-gold/20 bg-white/70 backdrop-blur-xs">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-7 xl:space-x-9 py-2.5 text-xs font-semibold uppercase tracking-wider text-stone-700">
+          <a 
+            href="/"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('home');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'home' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Home
+          </a>
+          <a 
+            href="/shop"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'All');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'shop' && selectedCategory !== 'Sale' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Shop Collections
+          </a>
+          {primaryPromotion && (
+            <a 
+              href="/shop?category=Sale"
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                navigateTo('shop', null, 'Sale');
+              }}
+              className={`transition-colors py-1 relative flex items-center gap-1 font-bold ${
+                currentView === 'shop' && selectedCategory === 'Sale'
+                  ? 'text-rose-600 border-b-2 border-rose-600'
+                  : 'text-rose-600 hover:text-rose-700'
+              }`}
+            >
+              <Sparkles className="w-3 h-3 text-brand-gold animate-pulse" />
+              <span>Sale</span>
+              <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                {promoDiscount}% OFF
+              </span>
+            </a>
+          )}
+          <a 
+            href="/necklaces"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'Necklace');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Necklace' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Necklaces
+          </a>
+          <a 
+            href="/earrings"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'Earring');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Earring' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Earrings
+          </a>
+          <a 
+            href="/rings"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'Rings');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Rings' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Rings
+          </a>
+          <a 
+            href="/bridal-sets"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'Bridal Sets');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bridal Sets' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Bridal Sets
+          </a>
+          <a 
+            href="/bracelets-bangles"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('shop', null, 'Bracelets/Bangles');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bracelets/Bangles' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Bangles
+          </a>
+          <a 
+            href="/blog"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('blog');
+            }}
+            className={`hover:text-brand-rose transition-colors py-1 relative ${currentView === 'blog' || currentView === 'blog-detail' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+          >
+            Ella Journal
+          </a>
+        </nav>
       </div>
 
       {/* APP-LIKE SLIDE-OUT MOBILE NAVIGATION DRAWER (PORTALED TO BODY TO PREVENT HEADER CLIPPING) */}

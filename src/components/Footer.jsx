@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { 
   Sparkles, 
-  ShieldCheck, 
-  Truck, 
-  Clock, 
-  Gift, 
   Instagram, 
   Facebook, 
   Globe, 
@@ -30,50 +26,6 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-stone-950 text-stone-200 pt-6 sm:pt-12 pb-6 sm:pb-10 border-t border-brand-gold/30 relative z-30 block">
-      {/* Brand Assurances Grid (Compact on Mobile, Expanded on Desktop) */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-4 sm:pb-8 border-b border-stone-800">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-1.5 sm:gap-3 p-2 sm:p-0 rounded-xl bg-stone-900/40 sm:bg-transparent">
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-brand-rose/20 flex items-center justify-center text-brand-rose shrink-0">
-              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div>
-              <h4 className="font-serif text-xs sm:text-base font-bold text-white leading-tight">Handcrafted Quality</h4>
-              <p className="hidden sm:block text-[10px] sm:text-xs text-stone-400 leading-snug mt-0.5">Handcrafted with premium finish for lasting beauty.</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-1.5 sm:gap-3 p-2 sm:p-0 rounded-xl bg-stone-900/40 sm:bg-transparent">
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold shrink-0">
-              <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div>
-              <h4 className="font-serif text-xs sm:text-base font-bold text-white leading-tight">Insured Courier</h4>
-              <p className="hidden sm:block text-[10px] sm:text-xs text-stone-400 leading-snug mt-0.5">Insured express courier dispatch across all India.</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-1.5 sm:gap-3 p-2 sm:p-0 rounded-xl bg-stone-900/40 sm:bg-transparent">
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-brand-pink/20 flex items-center justify-center text-brand-pink shrink-0">
-              <Gift className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div>
-              <h4 className="font-serif text-xs sm:text-base font-bold text-white leading-tight">Velvet Gift Box</h4>
-              <p className="hidden sm:block text-[10px] sm:text-xs text-stone-400 leading-snug mt-0.5">Every order arrives in tamper-evident protective box.</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-1.5 sm:gap-3 p-2 sm:p-0 rounded-xl bg-stone-900/40 sm:bg-transparent">
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold shrink-0">
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div>
-              <h4 className="font-serif text-xs sm:text-base font-bold text-white leading-tight">Stylist Support</h4>
-              <p className="hidden sm:block text-[10px] sm:text-xs text-stone-400 leading-snug mt-0.5">Personal assistance for bridal styling & order updates.</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Footer Links & Newsletter */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">

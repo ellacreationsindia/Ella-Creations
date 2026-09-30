@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { BookOpen, Calendar, Clock, User, ArrowLeft, ArrowRight, Tag, Share2, Sparkles, Search, MessageSquare, ShieldCheck } from 'lucide-react';
+import { BookOpen, Calendar, Clock, User, ArrowLeft, ArrowRight, Tag, Share2, Sparkles, Search, MessageSquare, AlertCircle } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
-import SEOHead from '../components/SEOHead';
+import { INITIAL_BLOGS } from '../data/initialData';
 
 export default function BlogView() {
   const { blogs, selectedBlogId, navigateTo, currentView, products } = useStore();
@@ -11,32 +11,87 @@ export default function BlogView() {
 
   const categories = ['All', 'Bridal Trends', 'Styling Guide', 'Jewelry Care'];
 
-  // Detail View Active Article
-  const activeBlog = blogs.find(b => b.id === selectedBlogId) || blogs[0];
+  // Resilient dataset fallback
+  const safeBlogs = (Array.isArray(blogs) && blogs.length > 0) ? blogs : INITIAL_BLOGS;
+
+  // Safe Date Formatter
+  const formatArticleDate = (dateVal) => {
+    try {
+      if (!dateVal) return 'Recently Published';
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) return 'Recently Published';
+      return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch {
+      return 'Recently Published';
+    }
+  };
+
+  // Detail View Active Article Lookup (Matches by slug, id, or title slug)
+  const activeBlog = selectedBlogId
+    ? (safeBlogs.find(b => b && (b.id === selectedBlogId || b.slug === selectedBlogId)) ||
+       INITIAL_BLOGS.find(b => b && (b.id === selectedBlogId || b.slug === selectedBlogId)) ||
+       safeBlogs[0] ||
+       INITIAL_BLOGS[0])
+    : (safeBlogs[0] || INITIAL_BLOGS[0]);
 
   // List View Filtered Articles
-  const publishedBlogs = blogs.filter(b => b.status !== 'Draft');
+  const publishedBlogs = safeBlogs.filter(b => b && b.status !== 'Draft');
   const filteredBlogs = publishedBlogs.filter(b => {
+    if (!b) return false;
     if (selectedCategory !== 'All' && b.category !== selectedCategory) return false;
-    if (blogSearch.trim() && !b.title.toLowerCase().includes(blogSearch.toLowerCase()) && !b.excerpt.toLowerCase().includes(blogSearch.toLowerCase())) return false;
+    const query = (blogSearch || '').trim().toLowerCase();
+    if (query) {
+      const title = (b.title || '').toLowerCase();
+      const excerpt = (b.excerpt || '').toLowerCase();
+      const author = (b.author || '').toLowerCase();
+      if (!title.includes(query) && !excerpt.includes(query) && !author.includes(query)) return false;
+    }
     return true;
   });
 
   // Render Full Article Detail Page
-  if (currentView === 'blog-detail' && activeBlog) {
-    const relatedBlogs = blogs.filter(b => b.id !== activeBlog.id && b.status !== 'Draft').slice(0, 2);
+  if (currentView === 'blog-detail') {
+    if (!activeBlog) {
+      return (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center space-y-6">
+          <div className="w-16 h-16 mx-auto rounded-full bg-stone-100 flex items-center justify-center text-stone-400">
+            <BookOpen className="w-8 h-8" />
+          </div>
+          <h2 className="font-serif text-3xl font-bold text-stone-900">Article Not Found</h2>
+          <p className="text-stone-500 text-sm max-w-md mx-auto">
+            The journal entry you are looking for may have been moved or updated.
+          </p>
+          <a
+            href="/blog"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              navigateTo('blog');
+            }}
+            className="inline-flex items-center gap-2 bg-brand-rose text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-full hover:bg-brand-rose/90 transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" /> Return to Ella Journal
+          </a>
+        </div>
+      );
+    }
+
+    const relatedBlogs = safeBlogs
+      .filter(b => b && b.id !== activeBlog.id && b.status !== 'Draft')
+      .slice(0, 2);
 
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 text-stone-800">
-        <SEOHead
-          title={`${activeBlog.title} | Ella Journal`}
-          description={activeBlog.excerpt}
-        />
-
+        
         {/* Back Button */}
         <a
           href="/blog"
-          className="inline-flex items-center gap-2 text-xs font-bold text-stone-600 hover:text-brand-rose transition-colors bg-white px-4 py-2 rounded-full border border-stone-200 shadow-sm"
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            navigateTo('blog');
+          }}
+          className="inline-flex items-center gap-2 text-xs font-bold text-stone-600 hover:text-brand-rose transition-colors bg-white px-4 py-2 rounded-full border border-stone-200 shadow-sm cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Ella Journal
         </a>
@@ -53,7 +108,7 @@ export default function BlogView() {
                 <Clock className="w-3.5 h-3.5" /> {activeBlog.readTime || '4 min read'}
               </span>
               <span className="text-stone-400 font-medium flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" /> {new Date(activeBlog.publishedAt || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                <Calendar className="w-3.5 h-3.5" /> {formatArticleDate(activeBlog.publishedAt)}
               </span>
             </div>
 
@@ -61,9 +116,11 @@ export default function BlogView() {
               {activeBlog.title}
             </h1>
 
-            <p className="text-stone-600 text-sm sm:text-base leading-relaxed italic border-l-4 border-brand-rose pl-4 py-1">
-              "{activeBlog.excerpt}"
-            </p>
+            {activeBlog.excerpt && (
+              <p className="text-stone-600 text-sm sm:text-base leading-relaxed italic border-l-4 border-brand-rose pl-4 py-1">
+                "{activeBlog.excerpt}"
+              </p>
+            )}
 
             <div className="flex items-center justify-between border-t border-stone-100 pt-4 text-xs">
               <div className="flex items-center gap-2">
@@ -85,7 +142,7 @@ export default function BlogView() {
                     alert('Article link copied to clipboard!');
                   }
                 }}
-                className="flex items-center gap-1.5 text-stone-500 hover:text-stone-900 bg-stone-100 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                className="flex items-center gap-1.5 text-stone-500 hover:text-stone-900 bg-stone-100 px-3 py-1.5 rounded-lg transition-colors font-medium cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" /> Share
               </button>
@@ -99,11 +156,12 @@ export default function BlogView() {
                 src={activeBlog.coverImage}
                 alt={`${activeBlog.title} - Jewelry Styling & Care Guide | Ella Journal`}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
           )}
 
-          {/* Article Body Content (Preserves Formatting & Line Breaks) */}
+          {/* Article Body Content */}
           <div className="prose prose-stone max-w-none text-xs sm:text-sm leading-relaxed text-stone-700 space-y-4 whitespace-pre-wrap font-normal">
             {activeBlog.content}
           </div>
@@ -121,7 +179,12 @@ export default function BlogView() {
             </div>
             <a
               href="/shop"
-              className="bg-brand-rose hover:bg-brand-rose/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-soft-rose transition-all flex-shrink-0 inline-block"
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                navigateTo('shop');
+              }}
+              className="bg-brand-rose hover:bg-brand-rose/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-soft-rose transition-all flex-shrink-0 inline-block cursor-pointer"
             >
               Explore Shop Catalog <ArrowRight className="w-4 h-4 inline ml-1" />
             </a>
@@ -138,6 +201,11 @@ export default function BlogView() {
                 <a
                   key={rel.id}
                   href={`/blog/${rel.slug || rel.id}`}
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('blog-detail', rel.slug || rel.id);
+                  }}
                   className="bg-white p-5 rounded-2xl border border-brand-gold/20 shadow-sm hover:shadow-md cursor-pointer transition-all space-y-3 flex flex-col justify-between block text-left"
                 >
                   <div className="space-y-2">
@@ -160,15 +228,10 @@ export default function BlogView() {
 
   // List View: Blog Journal Directory
   const featuredBlog = publishedBlogs[0];
-  const regularBlogs = publishedBlogs.slice(1);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 text-stone-800">
-      <SEOHead
-        title="Ella Journal | Jewelry Styling, Trends & Care Guides"
-        description="Read personalized blogs, bridal trends, jewelry styling guides, and care tips by Ella Creations."
-      />
-
+      
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-brand-sand via-brand-cream to-brand-pink/30 p-8 sm:p-12 rounded-3xl border border-brand-gold/30 text-center space-y-4 shadow-sm relative overflow-hidden">
         <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-1 rounded-full border border-brand-gold/40 text-xs font-semibold uppercase tracking-widest text-brand-gold">
@@ -201,7 +264,7 @@ export default function BlogView() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-xs px-3.5 py-2.5 rounded-xl font-semibold border transition-all flex-shrink-0 ${
+                className={`text-xs px-3.5 py-2.5 rounded-xl font-semibold border transition-all flex-shrink-0 cursor-pointer ${
                   selectedCategory === cat
                     ? 'bg-brand-rose text-white border-brand-rose shadow-soft-rose'
                     : 'bg-white text-stone-700 border-stone-200 hover:border-stone-400'
@@ -218,6 +281,11 @@ export default function BlogView() {
       {featuredBlog && !blogSearch && selectedCategory === 'All' && (
         <a
           href={`/blog/${featuredBlog.slug || featuredBlog.id}`}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            navigateTo('blog-detail', featuredBlog.slug || featuredBlog.id);
+          }}
           className="bg-white rounded-3xl overflow-hidden border border-brand-gold/30 shadow-md hover:shadow-xl transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 group block text-left"
         >
           <div className="lg:col-span-7 aspect-[16/10] lg:aspect-auto overflow-hidden relative">
@@ -225,6 +293,7 @@ export default function BlogView() {
               src={featuredBlog.coverImage}
               alt={`${featuredBlog.title} - Featured Jewelry Editorial Story | Ella Journal`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
             />
             <div className="absolute top-4 left-4 bg-brand-rose text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
               Featured Story
@@ -276,7 +345,7 @@ export default function BlogView() {
             <p className="text-xs text-stone-500">Try clearing search filters or changing category options.</p>
             <button
               onClick={() => { setBlogSearch(''); setSelectedCategory('All'); }}
-              className="bg-brand-rose text-white text-xs font-semibold px-6 py-2.5 rounded-full hover:bg-brand-rose/90 transition-colors"
+              className="bg-brand-rose text-white text-xs font-semibold px-6 py-2.5 rounded-full hover:bg-brand-rose/90 transition-colors cursor-pointer"
             >
               Reset Filters
             </button>
@@ -287,6 +356,11 @@ export default function BlogView() {
               <a
                 key={blog.id}
                 href={`/blog/${blog.slug || blog.id}`}
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('blog-detail', blog.slug || blog.id);
+                }}
                 className="bg-white rounded-3xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group block text-left"
               >
                 <div className="space-y-4">
@@ -295,6 +369,7 @@ export default function BlogView() {
                       src={blog.coverImage}
                       alt={`${blog.title} - Jewelry Style Guide & Insights | Ella Journal`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
                     />
                     <span className="absolute top-3 left-3 bg-stone-950/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full border border-white/20">
                       {blog.category}
@@ -305,7 +380,7 @@ export default function BlogView() {
                     <div className="flex items-center gap-3 text-[11px] text-stone-400 font-medium">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {blog.readTime}</span>
                       <span>•</span>
-                      <span>{new Date(blog.publishedAt || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
+                      <span>{formatArticleDate(blog.publishedAt)}</span>
                     </div>
 
                     <h3 className="font-serif text-lg font-bold text-stone-900 group-hover:text-brand-rose transition-colors leading-snug line-clamp-2">

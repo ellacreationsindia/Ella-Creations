@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import { useStore, formatPrice, getProductSlug } from '../context/StoreContext';
+import { INITIAL_BLOGS } from '../data/initialData';
 
 export default function SEOHead() {
   const { currentView, selectedProductId, selectedCategory, selectedBlogId, products, blogs } = useStore();
 
   useEffect(() => {
     const domain = 'https://ella-creations.com';
-    const activeProduct = products.find(p => p.id === selectedProductId) || (selectedProductId ? products[0] : null);
-    const activeBlog = blogs.find(b => b.id === selectedBlogId || b.slug === selectedBlogId) || (selectedBlogId ? blogs[0] : null);
+    const activeProduct = (products || []).find(p => p && p.id === selectedProductId) || (selectedProductId ? (products?.[0] || null) : null);
+    const activeBlog = (blogs || []).find(b => b && (b.id === selectedBlogId || b.slug === selectedBlogId)) || 
+                       INITIAL_BLOGS.find(b => b && (b.id === selectedBlogId || b.slug === selectedBlogId)) || 
+                       (selectedBlogId ? (blogs?.[0] || INITIAL_BLOGS[0]) : null);
 
     let title = 'Ella Creations | Handcrafted Artificial & Bridal Jewelry India';
     let description = 'Shop handcrafted luxury artificial jewelry online in India. Explore premium Kundan choker sets, AAA+ Cubic Zirconia drop earrings, solitaire rings, bridal necklaces, and festive bangles at Ella Creations.';

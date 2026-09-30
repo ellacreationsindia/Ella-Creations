@@ -287,8 +287,11 @@ export const StoreProvider = ({ children }) => {
       } else if (view === 'blog') {
         targetPath = '/blog';
       } else if (view === 'blog-detail') {
-        const targetBlog = itemId || selectedBlogId;
-        targetPath = targetBlog ? `/blog/${targetBlog}` : '/blog';
+        const rawTarget = itemId || selectedBlogId;
+        const targetBlog = (blogs || []).find(b => b && (b.id === rawTarget || b.slug === rawTarget)) ||
+                           INITIAL_BLOGS.find(b => b && (b.id === rawTarget || b.slug === rawTarget));
+        const slugOrId = targetBlog ? (targetBlog.slug || targetBlog.id) : rawTarget;
+        targetPath = slugOrId ? `/blog/${slugOrId}` : '/blog';
       } else {
         targetPath = `/${view}`;
       }
@@ -421,7 +424,7 @@ export const StoreProvider = ({ children }) => {
       window.removeEventListener('popstate', handleUrlRouting);
       window.removeEventListener('hashchange', handleUrlRouting);
     };
-  }, [products]);
+  }, [products, blogs]);
 
   // 1. Automatic Canonical Domain & OAuth Token Safety Catch
   useEffect(() => {
