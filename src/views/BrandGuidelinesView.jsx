@@ -16,12 +16,12 @@ export default function BrandGuidelinesView() {
       {/* Hero Banner */}
       <div className="bg-stone-950 text-white rounded-3xl p-8 sm:p-12 border border-brand-gold/40 relative overflow-hidden space-y-4 shadow-2xl">
         <div className="absolute -top-12 -right-12 w-64 h-64 bg-brand-rose/20 rounded-full blur-3xl pointer-events-none"></div>
-        <button
-          onClick={() => navigateTo('home')}
+        <a
+          href="/"
           className="text-xs text-stone-400 hover:text-white flex items-center gap-1 font-semibold transition-colors mb-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Storefront
-        </button>
+        </a>
         <span className="text-xs uppercase font-bold tracking-widest text-brand-gold flex items-center gap-2">
           <Crown className="w-4 h-4 text-brand-gold" /> Official Heritage & Visual Identity
         </span>

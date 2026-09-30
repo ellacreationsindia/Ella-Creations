@@ -15,12 +15,12 @@ export default function PrivacyView() {
 
       {/* Header */}
       <div className="border-b border-brand-gold/30 pb-5 space-y-2.5">
-        <button
-          onClick={() => navigateTo('home')}
+        <a
+          href="/"
           className="text-xs text-stone-500 hover:text-brand-rose flex items-center gap-1 font-semibold transition-colors cursor-pointer mb-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Storefront
-        </button>
+        </a>
         <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Data Protection & Privacy Compliance</span>
         <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900">Privacy Policy</h1>
         <p className="text-xs text-stone-500 font-mono">

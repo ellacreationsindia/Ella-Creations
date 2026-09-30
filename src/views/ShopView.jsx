@@ -16,7 +16,7 @@ export default function ShopView() {
     recentlyViewed
   } = useStore();
 
-  const primaryPromotion = activePopupCampaign || (activePromotions && activePromotions[0]) || (promotions && promotions.find(p => p.is_enabled !== false && p.isEnabled !== false)) || null;
+  const primaryPromotion = activePopupCampaign || (activePromotions && activePromotions[0]) || null;
   const promoDiscount = primaryPromotion ? (primaryPromotion.discount_percentage || primaryPromotion.discountPercentage || 0) : 0;
 
   // Detailed & Relevant Jewelry Filters
@@ -55,14 +55,7 @@ export default function ShopView() {
     // 1. Category Filter
     if (selectedCategory && selectedCategory !== 'All') {
       if (selectedCategory === 'Sale') {
-        const isPromoItem = 
-          (Array.isArray(activePromotions) && activePromotions.some(promo => isProductInCampaign(p.id, promo))) ||
-          (Array.isArray(promotions) && promotions.some(promo => (promo.is_enabled !== false && promo.isEnabled !== false) && isProductInCampaign(p.id, promo))) ||
-          (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
-          Boolean(p.isSale || p.onSale || p.sale || p.is_sale) ||
-          (Array.isArray(p.occasionTags) && p.occasionTags.some(t => String(t).toLowerCase() === 'sale')) ||
-          (p.category && String(p.category).toLowerCase() === 'sale');
-
+        const isPromoItem = Array.isArray(activePromotions) && activePromotions.length > 0 && activePromotions.some(promo => isProductInCampaign(p.id, promo));
         if (!isPromoItem) return false;
       } else {
         const normSel = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -156,10 +149,7 @@ export default function ShopView() {
       } else if (selectedCollection === 'New Arrivals') {
         if (!p.isNew && !(Array.isArray(p.tags) && p.tags.includes('new'))) return false;
       } else if (selectedCollection === 'Sale & Clearance') {
-        const isPromoItem = 
-          (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
-          Boolean(p.isSale || p.onSale || p.sale) ||
-          (Array.isArray(p.occasionTags) && p.occasionTags.some(t => String(t).toLowerCase() === 'sale'));
+        const isPromoItem = Array.isArray(activePromotions) && activePromotions.length > 0 && activePromotions.some(promo => isProductInCampaign(p.id, promo));
         if (!isPromoItem) return false;
       } else if (selectedCollection === 'Bridal Heritage') {
         const pTags = Array.isArray(p.occasionTags) ? p.occasionTags.join(' ').toLowerCase() : '';
@@ -253,14 +243,11 @@ export default function ShopView() {
     (inStockOnly ? 1 : 0) +
     (shopSearch.trim() ? 1 : 0);
 
-  const hasSaleProducts = products.some(p => 
-    (p.comparePrice && Number(p.comparePrice) > Number(p.price)) ||
-    Boolean(p.isSale || p.onSale || p.sale || p.is_sale) ||
-    (Array.isArray(promotions) && promotions.some(promo => (promo.is_enabled !== false && promo.isEnabled !== false) && isProductInCampaign(p.id, promo))) ||
-    (Array.isArray(activePromotions) && activePromotions.some(promo => isProductInCampaign(p.id, promo)))
+  const hasSaleProducts = Array.isArray(activePromotions) && activePromotions.length > 0 && products.some(p => 
+    activePromotions.some(promo => isProductInCampaign(p.id, promo))
   );
 
-  const categories = (hasSaleProducts || activePromotions.length > 0 || (promotions && promotions.length > 0))
+  const categories = (hasSaleProducts && activePromotions.length > 0)
     ? ['All', 'Sale', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'] 
     : ['All', 'Necklace', 'Pendant Set', 'Rings', 'Earring', 'Bridal Sets', 'Bracelets/Bangles', 'Others'];
 

@@ -50,18 +50,11 @@ export default function ProductCard({ product }) {
                 SALE -{pricing.discountPercent}%
               </span>
             ) : (
-              <>
-                {product.isNew && (
-                  <span className="bg-stone-900 text-white text-[9px] sm:text-[10px] lg:text-xs uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 lg:px-3 lg:py-1.5 rounded-full shadow-sm w-fit">
-                    NEW
-                  </span>
-                )}
-                {discountPercent > 0 && (
-                  <span className="bg-brand-rose text-white text-[9px] sm:text-[10px] lg:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 lg:px-3 lg:py-1.5 rounded-full shadow-sm w-fit">
-                    -{discountPercent}% OFF
-                  </span>
-                )}
-              </>
+              product.isNew && (
+                <span className="bg-stone-900 text-white text-[9px] sm:text-[10px] lg:text-xs uppercase font-bold tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 lg:px-3 lg:py-1.5 rounded-full shadow-sm w-fit">
+                  NEW
+                </span>
+              )
             )}
           </>
         )}
@@ -124,10 +117,6 @@ export default function ProductCard({ product }) {
       {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}
       <a 
         href={productPath}
-        onClick={(e) => {
-          e.preventDefault();
-          navigateTo('product', product.id);
-        }}
         className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-2.5 sm:p-4 lg:p-6 cursor-pointer group flex items-center justify-center border-b border-stone-100 block"
       >
         {/* Photo Count Indicator (Desktop) */}
@@ -205,10 +194,6 @@ export default function ProductCard({ product }) {
           >
             <a 
               href={productPath}
-              onClick={(e) => {
-                e.preventDefault();
-                navigateTo('product', product.id);
-              }}
               className="hover:text-brand-rose transition-colors"
             >
               {product.title}

@@ -130,11 +130,11 @@ export default function Footer() {
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCategoriesOpen ? 'rotate-180 text-brand-gold' : ''}`} />
             </button>
             <ul className={`text-xs text-stone-400 space-y-2 pt-2 ${isCategoriesOpen ? 'block' : 'hidden lg:block'}`}>
-              <li><a href="/shop?category=Necklace" onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Necklace'); }} className="hover:text-white transition-colors cursor-pointer">Necklaces</a></li>
-              <li><a href="/shop?category=Earring" onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Earring'); }} className="hover:text-white transition-colors cursor-pointer">Earrings & Drops</a></li>
-              <li><a href="/shop?category=Rings" onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Rings'); }} className="hover:text-white transition-colors cursor-pointer">Solitaire Rings</a></li>
-              <li><a href="/shop?category=Bridal%20Sets" onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Bridal Sets'); }} className="hover:text-white transition-colors cursor-pointer">Bridal Sets</a></li>
-              <li><a href="/shop?category=Bracelets%2FBangles" onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Bracelets/Bangles'); }} className="hover:text-white transition-colors cursor-pointer">Bracelets & Bangles</a></li>
+              <li><a href="/shop?category=Necklace" className="hover:text-white transition-colors cursor-pointer">Necklaces</a></li>
+              <li><a href="/shop?category=Earring" className="hover:text-white transition-colors cursor-pointer">Earrings & Drops</a></li>
+              <li><a href="/shop?category=Rings" className="hover:text-white transition-colors cursor-pointer">Solitaire Rings</a></li>
+              <li><a href="/shop?category=Bridal%20Sets" className="hover:text-white transition-colors cursor-pointer">Bridal Sets</a></li>
+              <li><a href="/shop?category=Bracelets%2FBangles" className="hover:text-white transition-colors cursor-pointer">Bracelets & Bangles</a></li>
             </ul>
           </div>
 
@@ -149,20 +149,19 @@ export default function Footer() {
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCustomerCareOpen ? 'rotate-180 text-brand-gold' : ''}`} />
             </button>
             <ul className={`text-xs text-stone-400 space-y-2 pt-2 ${isCustomerCareOpen ? 'block' : 'hidden lg:block'}`}>
-              <li><a href="/blog" onClick={(e) => { e.preventDefault(); navigateTo('blog'); }} className="hover:text-brand-rose text-white font-semibold transition-colors cursor-pointer">📖 Ella Journal & Blogs</a></li>
-              <li><a href="/brand-guidelines" onClick={(e) => { e.preventDefault(); navigateTo('brand-guidelines'); }} className="hover:text-white transition-colors cursor-pointer">Jewelry Care Guide</a></li>
-              <li><a href="/shipping-policy" onClick={(e) => { e.preventDefault(); navigateTo('shipping-policy'); }} className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery Policy</a></li>
-              <li><a href="/refund-policy" onClick={(e) => { e.preventDefault(); navigateTo('refund-policy'); }} className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation Policy</a></li>
-              <li><a href="/terms" onClick={(e) => { e.preventDefault(); navigateTo('terms'); }} className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</a></li>
-              <li><a href="/privacy" onClick={(e) => { e.preventDefault(); navigateTo('privacy'); }} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
-              <li><a href="/sitemap" onClick={(e) => { e.preventDefault(); navigateTo('sitemap'); }} className="hover:text-white transition-colors cursor-pointer">Sitemap Directory</a></li>
+              <li><a href="/blog" className="hover:text-brand-rose text-white font-semibold transition-colors cursor-pointer">📖 Ella Journal & Blogs</a></li>
+              <li><a href="/brand-guidelines" className="hover:text-white transition-colors cursor-pointer">Jewelry Care Guide</a></li>
+              <li><a href="/shipping-policy" className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery Policy</a></li>
+              <li><a href="/refund-policy" className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation Policy</a></li>
+              <li><a href="/terms" className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</a></li>
+              <li><a href="/privacy" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
+              <li><a href="/sitemap" className="hover:text-white transition-colors cursor-pointer">Sitemap Directory</a></li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
               {isAdmin && (
                 <li>
                   <a 
                     href="/admin" 
-                    onClick={(e) => { e.preventDefault(); navigateTo('admin'); }} 
                     className="text-brand-gold font-bold hover:underline inline-flex items-center gap-1 mt-1 cursor-pointer"
                   >
                     <Crown className="w-3.5 h-3.5 text-brand-gold" /> Admin Dashboard

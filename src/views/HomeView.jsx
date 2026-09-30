@@ -27,7 +27,8 @@ import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 
 export default function HomeView() {
-  const { products, blogs, navigateTo, applyCoupon, showToast, reviews } = useStore();
+  const { products, blogs, navigateTo, applyCoupon, showToast, reviews, activePromotions } = useStore();
+  const hasActiveSale = Array.isArray(activePromotions) && activePromotions.length > 0;
   const [copiedCoupon, setCopiedCoupon] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'featured' | 'new' | 'kundan' | 'cz'
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -110,7 +111,6 @@ export default function HomeView() {
             <div className="pt-0.5">
               <a
                 href="/shop"
-                onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}
                 className="inline-flex items-center gap-1.5 bg-[#B87080] hover:bg-[#A55E6E] text-white text-[10px] sm:text-xs font-semibold uppercase tracking-wider py-1.5 px-3.5 sm:py-2 sm:px-4 rounded-full shadow-xs active:scale-95 transition-all"
               >
                 <span>Shop Now</span>
@@ -170,20 +170,28 @@ export default function HomeView() {
               <div className="flex items-center gap-3.5 pt-2">
                 <a
                   href="/shop"
-                  onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}
                   className="bg-[#B87080] hover:bg-[#A55E6E] text-white text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-8 rounded-full shadow-sm hover:shadow-md transition-all transform active:scale-95 flex items-center justify-center gap-2"
                 >
                   <span>SHOP COLLECTIONS</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
 
-                <a
-                  href="/shop?category=Sale"
-                  onClick={(e) => { e.preventDefault(); navigateTo('shop', null, 'Sale'); }}
-                  className="bg-[#FDF7F2]/80 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-7 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 text-center"
-                >
-                  <span>EXPLORE SALE</span>
-                </a>
+                {hasActiveSale ? (
+                  <a
+                    href="/shop?category=Sale"
+                    className="bg-[#FDF7F2]/80 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-7 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 text-center flex items-center gap-1.5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-pulse" />
+                    <span>EXPLORE SALE</span>
+                  </a>
+                ) : (
+                  <a
+                    href="/shop"
+                    className="bg-[#FDF7F2]/80 hover:bg-[#B87080]/10 text-[#4A4543] hover:text-[#1A1A1A] text-xs font-semibold uppercase tracking-[0.14em] py-3.5 px-7 rounded-full border border-[#B87080]/50 hover:border-[#B87080] transition-all transform active:scale-95 text-center"
+                  >
+                    <span>BESTSELLERS</span>
+                  </a>
+                )}
               </div>
 
               {/* Value Badges */}
@@ -302,10 +310,6 @@ export default function HomeView() {
             <a
               key={idx}
               href={`/shop?category=${encodeURIComponent(cat.label)}`}
-              onClick={(e) => {
-                e.preventDefault();
-                navigateTo('shop', null, cat.title);
-              }}
               className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[60px] sm:w-[72px] md:w-full"
             >
               <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-0.5 sm:p-1 shadow-xs group-hover:shadow-soft-rose transition-all flex items-center justify-center">
@@ -376,12 +380,12 @@ export default function HomeView() {
         )}
 
         <div className="text-center pt-2 sm:pt-4">
-          <button
-            onClick={() => navigateTo('shop')}
+          <a
+            href="/shop"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-lg transition-all min-h-[44px]"
           >
             View Complete {products.length}+ Pieces Catalog <ArrowRight className="w-4 h-4" />
-          </button>
+          </a>
         </div>
       </section>
 
@@ -435,12 +439,12 @@ export default function HomeView() {
                     <p className="text-xs text-stone-600 leading-relaxed">{occ.desc}</p>
                   </div>
                   
-                  <button
-                    onClick={() => navigateTo('shop')}
+                  <a
+                    href="/shop"
                     className="text-xs font-bold text-brand-rose hover:text-stone-900 flex items-center gap-1 pt-2.5 border-t border-stone-100 transition-colors"
                   >
                     Browse Occasion <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  </a>
                 </div>
               );
             })}
@@ -457,20 +461,20 @@ export default function HomeView() {
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mt-1">Latest From Ella Journal</h2>
             </div>
 
-            <button
-              onClick={() => navigateTo('blog')}
+            <a
+              href="/blog"
               className="text-xs font-bold uppercase tracking-wider text-brand-rose hover:text-stone-900 transition-colors flex items-center gap-1"
             >
               View All Articles <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {latestBlogs.map((blog) => (
-              <div
+              <a
                 key={blog.id}
-                onClick={() => navigateTo('blog-detail', blog.id)}
-                className="bg-white rounded-3xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group"
+                href={`/blog/${blog.slug || blog.id}`}
+                className="bg-white rounded-3xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group block text-left"
               >
                 <div className="space-y-3">
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
@@ -507,7 +511,7 @@ export default function HomeView() {
                     Read Article <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </section>

@@ -250,17 +250,13 @@ export function calculateProductPricing(product, selectedVariant = null, activeP
 
   if (!applicableCampaign) {
     const hasCatalogDiscount = Boolean(comparePrice && comparePrice > basePrice);
-    const catalogDiscountPercent = hasCatalogDiscount 
-      ? Math.round(((comparePrice - basePrice) / comparePrice) * 100) 
-      : 0;
-    const catalogSavings = hasCatalogDiscount ? Math.max(0, comparePrice - basePrice) : 0;
 
     return {
-      hasPromo: hasCatalogDiscount,
-      originalPrice: hasCatalogDiscount ? comparePrice : basePrice,
+      hasPromo: false,
+      originalPrice: basePrice,
       finalPrice: basePrice,
-      discountPercent: catalogDiscountPercent,
-      savings: catalogSavings,
+      discountPercent: 0,
+      savings: 0,
       campaign: null,
       comparePrice: hasCatalogDiscount ? comparePrice : null
     };

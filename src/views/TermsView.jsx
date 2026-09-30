@@ -15,12 +15,12 @@ export default function TermsView() {
 
       {/* Header */}
       <div className="border-b border-brand-gold/30 pb-5 space-y-2.5">
-        <button
-          onClick={() => navigateTo('home')}
+        <a
+          href="/"
           className="text-xs text-stone-500 hover:text-brand-rose flex items-center gap-1 font-semibold transition-colors cursor-pointer mb-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Storefront
-        </button>
+        </a>
         <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Legal & Commercial Agreement</span>
         <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900">Terms & Conditions of Service</h1>
         <p className="text-xs text-stone-500 font-mono">
@@ -100,7 +100,7 @@ export default function TermsView() {
           </h2>
           <div className="space-y-2 text-stone-700">
             <p>
-              Deliveries are operated across India in partnership with reputable courier networks via Shiprocket. Detailed shipping terms are governed by our standalone <button onClick={() => navigateTo('shipping-policy')} className="text-brand-rose underline font-semibold cursor-pointer">Shipping & Delivery Policy</button>.
+              Deliveries are operated across India in partnership with reputable courier networks via Shiprocket. Detailed shipping terms are governed by our standalone <a href="/shipping-policy" className="text-brand-rose underline font-semibold cursor-pointer">Shipping & Delivery Policy</a>.
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>
@@ -120,7 +120,7 @@ export default function TermsView() {
           </h2>
           <div className="space-y-2 text-stone-700">
             <p>
-              Please refer to our standalone <button onClick={() => navigateTo('refund-policy')} className="text-brand-rose underline font-semibold cursor-pointer">Refund & Cancellation Policy</button> for full terms.
+              Please refer to our standalone <a href="/refund-policy" className="text-brand-rose underline font-semibold cursor-pointer">Refund & Cancellation Policy</a> for full terms.
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>

@@ -61,12 +61,12 @@ export default function SitemapView() {
 
       {/* Header */}
       <div className="border-b border-brand-gold/30 pb-6 space-y-3">
-        <button
-          onClick={() => navigateTo('home')}
+        <a
+          href="/"
           className="text-xs text-stone-500 hover:text-brand-rose flex items-center gap-1 font-semibold transition-colors mb-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Storefront
-        </button>
+        </a>
         <span className="text-xs uppercase font-bold tracking-widest text-brand-gold flex items-center gap-2">
           <Compass className="w-4 h-4 text-brand-gold" /> Complete Site Directory
         </span>
@@ -116,10 +116,6 @@ export default function SitemapView() {
                               ? `/blog/${link.itemId}`
                               : `/${link.view}`
                           }
-                          onClick={(e) => {
-                            e.preventDefault();
-                            navigateTo(link.view, link.itemId || null, link.category || null);
-                          }}
                           className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left inline-block"
                         >
                           <span itemProp="name">{link.label}</span>
@@ -141,12 +137,12 @@ export default function SitemapView() {
           <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
             <Crown className="w-4 h-4 text-brand-gold" /> Admin Dashboard Access Enabled
           </span>
-          <button
-            onClick={() => navigateTo('admin')}
-            className="bg-brand-gold text-stone-950 font-bold text-xs px-4 py-2 rounded-xl"
+          <a
+            href="/admin"
+            className="bg-brand-gold text-stone-950 font-bold text-xs px-4 py-2 rounded-xl inline-block"
           >
             Open Admin Panel
-          </button>
+          </a>
         </div>
       )}
 

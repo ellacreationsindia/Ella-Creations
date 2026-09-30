@@ -8,7 +8,7 @@
   <!-- 1. Core Brand Landing Pages -->
   <url>
     <loc>https://ella-creations.com/</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/"/>
@@ -21,7 +21,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop"/>
@@ -31,7 +31,7 @@
   <!-- 2. Category Landing Pages -->
   <url>
     <loc>https://ella-creations.com/shop?category=Necklace</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Necklace"/>
@@ -43,7 +43,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Earring</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Earring"/>
@@ -55,7 +55,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Rings</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Rings"/>
@@ -67,7 +67,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Bracelets%2FBangles</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bracelets%2FBangles"/>
@@ -79,7 +79,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Pendant%20Set</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Pendant%20Set"/>
@@ -91,7 +91,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Sets</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sets"/>
@@ -103,7 +103,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Bridal%20Sets</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bridal%20Sets"/>
@@ -115,7 +115,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Others</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Others"/>
@@ -127,7 +127,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop?category=Sale</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sale"/>
@@ -141,7 +141,7 @@
   <!-- 3. Individual Handcrafted Products (With Encrypted Canonical Slugs) -->
   <url>
     <loc>https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a"/>
@@ -164,7 +164,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29"/>
@@ -182,7 +182,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28"/>
@@ -200,7 +200,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f"/>
@@ -218,7 +218,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e"/>
@@ -236,7 +236,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d"/>
@@ -254,7 +254,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c"/>
@@ -272,7 +272,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323"/>
@@ -292,7 +292,7 @@
   <!-- 4. Ella Journal & Styling Articles -->
   <url>
     <loc>https://ella-creations.com/blog</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog"/>
@@ -300,7 +300,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry"/>
@@ -312,7 +312,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night"/>
@@ -324,7 +324,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry"/>
@@ -338,7 +338,7 @@
   <!-- 5. Brand Information & Legal Policies -->
   <url>
     <loc>https://ella-creations.com/brand-guidelines</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/brand-guidelines"/>
@@ -346,7 +346,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/sitemap</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/sitemap"/>
@@ -354,7 +354,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shipping-policy</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shipping-policy"/>
@@ -362,7 +362,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/refund-policy</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/refund-policy"/>
@@ -370,7 +370,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/terms</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/terms"/>
@@ -378,7 +378,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/privacy</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/privacy"/>

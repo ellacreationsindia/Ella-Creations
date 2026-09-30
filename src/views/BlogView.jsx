@@ -34,12 +34,12 @@ export default function BlogView() {
         />
 
         {/* Back Button */}
-        <button
-          onClick={() => navigateTo('blog')}
+        <a
+          href="/blog"
           className="inline-flex items-center gap-2 text-xs font-bold text-stone-600 hover:text-brand-rose transition-colors bg-white px-4 py-2 rounded-full border border-stone-200 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Ella Journal
-        </button>
+        </a>
 
         {/* Article Header */}
         <article className="bg-white rounded-3xl p-6 sm:p-10 border border-brand-gold/30 shadow-md space-y-6">
@@ -119,12 +119,12 @@ export default function BlogView() {
                 Explore our handcrafted gold-plated Kundan chokers, AAA+ Cubic Zirconia crystals, and bridal fine sets.
               </p>
             </div>
-            <button
-              onClick={() => navigateTo('shop')}
-              className="bg-brand-rose hover:bg-brand-rose/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-soft-rose transition-all flex-shrink-0"
+            <a
+              href="/shop"
+              className="bg-brand-rose hover:bg-brand-rose/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-soft-rose transition-all flex-shrink-0 inline-block"
             >
               Explore Shop Catalog <ArrowRight className="w-4 h-4 inline ml-1" />
-            </button>
+            </a>
           </div>
 
         </article>
@@ -135,10 +135,10 @@ export default function BlogView() {
             <h3 className="font-serif text-xl font-bold text-stone-900">More Articles from Ella Journal</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {relatedBlogs.map((rel) => (
-                <div
+                <a
                   key={rel.id}
-                  onClick={() => navigateTo('blog-detail', rel.id)}
-                  className="bg-white p-5 rounded-2xl border border-brand-gold/20 shadow-sm hover:shadow-md cursor-pointer transition-all space-y-3 flex flex-col justify-between"
+                  href={`/blog/${rel.slug || rel.id}`}
+                  className="bg-white p-5 rounded-2xl border border-brand-gold/20 shadow-sm hover:shadow-md cursor-pointer transition-all space-y-3 flex flex-col justify-between block text-left"
                 >
                   <div className="space-y-2">
                     <span className="text-[10px] uppercase font-bold text-brand-gold">{rel.category}</span>
@@ -148,7 +148,7 @@ export default function BlogView() {
                   <span className="text-xs font-bold text-brand-rose flex items-center gap-1 pt-2 border-t border-stone-100">
                     Read Article <ArrowRight className="w-3.5 h-3.5" />
                   </span>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -216,9 +216,9 @@ export default function BlogView() {
 
       {/* Featured Hero Article Spotlight */}
       {featuredBlog && !blogSearch && selectedCategory === 'All' && (
-        <div
-          onClick={() => navigateTo('blog-detail', featuredBlog.id)}
-          className="bg-white rounded-3xl overflow-hidden border border-brand-gold/30 shadow-md hover:shadow-xl transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 group"
+        <a
+          href={`/blog/${featuredBlog.slug || featuredBlog.id}`}
+          className="bg-white rounded-3xl overflow-hidden border border-brand-gold/30 shadow-md hover:shadow-xl transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 group block text-left"
         >
           <div className="lg:col-span-7 aspect-[16/10] lg:aspect-auto overflow-hidden relative">
             <img
@@ -257,7 +257,7 @@ export default function BlogView() {
               </span>
             </div>
           </div>
-        </div>
+        </a>
       )}
 
       {/* Blog Cards Grid */}
@@ -284,10 +284,10 @@ export default function BlogView() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBlogs.map((blog) => (
-              <div
+              <a
                 key={blog.id}
-                onClick={() => navigateTo('blog-detail', blog.id)}
-                className="bg-white rounded-3xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group"
+                href={`/blog/${blog.slug || blog.id}`}
+                className="bg-white rounded-3xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group block text-left"
               >
                 <div className="space-y-4">
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
@@ -324,7 +324,7 @@ export default function BlogView() {
                     Read Post <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         )}
