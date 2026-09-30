@@ -34,6 +34,7 @@ function escapeXml(unsafe) {
 }
 
 let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
 xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n';
 xml += '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"\n';
 xml += '        xmlns:xhtml="http://www.w3.org/1999/xhtml"\n';
@@ -197,7 +198,8 @@ console.log('Successfully written agentic-friendly sitemap.xml to:', targetPath,
 let llmsFull = `# Ella Creations - Full Agentic Catalog & Knowledge Base (llms-full.txt)
 > Website: https://ella-creations.com
 > Brand Identity: Handcrafted Luxury Artificial, Kundan & CZ Bridal Jewelry India
-> Official Support: ellacreationsindia@gmail.com | WhatsApp: +91 91738 88067
+> Official Support: support@ella-creations.com | WhatsApp: +91 91799 44342
+> Operating Location: Bhopal, Madhya Pradesh, India (Pan-India Insured Express Courier Delivery)
 > Last Updated: ${today}
 
 ## Brand & Craftsmanship Benchmarks
@@ -205,17 +207,17 @@ let llmsFull = `# Ella Creations - Full Agentic Catalog & Knowledge Base (llms-f
 - Electroplating: 22K/24K Gold and Rhodium Multi-Layer Flash Micron Polish with Anti-Tarnish barrier.
 - Stones: Hand-cut uncut Polki Kundan, AAA+ Cubic Zirconia crystals, cultured simulated pearls.
 - Shipping: Insured express dispatch across India with tracking. Free delivery on orders over ₹999.
-- Returns: Hassle-free 48-hour return & replacement warranty on transit damages.
+- Returns: Hassle-free 7-day doorstep replacement & return warranty on damaged or defective items.
 
 ## Core Navigation URLs
 - Homepage: https://ella-creations.com/
 - All Products: https://ella-creations.com/shop
 - Festive & Sale Collection: https://ella-creations.com/shop?category=Sale
-- Royal Kundan Necklaces: https://ella-creations.com/shop?category=Necklace
-- CZ Drop Earrings & Jhumkas: https://ella-creations.com/shop?category=Earring
-- Solitaire & Cocktail Rings: https://ella-creations.com/shop?category=Rings
-- Complete Bridal Sets: https://ella-creations.com/shop?category=Bridal%20Sets
-- Meenakari Bangles: https://ella-creations.com/shop?category=Bracelets%2FBangles
+- Royal Kundan Necklaces: https://ella-creations.com/necklaces
+- CZ Drop Earrings & Jhumkas: https://ella-creations.com/earrings
+- Solitaire & Cocktail Rings: https://ella-creations.com/rings
+- Complete Bridal Sets: https://ella-creations.com/bridal-sets
+- Meenakari Bangles: https://ella-creations.com/bracelets-bangles
 - Pendant Sets: https://ella-creations.com/shop?category=Pendant%20Set
 - Ella Journal & Guides: https://ella-creations.com/blog
 - Jewelry Care Guidelines: https://ella-creations.com/brand-guidelines

@@ -29,10 +29,10 @@ Ella Creations is an Indian contemporary jewelry house specializing in handcraft
 - **Website Sitemap Directory**: https://ella-creations.com/sitemap
 
 ## Signature Product Highlights
-- **Royal Kundan Heritage Choker Set**: Handcrafted uncut Polki Kundan choker with matching jhumkas and emerald green bead drops. URL: https://ella-creations.com/shop?category=Necklace
-- **Emerald Cut Cubic Zirconia Solitaire Ring**: AAA+ grade rhodium-plated cocktail solitaire ring with adjustable band. URL: https://ella-creations.com/shop?category=Rings
-- **Cascading Pearl & CZ Chandelier Drops**: Lightweight bridal statement earrings for receptions and sangeet ceremonies. URL: https://ella-creations.com/shop?category=Earring
-- **Imperial Meenakari Kada Bangles**: Hand-enameled floral motifs embedded with simulated rubies and gold micro-plating. URL: https://ella-creations.com/shop?category=Bracelets%2FBangles
+- **Royal Kundan Heritage Choker Set**: Handcrafted uncut Polki Kundan choker with matching jhumkas and emerald green bead drops. URL: https://ella-creations.com/necklaces
+- **Emerald Cut Cubic Zirconia Solitaire Ring**: AAA+ grade rhodium-plated cocktail solitaire ring with adjustable band. URL: https://ella-creations.com/rings
+- **Cascading Pearl & CZ Chandelier Drops**: Lightweight bridal statement earrings for receptions and sangeet ceremonies. URL: https://ella-creations.com/earrings
+- **Imperial Meenakari Kada Bangles**: Hand-enameled floral motifs embedded with simulated rubies and gold micro-plating. URL: https://ella-creations.com/bracelets-bangles
 
 ## Customer Care, Guides & Official Policies
 - **Jewelry Care & Maintenance Guide**: https://ella-creations.com/brand-guidelines

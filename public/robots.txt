@@ -33,6 +33,11 @@ Disallow: /*?*filter=
 User-agent: Googlebot
 Allow: /
 Allow: /shop
+Allow: /necklaces
+Allow: /earrings
+Allow: /rings
+Allow: /bridal-sets
+Allow: /bracelets-bangles
 Allow: /product/
 Allow: /blog
 Allow: /terms
@@ -41,9 +46,14 @@ Allow: /refund-policy
 Allow: /shipping-policy
 Allow: /brand-guidelines
 Allow: /sitemap
+Allow: /llms.txt
 Disallow: /admin
 Disallow: /checkout
 Disallow: /account
+Disallow: /*?*search=
+Disallow: /*?*q=
+Disallow: /*?*sort=
+Disallow: /*?*filter=
 
 User-agent: Googlebot-Image
 Allow: /
