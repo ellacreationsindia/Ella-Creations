@@ -101,10 +101,10 @@ export default function HomeView() {
             <p className="text-[8px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#9E7D58]">
               ARTIFICIAL JEWELRY INDIA
             </p>
-            <h1 className="font-serif text-[22px] sm:text-[28px] font-bold tracking-tight text-[#1A1A1A] leading-[1.08]">
+            <p className="font-serif text-[22px] sm:text-[28px] font-bold tracking-tight text-[#1A1A1A] leading-[1.08]">
               Jewelry for <br />
               <span className="text-[#B87080] font-serif font-normal">Every You</span>
-            </h1>
+            </p>
             <p className="text-[#5C5552] text-[10px] sm:text-xs leading-tight line-clamp-1">
               Handcrafted Kundan & CZ crystal heirlooms.
             </p>
@@ -274,42 +274,49 @@ export default function HomeView() {
             { 
               title: "necklace", 
               label: "Necklace", 
+              href: "/necklaces",
               image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=300"
             },
             { 
               title: "pendant set", 
               label: "Pendant Set", 
+              href: "/shop?category=Pendant%20Set",
               image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=300" 
             },
             { 
               title: "rings", 
               label: "Rings", 
+              href: "/rings",
               image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=300" 
             },
             { 
               title: "earring", 
               label: "Earring", 
+              href: "/earrings",
               image: "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=300" 
             },
             { 
               title: "bridal sets", 
               label: "Bridal Sets", 
+              href: "/bridal-sets",
               image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=300" 
             },
             { 
               title: "bracelets/bangles", 
               label: "Bracelets / Bangles", 
+              href: "/bracelets-bangles",
               image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=300" 
             },
             { 
               title: "others", 
               label: "Others", 
+              href: "/shop?category=Others",
               image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=300" 
             }
           ].map((cat, idx) => (
             <a
               key={idx}
-              href={`/shop?category=${encodeURIComponent(cat.label)}`}
+              href={cat.href}
               className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[60px] sm:w-[72px] md:w-full"
             >
               <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-0.5 sm:p-1 shadow-xs group-hover:shadow-soft-rose transition-all flex items-center justify-center">

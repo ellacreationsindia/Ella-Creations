@@ -611,11 +611,40 @@ export default function ShopView() {
             </div>
           )}
 
-          <h1 className="sr-only">
-            {selectedCategory && selectedCategory !== 'All' 
-              ? `${selectedCategory} Collection - Handcrafted Artificial Jewelry | Ella Creations` 
-              : 'Artificial Fine Jewelry Collection | Ella Creations'}
-          </h1>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-brand-gold/30 shadow-xs space-y-2">
+            {/* Breadcrumb Trail */}
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[11px] sm:text-xs text-stone-500">
+              <a href="/" className="hover:text-brand-rose transition-colors">Home</a>
+              <span>/</span>
+              <a href="/shop" className="hover:text-brand-rose transition-colors">Shop</a>
+              {selectedCategory && selectedCategory !== 'All' && (
+                <>
+                  <span>/</span>
+                  <span className="font-semibold text-stone-800">{selectedCategory}</span>
+                </>
+              )}
+            </nav>
+
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-stone-900">
+                {selectedCategory && selectedCategory !== 'All' 
+                  ? `${selectedCategory} Collection` 
+                  : 'Artificial Fine Jewelry Collection'}
+              </h1>
+              <span className="text-xs text-stone-500 font-medium">
+                {filtered.length} Handcrafted Designs
+              </span>
+            </div>
+
+            <p className="text-xs sm:text-sm text-stone-600 max-w-3xl leading-relaxed">
+              {selectedCategory === 'Necklace' && 'Explore handcrafted Kundan chokers, layered bridal rani haars, and delicate CZ crystal pendants crafted with skin-safe brass and long-lasting gold polish.'}
+              {selectedCategory === 'Earring' && 'Discover designer jhumkas, chandelier drops, and everyday crystal studs engineered with hypoallergenic 925 sterling silver posts.'}
+              {selectedCategory === 'Rings' && 'Adorn your fingers with adjustable cocktail statement rings, solitaire Cubic Zirconia bands, and micro-pave brass masterworks.'}
+              {selectedCategory === 'Bridal Sets' && 'Complete bridal heritage jewelry suites featuring regal choker sets, matching earrings, maang tikka, and hathphool.'}
+              {selectedCategory === 'Bracelets/Bangles' && 'Traditional hand-painted Meenakari kadas, openable bridal bangles, and sleek rose-gold crystal cuffs.'}
+              {(!selectedCategory || selectedCategory === 'All' || selectedCategory === 'Others' || selectedCategory === 'Pendant Set') && 'Explore our complete catalog of handcrafted artificial jewellery, Kundan sets, CZ solitaire heirlooms, and occasion pieces with insured Pan-India delivery.'}
+            </p>
+          </div>
         </>
       )}
 
@@ -886,6 +915,52 @@ export default function ShopView() {
         </div>
 
       </div>
+
+      {/* Category SEO FAQ Section */}
+      <section className="pt-8 border-t border-brand-gold/30 space-y-4 max-w-4xl mx-auto">
+        <div className="text-center space-y-1">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">
+            Buyer Assistance & Guide
+          </span>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+            Frequently Asked Questions About Our Jewelry
+          </h2>
+          <p className="text-xs text-stone-500">
+            Learn more about our craftsmanship, sizing, polish longevity, and express delivery across India.
+          </p>
+        </div>
+
+        <div className="space-y-3 pt-2">
+          {[
+            {
+              q: "How do I choose the right size for rings and bangles?",
+              a: "Most of our statement cocktail rings feature adjustable comfort-fit shank bands that comfortably accommodate Indian ring sizes 10 to 20. For bangles, check our 2.4, 2.6, and 2.8 diameter sizing guide on each product page or select openable screw-lock kada designs."
+            },
+            {
+              q: "What makes Ella Creations artificial jewellery premium?",
+              a: "Unlike cheap tin or zinc fashion jewelry that tarnishes quickly, every piece is sculpted from pure, solid brass alloy, layered with genuine gold micro-plating and anti-tarnish protective e-coating for enduring lustre."
+            },
+            {
+              q: "What is your return or replacement policy?",
+              a: "We offer a 7-day doorstep replacement or return guarantee for any damaged, defective, or incorrect items received. Simply contact our support team via WhatsApp or email within 7 days of delivery."
+            },
+            {
+              q: "How fast is shipping to metro and non-metro cities?",
+              a: "All orders dispatch within 24–48 hours from our fulfillment hub. Metro cities (Delhi, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata) typically receive delivery in 2–4 business days; rest of India within 4–6 business days."
+            }
+          ].map((faq, idx) => (
+            <details key={idx} className="group bg-white rounded-xl border border-stone-200 p-4 transition-all">
+              <summary className="font-medium text-xs sm:text-sm text-stone-900 cursor-pointer list-none flex items-center justify-between gap-2">
+                <span>{faq.q}</span>
+                <ChevronDown className="w-4 h-4 text-stone-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+              </summary>
+              <p className="mt-2 text-xs sm:text-[13px] text-stone-600 leading-relaxed pt-2 border-t border-stone-100">
+                {faq.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* Recently Viewed Jewelry Section */}
       {recentlyViewedProducts.length > 0 && (

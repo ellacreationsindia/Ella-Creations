@@ -193,7 +193,15 @@ export default function SEOHead() {
         "url": domain,
         "logo": `${domain}/logo.png`,
         "description": "Contemporary handcrafted artificial jewelry brand in India, specializing in bridal Kundan chokers, AAA+ CZ earrings, solitaire rings, and festive collections.",
-        "email": "ellacreationsindia@gmail.com",
+        "email": "support@ella-creations.com",
+        "telephone": "+91-9179944342",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-9179944342",
+          "contactType": "customer service",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Hindi"]
+        },
         "sameAs": [
           "https://www.instagram.com/ellacreationsindia/",
           "https://www.facebook.com/ellacreations"
@@ -210,13 +218,13 @@ export default function SEOHead() {
         },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": `${domain}/#shop?search={search_term_string}`,
+          "target": `${domain}/shop?search={search_term_string}`,
           "query-input": "required name=search_term_string"
         }
       }
     ];
 
-    // Add Breadcrumb Schema for structured search engine breadcrumbs
+    // Add Breadcrumb Schema for structured search engine breadcrumbs (Zero hash fragments)
     const breadcrumbItems = [
       {
         "@type": "ListItem",
@@ -238,8 +246,8 @@ export default function SEOHead() {
         {
           "@type": "ListItem",
           "position": 2,
-          "name": activeProduct.category || 'Shop',
-          "item": `${domain}/#${(activeProduct.category || 'shop').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+          "name": activeProduct.category || 'Catalog',
+          "item": `${domain}/shop?category=${encodeURIComponent(activeProduct.category || 'All')}`
         },
         {
           "@type": "ListItem",
@@ -253,7 +261,7 @@ export default function SEOHead() {
         "@type": "ListItem",
         "position": 2,
         "name": "Ella Journal",
-        "item": `${domain}/#blog`
+        "item": `${domain}/blog`
       });
     } else if (currentView === 'blog-detail' && activeBlog) {
       breadcrumbItems.push(
@@ -261,7 +269,7 @@ export default function SEOHead() {
           "@type": "ListItem",
           "position": 2,
           "name": "Ella Journal",
-          "item": `${domain}/#blog`
+          "item": `${domain}/blog`
         },
         {
           "@type": "ListItem",
@@ -306,7 +314,7 @@ export default function SEOHead() {
       "itemListElement": breadcrumbItems
     });
 
-    // Add Product Schema if on Product Detail View
+    // Add Product Schema if on Product Detail View with Merchant Listings compliance
     if (currentView === 'product' && activeProduct) {
       const productSchema = {
         "@context": "https://schema.org",
@@ -336,6 +344,14 @@ export default function SEOHead() {
             "@type": "Organization",
             "name": "Ella Creations"
           },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "IN",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 7,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+          },
           "shippingDetails": {
             "@type": "OfferShippingDetails",
             "shippingRate": {
@@ -355,8 +371,8 @@ export default function SEOHead() {
               },
               "transitTime": {
                 "@type": "QuantitativeValue",
-                "minValue": 3,
-                "maxValue": 5,
+                "minValue": 2,
+                "maxValue": 4,
                 "unitCode": "DAY"
               }
             }

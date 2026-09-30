@@ -206,37 +206,59 @@ export default function Header() {
                 </a>
               )}
               <a 
-                href="/shop?category=Necklace"
+                href="/necklaces"
                 onClick={(e) => {
                   if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                   e.preventDefault();
                   navigateTo('shop', null, 'Necklace');
                 }}
-                className="hover:text-brand-rose transition-colors py-1"
+                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Necklace' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Necklaces
               </a>
               <a 
-                href="/shop?category=Earring"
+                href="/earrings"
                 onClick={(e) => {
                   if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                   e.preventDefault();
                   navigateTo('shop', null, 'Earring');
                 }}
-                className="hover:text-brand-rose transition-colors py-1"
+                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Earring' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Earrings
               </a>
               <a 
-                href="/shop?category=Bridal+Sets"
+                href="/rings"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'Rings');
+                }}
+                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Rings' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+              >
+                Rings
+              </a>
+              <a 
+                href="/bridal-sets"
                 onClick={(e) => {
                   if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                   e.preventDefault();
                   navigateTo('shop', null, 'Bridal Sets');
                 }}
-                className="hover:text-brand-rose transition-colors py-1"
+                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bridal Sets' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
               >
                 Bridal Sets
+              </a>
+              <a 
+                href="/bracelets-bangles"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  navigateTo('shop', null, 'Bracelets/Bangles');
+                }}
+                className={`hover:text-brand-rose transition-colors py-1 ${currentView === 'shop' && selectedCategory === 'Bracelets/Bangles' ? 'text-brand-rose font-bold border-b-2 border-brand-rose' : ''}`}
+              >
+                Bangles
               </a>
               <a 
                 href="/blog"
@@ -517,13 +539,13 @@ export default function Header() {
                         <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
                       </a>
                       {[
-                        { label: 'Necklace', cat: 'Necklace', href: '/shop?category=Necklace' },
-                        { label: 'Pendant Set', cat: 'Pendant Set', href: '/shop?category=Pendant%20Set' },
-                        { label: 'Rings', cat: 'Rings', href: '/shop?category=Rings' },
-                        { label: 'Earring', cat: 'Earring', href: '/shop?category=Earring' },
-                        { label: 'Bridal Sets', cat: 'Bridal Sets', href: '/shop?category=Bridal%20Sets' },
-                        { label: 'Bracelets / Bangles', cat: 'Bracelets/Bangles', href: '/shop?category=Bracelets%2FBangles' },
-                        { label: 'Others', cat: 'Others', href: '/shop?category=Others' }
+                        { label: 'Necklaces & Chokers', cat: 'Necklace', href: '/necklaces' },
+                        { label: 'Earrings & Jhumkas', cat: 'Earring', href: '/earrings' },
+                        { label: 'Solitaire & Statement Rings', cat: 'Rings', href: '/rings' },
+                        { label: 'Bridal Trousseau Sets', cat: 'Bridal Sets', href: '/bridal-sets' },
+                        { label: 'Bangles & Bracelets', cat: 'Bracelets/Bangles', href: '/bracelets-bangles' },
+                        { label: 'Pendant Sets', cat: 'Pendant Set', href: '/shop?category=Pendant%20Set' },
+                        { label: 'Other Fine Accessories', cat: 'Others', href: '/shop?category=Others' }
                       ].map((item) => (
                         <a
                           key={item.cat}

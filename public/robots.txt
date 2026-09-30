@@ -7,6 +7,11 @@
 User-agent: *
 Allow: /
 Allow: /shop
+Allow: /necklaces
+Allow: /earrings
+Allow: /rings
+Allow: /bridal-sets
+Allow: /bracelets-bangles
 Allow: /product/
 Allow: /blog
 Allow: /terms
@@ -19,6 +24,8 @@ Allow: /llms.txt
 Disallow: /admin
 Disallow: /checkout
 Disallow: /account
+Disallow: /*?*search=
+Disallow: /*?*q=
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 

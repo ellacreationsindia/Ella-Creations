@@ -130,11 +130,71 @@ export default function Footer() {
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCategoriesOpen ? 'rotate-180 text-brand-gold' : ''}`} />
             </button>
             <ul className={`text-xs text-stone-400 space-y-2 pt-2 ${isCategoriesOpen ? 'block' : 'hidden lg:block'}`}>
-              <li><a href="/shop?category=Necklace" className="hover:text-white transition-colors cursor-pointer">Necklaces</a></li>
-              <li><a href="/shop?category=Earring" className="hover:text-white transition-colors cursor-pointer">Earrings & Drops</a></li>
-              <li><a href="/shop?category=Rings" className="hover:text-white transition-colors cursor-pointer">Solitaire Rings</a></li>
-              <li><a href="/shop?category=Bridal%20Sets" className="hover:text-white transition-colors cursor-pointer">Bridal Sets</a></li>
-              <li><a href="/shop?category=Bracelets%2FBangles" className="hover:text-white transition-colors cursor-pointer">Bracelets & Bangles</a></li>
+              <li>
+                <a 
+                  href="/necklaces" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Necklace');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Royal Necklaces & Chokers
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/earrings" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Earring');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Earrings & Jhumkas
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/rings" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Rings');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Solitaire Cocktail Rings
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/bridal-sets" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Bridal Sets');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Bridal Trousseau Sets
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/bracelets-bangles" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shop', null, 'Bracelets/Bangles');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Meenakari Bangles & Kadas
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -149,13 +209,97 @@ export default function Footer() {
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCustomerCareOpen ? 'rotate-180 text-brand-gold' : ''}`} />
             </button>
             <ul className={`text-xs text-stone-400 space-y-2 pt-2 ${isCustomerCareOpen ? 'block' : 'hidden lg:block'}`}>
-              <li><a href="/blog" className="hover:text-brand-rose text-white font-semibold transition-colors cursor-pointer">📖 Ella Journal & Blogs</a></li>
-              <li><a href="/brand-guidelines" className="hover:text-white transition-colors cursor-pointer">Jewelry Care Guide</a></li>
-              <li><a href="/shipping-policy" className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery Policy</a></li>
-              <li><a href="/refund-policy" className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation Policy</a></li>
-              <li><a href="/terms" className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</a></li>
-              <li><a href="/privacy" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
-              <li><a href="/sitemap" className="hover:text-white transition-colors cursor-pointer">Sitemap Directory</a></li>
+              <li>
+                <a 
+                  href="/blog" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('blog');
+                  }}
+                  className="hover:text-brand-rose text-white font-semibold transition-colors cursor-pointer"
+                >
+                  📖 Ella Journal & Styling Guides
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/brand-guidelines" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('brand-guidelines');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Jewelry Care & Metallurgy Guide
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/shipping-policy" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('shipping-policy');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Shipping & Delivery Policy
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/refund-policy" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('refund-policy');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Refund & Cancellation Policy
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/terms" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('terms');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Terms & Conditions
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/privacy" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('privacy');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/sitemap" 
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    navigateTo('sitemap');
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Sitemap Directory
+                </a>
+              </li>
               
               {/* ADMIN PANEL LINK: ONLY VISIBLE IF LOGGED IN AS ADMIN */}
               {isAdmin && (

@@ -263,6 +263,16 @@ export const StoreProvider = ({ children }) => {
       } else if (view === 'shop') {
         if (category && category === 'Sale') {
           targetPath = '/shop?category=Sale';
+        } else if (category && (category === 'Necklace' || category === 'necklaces')) {
+          targetPath = '/necklaces';
+        } else if (category && (category === 'Earring' || category === 'earrings')) {
+          targetPath = '/earrings';
+        } else if (category && (category === 'Rings' || category === 'ring')) {
+          targetPath = '/rings';
+        } else if (category && (category === 'Bridal Sets' || category === 'bridal-sets')) {
+          targetPath = '/bridal-sets';
+        } else if (category && (category.includes('Bangles') || category.includes('Bracelets') || category === 'bracelets-bangles')) {
+          targetPath = '/bracelets-bangles';
         } else if (category && category !== 'All') {
           targetPath = `/shop?category=${encodeURIComponent(category)}`;
         } else {

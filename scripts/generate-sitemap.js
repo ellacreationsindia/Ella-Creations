@@ -96,16 +96,24 @@ const categories = [
   { name: 'Sale', title: 'Exclusive Festive Jewelry Deals & Promotional Sale', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=1000', prio: '0.95' }
 ];
 
-xml += '\n  <!-- 2. Category Landing Pages -->\n';
-for (const cat of categories) {
-  const encodedCat = encodeURIComponent(cat.name);
+// 2. Jewelry Dedicated Category Landing Pages
+xml += '\n  <!-- 2. Dedicated Category Landing Pages -->\n';
+const canonicalCategoryRoutes = [
+  { path: 'necklaces', cat: 'Necklace', title: 'Handcrafted Royal Kundan Chokers & Rani Haars', img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1000', prio: '0.90' },
+  { path: 'earrings', cat: 'Earring', title: 'AAA+ Cubic Zirconia Drop Earrings & Peacock Jhumkas', img: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=1000', prio: '0.90' },
+  { path: 'rings', cat: 'Rings', title: 'Solitaire & Floral Statement Cocktail Rings', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=1000', prio: '0.85' },
+  { path: 'bridal-sets', cat: 'Bridal Sets', title: 'Grand Wedding Bridal Troussau Ensembles', img: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=1000', prio: '0.95' },
+  { path: 'bracelets-bangles', cat: 'Bracelets/Bangles', title: 'Imperial Hand-Enameled Meenakari Bangles & Cuffs', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=1000', prio: '0.85' }
+];
+
+for (const cRoute of canonicalCategoryRoutes) {
   xml += renderUrlEntry({
-    loc: `${domain}/shop?category=${encodedCat}`,
-    priority: cat.prio,
+    loc: `${domain}/${cRoute.path}`,
+    priority: cRoute.prio,
     changefreq: 'weekly',
     images: [{
-      loc: cat.img,
-      title: cat.title
+      loc: cRoute.img,
+      title: cRoute.title
     }]
   });
 }

@@ -105,10 +105,12 @@ function renderCommonHeader(activePath = '') {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         <nav class="hidden lg:flex items-center space-x-6 text-xs font-semibold uppercase tracking-wider text-stone-700">
           <a href="/" class="hover:text-rose-700 py-1 ${activePath === '/' ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Home</a>
-          <a href="/shop" class="hover:text-rose-700 py-1 ${activePath.startsWith('/shop') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Shop Collections</a>
-          <a href="/shop?category=Necklace" class="hover:text-rose-700 py-1">Necklaces</a>
-          <a href="/shop?category=Earring" class="hover:text-rose-700 py-1">Earrings</a>
-          <a href="/shop?category=Bridal%20Sets" class="hover:text-rose-700 py-1">Bridal Sets</a>
+          <a href="/shop" class="hover:text-rose-700 py-1 ${activePath === '/shop' ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Shop Collections</a>
+          <a href="/necklaces" class="hover:text-rose-700 py-1 ${activePath.includes('necklace') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Necklaces</a>
+          <a href="/earrings" class="hover:text-rose-700 py-1 ${activePath.includes('earring') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Earrings</a>
+          <a href="/rings" class="hover:text-rose-700 py-1 ${activePath.includes('ring') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Rings</a>
+          <a href="/bridal-sets" class="hover:text-rose-700 py-1 ${activePath.includes('bridal') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Bridal Sets</a>
+          <a href="/bracelets-bangles" class="hover:text-rose-700 py-1 ${activePath.includes('bangle') || activePath.includes('bracelet') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Bangles</a>
           <a href="/blog" class="hover:text-rose-700 py-1 ${activePath.startsWith('/blog') ? 'text-rose-700 font-bold border-b-2 border-rose-700' : ''}">Ella Journal</a>
         </nav>
         <div class="flex flex-col items-center justify-center text-center mx-auto lg:mx-0">
@@ -158,11 +160,11 @@ function renderCommonFooter() {
         <div>
           <h5 class="font-serif text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Shop Collections</h5>
           <ul class="space-y-2 text-stone-400">
-            <li><a href="/shop?category=Necklace" class="hover:text-white">Necklaces</a></li>
-            <li><a href="/shop?category=Earring" class="hover:text-white">Earrings & Drops</a></li>
-            <li><a href="/shop?category=Rings" class="hover:text-white">Solitaire Cocktail Rings</a></li>
-            <li><a href="/shop?category=Bridal%20Sets" class="hover:text-white">Bridal Trousseau Sets</a></li>
-            <li><a href="/shop?category=Bracelets%2FBangles" class="hover:text-white">Bangles & Bracelets</a></li>
+            <li><a href="/necklaces" class="hover:text-white">Necklaces & Chokers</a></li>
+            <li><a href="/earrings" class="hover:text-white">Earrings & Jhumkas</a></li>
+            <li><a href="/rings" class="hover:text-white">Solitaire Cocktail Rings</a></li>
+            <li><a href="/bridal-sets" class="hover:text-white">Bridal Trousseau Sets</a></li>
+            <li><a href="/bracelets-bangles" class="hover:text-white">Bangles & Bracelets</a></li>
           </ul>
         </div>
         <div>
@@ -758,7 +760,42 @@ export function generateAllStaticPages() {
         "priceCurrency": "INR",
         "price": prod.price,
         "availability": "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition"
+        "itemCondition": "https://schema.org/NewCondition",
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "IN",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "INR"
+          },
+          "shippingDestination": {
+            "@type": "DefinedRegion",
+            "addressCountry": "IN"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 1,
+              "maxValue": 2,
+              "unitCode": "d"
+            },
+            "transitTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 2,
+              "maxValue": 5,
+              "unitCode": "d"
+            }
+          }
+        }
       },
       "aggregateRating": {
         "@type": "AggregateRating",

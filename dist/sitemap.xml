@@ -28,113 +28,65 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop"/>
   </url>
 
-  <!-- 2. Category Landing Pages -->
+  <!-- 2. Dedicated Category Landing Pages -->
   <url>
-    <loc>https://ella-creations.com/shop?category=Necklace</loc>
+    <loc>https://ella-creations.com/necklaces</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Necklace"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Necklace"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/necklaces"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/necklaces"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Handcrafted Royal Kundan Chokers &amp; Rani Haars</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/shop?category=Earring</loc>
+    <loc>https://ella-creations.com/earrings</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Earring"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Earring"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/earrings"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/earrings"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>AAA+ Cubic Zirconia Drop Earrings &amp; Peacock Jhumkas</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/shop?category=Rings</loc>
+    <loc>https://ella-creations.com/rings</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Rings"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Rings"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/rings"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/rings"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Solitaire &amp; Floral Statement Cocktail Rings</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/shop?category=Bracelets%2FBangles</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bracelets%2FBangles"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Bracelets%2FBangles"/>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Imperial Hand-Enameled Meenakari Bangles &amp; Cuffs</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/shop?category=Pendant%20Set</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Pendant%20Set"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Pendant%20Set"/>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Rose Gold &amp; Diamond Look CZ Pendant Sets</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/shop?category=Sets</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sets"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Sets"/>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Bridal &amp; Festive Jewelry Complete Sets</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/shop?category=Bridal%20Sets</loc>
+    <loc>https://ella-creations.com/bridal-sets</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Bridal%20Sets"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Bridal%20Sets"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/bridal-sets"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/bridal-sets"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
       <image:title>Grand Wedding Bridal Troussau Ensembles</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/shop?category=Others</loc>
+    <loc>https://ella-creations.com/bracelets-bangles</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Others"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Others"/>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1611591475819-79b8b4a742cd?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Accessories &amp; Special Jewelry Pieces</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://ella-creations.com/shop?category=Sale</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop?category=Sale"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/shop?category=Sale"/>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/bracelets-bangles"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/bracelets-bangles"/>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Exclusive Festive Jewelry Deals &amp; Promotional Sale</image:title>
+      <image:title>Imperial Hand-Enameled Meenakari Bangles &amp; Cuffs</image:title>
     </image:image>
   </url>
 

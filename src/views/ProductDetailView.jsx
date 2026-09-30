@@ -301,13 +301,41 @@ export default function ProductDetailView() {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-20 lg:pb-12">
       
-      {/* Back Button */}
-      <a
-        href="/shop"
-        className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600 hover:text-brand-rose transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" /> Back to Shop Catalog
-      </a>
+      {/* Breadcrumb Trail & Back Button */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-gold/20 pb-3">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-stone-500">
+          <a href="/" className="hover:text-brand-rose transition-colors">Home</a>
+          <span>/</span>
+          <a href="/shop" className="hover:text-brand-rose transition-colors">Shop</a>
+          {product.category && (
+            <>
+              <span>/</span>
+              <a 
+                href={
+                  product.category.toLowerCase().includes('neck') ? '/necklaces' :
+                  product.category.toLowerCase().includes('ear') ? '/earrings' :
+                  product.category.toLowerCase().includes('ring') ? '/rings' :
+                  product.category.toLowerCase().includes('bridal') ? '/bridal-sets' :
+                  (product.category.toLowerCase().includes('bangle') || product.category.toLowerCase().includes('bracelet')) ? '/bracelets-bangles' :
+                  `/shop?category=${encodeURIComponent(product.category)}`
+                }
+                className="hover:text-brand-rose transition-colors"
+              >
+                {product.category}
+              </a>
+            </>
+          )}
+          <span>/</span>
+          <span className="font-semibold text-stone-800 line-clamp-1 max-w-[200px] sm:max-w-xs">{product.title}</span>
+        </nav>
+
+        <a
+          href="/shop"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-brand-rose transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Catalog
+        </a>
+      </div>
 
       {/* Main Product Layout: Left Gallery & Video Player, Right Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
