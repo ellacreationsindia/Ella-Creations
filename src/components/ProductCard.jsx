@@ -117,7 +117,8 @@ export default function ProductCard({ product }) {
       {/* Image Container with Uncropped Full View & Hover Secondary Photo Swap */}
       <a 
         href={productPath}
-        className="relative aspect-square overflow-hidden bg-gradient-to-b from-stone-50 via-brand-cream/30 to-white p-2.5 sm:p-4 lg:p-6 cursor-pointer group flex items-center justify-center border-b border-stone-100 block"
+        className="relative aspect-square overflow-hidden bg-[#FAF7F4] p-3 sm:p-4 lg:p-6 cursor-pointer group flex items-center justify-center border-b border-stone-100/80 block"
+        aria-label={`View details for ${product.title}`}
       >
         {/* Photo Count Indicator (Desktop) */}
         {product.images && product.images.length > 1 && (
@@ -142,7 +143,7 @@ export default function ProductCard({ product }) {
             src={product.images[1]}
             alt={`${product.title} - ${product.category} detailed view | Ella Creations`}
             loading="lazy"
-            className={`absolute inset-0 w-full h-full object-contain object-center p-2.5 sm:p-4 lg:p-6 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out hidden sm:block ${
+            className={`absolute inset-0 w-full h-full object-contain object-center p-3 sm:p-4 lg:p-6 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out hidden sm:block ${
               isOutOfStock ? 'opacity-60 grayscale' : ''
             }`}
           />
@@ -152,12 +153,13 @@ export default function ProductCard({ product }) {
         <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center gap-3 lg:gap-4">
           <button
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setQuickViewProduct(product);
             }}
-            className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white text-stone-800 flex items-center justify-center shadow-lg hover:bg-brand-rose hover:text-white transition-all transform hover:scale-110"
+            className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white text-stone-800 flex items-center justify-center shadow-lg hover:bg-brand-rose hover:text-white transition-all transform hover:scale-110 cursor-pointer"
             title="Quick View"
-            aria-label="Quick View Product"
+            aria-label={`Quick View ${product.title}`}
           >
             <Eye className="w-5 h-5 lg:w-6 lg:h-6" />
           </button>
@@ -165,12 +167,13 @@ export default function ProductCard({ product }) {
           {!isOutOfStock && (
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 addToCart(product, 1);
               }}
-              className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-brand-gold text-white flex items-center justify-center shadow-lg hover:bg-stone-900 transition-all transform hover:scale-110"
+              className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-brand-gold text-white flex items-center justify-center shadow-lg hover:bg-stone-900 transition-all transform hover:scale-110 cursor-pointer"
               title="Add to Cart"
-              aria-label="Add product to cart"
+              aria-label={`Add ${product.title} to cart`}
             >
               <ShoppingBag className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>
@@ -200,19 +203,27 @@ export default function ProductCard({ product }) {
             </a>
           </h3>
 
-          {/* Rating */}
-          <div className="flex items-center gap-1 mt-1 lg:mt-1.5">
-            <div className="flex text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 ${
-                    i < Math.floor(product.rating) ? 'fill-current' : 'text-stone-300'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-[10px] sm:text-xs lg:text-sm text-stone-500 font-medium">({product.reviewsCount})</span>
+          {/* Rating: Rendered strictly when verified rating and reviews exist */}
+          <div className="flex items-center gap-1 mt-1 lg:mt-1.5 min-h-[18px]">
+            {product.reviewsCount > 0 && product.rating > 0 ? (
+              <>
+                <div className="flex text-amber-400" aria-label={`Rating ${product.rating} out of 5 stars`}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 ${
+                        i < Math.floor(product.rating) ? 'fill-current' : 'text-stone-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] sm:text-xs lg:text-sm text-stone-500 font-medium">({product.reviewsCount})</span>
+              </>
+            ) : (
+              <span className="text-[10px] sm:text-[11px] text-stone-400 font-medium italic">
+                {product.isNew ? '✨ New Release' : 'Handcrafted Edition'}
+              </span>
+            )}
           </div>
         </div>
 
@@ -233,7 +244,7 @@ export default function ProductCard({ product }) {
                     {formatPrice(pricing.originalPrice)}
                   </span>
                 ) : (
-                  product.comparePrice && (
+                  product.comparePrice && product.comparePrice > product.price && (
                     <span className="text-[10px] sm:text-xs lg:text-sm line-through text-stone-400 font-normal">
                       {formatPrice(product.comparePrice)}
                     </span>
@@ -250,7 +261,7 @@ export default function ProductCard({ product }) {
                 e.stopPropagation();
                 addToCart(product, 1);
               }}
-              className="p-1.5 sm:px-2.5 sm:py-1 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white transition-all flex items-center gap-1.5 text-[11px] lg:text-xs font-semibold flex-shrink-0 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-2 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white transition-all flex items-center gap-1.5 text-[11px] lg:text-xs font-semibold flex-shrink-0 cursor-pointer shadow-xs active:scale-95"
               title="Add to Shopping Bag"
               aria-label={`Add ${product.title} to bag`}
             >
@@ -258,12 +269,12 @@ export default function ProductCard({ product }) {
               <span className="hidden md:inline">Add to Bag</span>
             </button>
           ) : (
-            <button
-              onClick={() => navigateTo('product', product.id)}
-              className="text-[11px] lg:text-xs font-semibold text-stone-400 hover:text-stone-700 transition-colors flex items-center gap-0.5 flex-shrink-0 cursor-pointer"
+            <a
+              href={productPath}
+              className="text-[11px] lg:text-xs font-semibold text-stone-400 hover:text-stone-700 transition-colors flex items-center gap-0.5 flex-shrink-0"
             >
               Details
-            </button>
+            </a>
           )}
         </div>
 

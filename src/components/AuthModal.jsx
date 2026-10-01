@@ -28,6 +28,21 @@ export default function AuthModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
+  // Support Escape key to close modal
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
@@ -65,19 +80,29 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-brand-gold/30 relative max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="auth-modal-title"
+    >
+      <div 
+        className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-brand-gold/30 relative max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 p-1 rounded-full"
+          className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 p-1 rounded-full cursor-pointer transition-colors"
+          aria-label="Close sign in dialog"
         >
           <X className="w-6 h-6" />
         </button>
 
         <div className="text-center space-y-2 mb-6">
           <img src="/logo.png" alt="Ella Creations Logo" className="h-14 w-auto mx-auto filter drop-shadow" />
-          <h2 className="font-serif text-2xl font-bold text-stone-900">
+          <h2 id="auth-modal-title" className="font-serif text-2xl font-bold text-stone-900">
             {mode === 'signup' ? 'Create Your Account' : 'Sign In to Ella Creations'}
           </h2>
           <p className="text-xs text-stone-500">
@@ -104,7 +129,11 @@ export default function AuthModal({ isOpen, onClose }) {
         </div>
 
         {authError && (
-          <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-xs text-rose-700 leading-relaxed">
+          <div 
+            id="auth-error-msg"
+            role="alert"
+            className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-xs text-rose-700 leading-relaxed"
+          >
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{authError}</span>
           </div>
@@ -178,10 +207,24 @@ export default function AuthModal({ isOpen, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full min-h-[44px] bg-brand-rose hover:bg-brand-rose/90 text-white font-semibold text-xs py-3 rounded-xl shadow-soft-rose transition-colors flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer active:scale-95"
+            className="w-full min-h-[44px] bg-brand-rose hover:bg-brand-rose/90 disabled:opacity-60 text-white font-semibold text-xs py-3 rounded-xl shadow-soft-rose transition-colors flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer active:scale-95"
           >
-            {mode === 'signup' ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-            {mode === 'signup' ? 'Create Account' : 'Sign In'}
+            {loading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                <span>Processing...</span>
+              </>
+            ) : mode === 'signup' ? (
+              <>
+                <UserPlus className="w-4 h-4" />
+                <span>Create Account</span>
+              </>
+            ) : (
+              <>
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
+              </>
+            )}
           </button>
         </form>
 

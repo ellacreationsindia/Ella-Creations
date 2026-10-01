@@ -38,6 +38,17 @@ export default function ProductQuickView() {
     };
   }, [quickViewProduct]);
 
+  // Support Escape key to close quick view
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && quickViewProduct) {
+        setQuickViewProduct(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quickViewProduct, setQuickViewProduct]);
+
   if (!quickViewProduct) return null;
 
   const handleToggleAddon = (addon) => {
@@ -68,20 +79,30 @@ export default function ProductQuickView() {
   const effectiveOriginalPrice = pricing.originalPrice + addonsExtraTotal;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
-      <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative max-h-[90vh] flex flex-col md:flex-row overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn"
+      onClick={() => setQuickViewProduct(null)}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quickview-title"
+    >
+      <div 
+        className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-brand-gold/30 relative max-h-[90vh] flex flex-col md:flex-row overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Close Button */}
         <button
           onClick={() => setQuickViewProduct(null)}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md text-stone-600 hover:text-stone-900 flex items-center justify-center shadow-md transition-colors"
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md text-stone-600 hover:text-stone-900 flex items-center justify-center shadow-md transition-colors cursor-pointer"
+          aria-label="Close Quick View"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Gallery Section */}
         <div className="md:w-1/2 bg-brand-cream p-6 flex flex-col justify-between">
-          <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-inner mb-4 relative p-4 flex items-center justify-center border border-stone-100">
+          <div className="aspect-square rounded-2xl overflow-hidden bg-[#FAF7F4] shadow-inner mb-4 relative p-4 flex items-center justify-center border border-stone-100">
             <img
               src={selectedImage}
               alt={`${quickViewProduct.title} - Handcrafted Artificial Jewelry | Ella Creations`}
@@ -96,9 +117,10 @@ export default function ProductQuickView() {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 bg-white p-1 flex items-center justify-center ${
+                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 bg-white p-1 flex items-center justify-center cursor-pointer ${
                     selectedImage === img ? 'border-brand-rose shadow-md' : 'border-stone-200 opacity-70 hover:opacity-100'
                   }`}
+                  aria-label={`Thumbnail view ${idx + 1}`}
                 >
                   <img 
                     src={img} 
@@ -119,23 +141,29 @@ export default function ProductQuickView() {
               {quickViewProduct.stoneType ? <span>{quickViewProduct.stoneType}</span> : null}
             </div>
 
-            <h2 className="font-serif text-2xl font-bold text-stone-900">{quickViewProduct.title}</h2>
+            <h2 id="quickview-title" className="font-serif text-2xl font-bold text-stone-900">{quickViewProduct.title}</h2>
 
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(quickViewProduct.rating) ? 'fill-current' : 'text-stone-300'
-                    }`}
-                  />
-                ))}
+            {quickViewProduct.reviewsCount > 0 && quickViewProduct.rating > 0 ? (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex text-amber-400" aria-label={`Rating ${quickViewProduct.rating} out of 5 stars`}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < Math.floor(quickViewProduct.rating) ? 'fill-current' : 'text-stone-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs font-semibold text-stone-700">
+                  {quickViewProduct.rating} ({quickViewProduct.reviewsCount} reviews)
+                </span>
               </div>
-              <span className="text-xs font-semibold text-stone-700">
-                {quickViewProduct.rating} ({quickViewProduct.reviewsCount} reviews)
-              </span>
-            </div>
+            ) : (
+              <p className="text-[11px] text-stone-500 font-medium italic mt-1">
+                Handcrafted piece • Insured express delivery
+              </p>
+            )}
 
             <div className="flex items-baseline gap-3 mt-3 flex-wrap">
               <span className="text-2xl font-bold text-brand-rose">{formatPrice(effectiveFinalPrice)}</span>

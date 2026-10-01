@@ -35,11 +35,26 @@ export default function CartDrawer() {
     };
   }, [isCartOpen]);
 
+  // Support Escape key to dismiss drawer
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isCartOpen) {
+        setIsCartOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCartOpen, setIsCartOpen]);
+
   if (!isCartOpen) return null;
 
+  const FREE_SHIPPING_THRESHOLD = 999;
+  const isFreeShipping = cartSubtotal >= FREE_SHIPPING_THRESHOLD;
+  const shippingCost = cart.length === 0 ? 0 : (isFreeShipping ? 0 : 99);
+  const amountNeededForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - cartSubtotal);
+
   const discountAmount = activeCoupon ? (cartSubtotal * activeCoupon.discountPercent) / 100 : 0;
-  const shippingCost = cart.length === 0 ? 0 : 99;
-  const grandTotal = cartSubtotal - discountAmount + shippingCost;
+  const grandTotal = Math.max(0, cartSubtotal - discountAmount + shippingCost);
 
   const handleProceedToCheckout = () => {
     requireAuthForAction(() => {
@@ -57,30 +72,60 @@ export default function CartDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div 
+      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-fadeIn"
+      onClick={() => setIsCartOpen(false)}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-drawer-heading"
+    >
       <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full justify-end">
-        <div className="w-full sm:max-w-md bg-white shadow-2xl flex flex-col justify-between border-l border-brand-gold/30">
+        <div 
+          className="w-full sm:max-w-md bg-white shadow-2xl flex flex-col justify-between border-l border-brand-gold/30"
+          onClick={(e) => e.stopPropagation()}
+        >
           
           {/* Header */}
-          <div className="p-6 border-b border-stone-200 bg-brand-cream flex items-center justify-between">
+          <div className="p-5 sm:p-6 border-b border-stone-200 bg-brand-cream flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-brand-rose" />
-              <h2 className="font-serif text-xl font-bold text-stone-900">Shopping Bag ({cart.length})</h2>
+              <h2 id="cart-drawer-heading" className="font-serif text-xl font-bold text-stone-900">
+                Shopping Bag ({cart.length})
+              </h2>
             </div>
             <button
               onClick={() => setIsCartOpen(false)}
-              className="p-1 rounded-full text-stone-400 hover:text-stone-700"
+              className="p-1 rounded-full text-stone-400 hover:text-stone-700 cursor-pointer"
+              aria-label="Close Shopping Bag"
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Insured Delivery Banner */}
-          <div className="px-6 py-2.5 bg-brand-sand/50 border-b border-brand-gold/20 flex items-center justify-between text-xs font-semibold text-stone-700">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> Insured courier packaging & fast delivery
-            </span>
-          </div>
+          {/* Dynamic Free Shipping Threshold Progress Banner */}
+          {cart.length > 0 && (
+            <div className="px-5 sm:px-6 py-2.5 bg-brand-sand/40 border-b border-brand-gold/20 text-xs">
+              {isFreeShipping ? (
+                <div className="flex items-center gap-1.5 text-emerald-800 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>You've unlocked <strong>FREE Insured Express Delivery</strong>!</span>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-stone-700">
+                    <span>Add <strong>{formatPrice(amountNeededForFreeShipping)}</strong> more for <strong>FREE Delivery</strong></span>
+                    <span className="text-[10px] text-brand-rose font-bold">{Math.round((cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-brand-rose to-brand-gold h-full rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(100, (cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Cart Items List */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -263,9 +308,15 @@ export default function CartDrawer() {
                     <span>-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span>Estimated Shipping</span>
-                  <span className="font-semibold text-stone-900">{formatPrice(shippingCost)}</span>
+                  {shippingCost === 0 ? (
+                    <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-[11px] border border-emerald-200">
+                      FREE (Orders over ₹999)
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-stone-900">{formatPrice(shippingCost)}</span>
+                  )}
                 </div>
                 <div className="flex justify-between text-base font-bold text-stone-900 pt-2 border-t border-stone-200">
                   <span>Total</span>

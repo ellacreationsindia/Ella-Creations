@@ -473,21 +473,36 @@ export default function ProductDetailView() {
               {product.title}
             </h1>
 
-            {/* Rating Jump */}
-            <div className="flex items-center gap-2 mt-3">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(product.rating) ? 'fill-current' : 'text-stone-300'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-xs font-semibold text-stone-700">
-                {product.rating} ({product.reviewsCount} customer reviews)
-              </span>
+            {/* Rating Jump: Rendered only when genuine reviews exist */}
+            <div className="flex items-center gap-2 mt-3 min-h-[22px]">
+              {productReviews.length > 0 ? (
+                <>
+                  <div className="flex text-amber-400" aria-label={`Average rating ${(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length).toFixed(1)} out of 5 stars`}>
+                    {[...Array(5)].map((_, i) => {
+                      const avg = productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length;
+                      return (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(avg) ? 'fill-current' : 'text-stone-300'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="text-xs font-semibold text-stone-700">
+                    {(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length).toFixed(1)} ({productReviews.length} customer review{productReviews.length > 1 ? 's' : ''})
+                  </span>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-xs text-stone-500 font-medium">
+                  <span className="inline-flex items-center gap-1 text-brand-gold font-semibold">
+                    <Sparkles className="w-3.5 h-3.5" /> Handcrafted Fine Jewelry
+                  </span>
+                  <span>•</span>
+                  <span>Lead & Nickel Safe Brass</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -725,15 +740,22 @@ export default function ProductDetailView() {
             <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
               <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold mx-auto mb-1" />
               <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Handcrafted Quality</p>
+              <span className="text-[9px] text-stone-500 block">Lead & Nickel Safe</span>
             </div>
             <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
               <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-rose mx-auto mb-1" />
               <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">Insured Dispatch</p>
+              <span className="text-[9px] text-stone-500 block">Pan-India Express</span>
             </div>
-            <div className="p-2.5 sm:p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-stone-600 mx-auto mb-1" />
-              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800">No Return Policy</p>
-            </div>
+            <a 
+              href="/refund-policy"
+              className="p-2.5 sm:p-3 bg-stone-50 hover:bg-brand-cream/50 rounded-xl border border-stone-100 transition-colors block text-center group"
+              title="View Refund and Defect Replacement Policy"
+            >
+              <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 mx-auto mb-1 group-hover:scale-105 transition-transform" />
+              <p className="text-[10px] sm:text-[11px] font-semibold text-stone-800 group-hover:text-brand-rose transition-colors">Damage Protection</p>
+              <span className="text-[9px] text-emerald-700 font-medium block">48-Hr Replacement</span>
+            </a>
           </div>
 
           {/* Delivery & Pincode Checker Widget */}
@@ -742,8 +764,8 @@ export default function ProductDetailView() {
               <span className="text-xs font-bold uppercase tracking-wider text-stone-800 flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-brand-rose" /> Delivery & Pincode Check
               </span>
-              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                Pan-India Free Express
+              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Free Delivery on ₹999+
               </span>
             </div>
 
@@ -877,20 +899,32 @@ export default function ProductDetailView() {
             <span className="text-xs uppercase font-bold tracking-widest text-brand-gold">Verified Feedback</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mt-1">Customer Reviews & Photos</h2>
           </div>
-          <div className="flex items-center gap-4 bg-brand-cream p-4 rounded-2xl border border-brand-gold/20 self-start md:self-auto">
-            <div className="text-center">
-              <span className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">{product.rating}</span>
-              <span className="text-[10px] sm:text-xs text-stone-500 block">out of 5 stars</span>
-            </div>
-            <div className="border-l border-stone-300 pl-4 space-y-1">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                ))}
+          {productReviews.length > 0 ? (
+            <div className="flex items-center gap-4 bg-brand-cream p-4 rounded-2xl border border-brand-gold/20 self-start md:self-auto">
+              <div className="text-center">
+                <span className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
+                  {(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length).toFixed(1)}
+                </span>
+                <span className="text-[10px] sm:text-xs text-stone-500 block">out of 5 stars</span>
               </div>
-              <span className="text-xs font-semibold text-stone-600 block">{productReviews.length} Total Reviews</span>
+              <div className="border-l border-stone-300 pl-4 space-y-1">
+                <div className="flex text-amber-400">
+                  {[...Array(5)].map((_, i) => {
+                    const avg = productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length;
+                    return (
+                      <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(avg) ? 'fill-current' : 'text-stone-300'}`} />
+                    );
+                  })}
+                </div>
+                <span className="text-xs font-semibold text-stone-600 block">{productReviews.length} Verified Review{productReviews.length > 1 ? 's' : ''}</span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="bg-brand-cream/60 px-4 py-3 rounded-2xl border border-brand-gold/20 text-xs text-stone-600 flex items-center gap-2 self-start md:self-auto">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>100% Genuine Reviews from Verified Purchases Only</span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
@@ -1086,21 +1120,22 @@ export default function ProductDetailView() {
         <div className="flex-1 min-w-0 pr-1">
           <span className="block text-[10px] text-stone-500 font-semibold uppercase truncate">{product.title}</span>
           <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className="text-base font-bold text-brand-rose">{formatPrice(pricing.finalPrice)}</span>
+            <span className="text-base font-bold text-brand-rose">{formatPrice(effectiveFinalPrice)}</span>
             {pricing.hasPromo && (
-              <span className="text-[10px] line-through text-stone-400">{formatPrice(pricing.originalPrice)}</span>
+              <span className="text-[10px] line-through text-stone-400">{formatPrice(effectiveOriginalPrice)}</span>
             )}
           </div>
         </div>
 
         <button
           disabled={isOutOfStock}
-          onClick={() => addToCart(product, qty, selectedVariant || 'Standard')}
+          onClick={() => addToCart(product, qty, selectedVariant || 'Standard', selectedAddons)}
           className={`min-h-[44px] font-semibold py-2.5 px-3.5 rounded-xl flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider transition-colors cursor-pointer shrink-0 ${
             isOutOfStock 
               ? 'bg-stone-300 text-stone-500 cursor-not-allowed' 
               : 'bg-stone-900 text-white shadow-sm active:scale-95'
           }`}
+          aria-label={`Add ${product.title} to bag`}
         >
           <ShoppingBag className="w-4 h-4" /> Add
         </button>
@@ -1109,7 +1144,7 @@ export default function ProductDetailView() {
           disabled={isOutOfStock}
           onClick={() => {
             requireAuthForAction(() => {
-              addToCart(product, qty, selectedVariant || 'Standard');
+              addToCart(product, qty, selectedVariant || 'Standard', selectedAddons);
               navigateTo('checkout');
             }, 'Please sign in or create an account to buy this product.');
           }}

@@ -271,9 +271,14 @@ export default function Footer() {
           <div className="lg:col-span-4 border-t border-stone-800/80 pt-3 lg:border-none lg:pt-0 space-y-2">
             <h5 className="font-serif text-xs sm:text-sm font-semibold tracking-wider text-brand-gold uppercase">VIP Sparkle Club</h5>
             <p className="text-xs text-stone-400">Subscribe for early access to new jewelry drops and secret festive discount codes.</p>
-            <form onSubmit={handleSubscribe} className="flex gap-2 pt-1">
+            <form onSubmit={handleSubscribe} className="flex gap-2 pt-1" aria-label="VIP Sparkle Club Newsletter Form">
+              <label htmlFor="footer-newsletter-email" className="sr-only">Email address for VIP Sparkle Club</label>
               <input
+                id="footer-newsletter-email"
                 type="email"
+                name="email"
+                autoComplete="email"
+                aria-label="Email address for VIP Sparkle Club"
                 placeholder="Enter your email address"
                 required
                 value={newsletterEmail}
@@ -282,6 +287,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
+                aria-label="Join VIP Sparkle Club"
                 className="bg-brand-rose hover:bg-brand-rose/90 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
               >
                 Join <Sparkles className="w-3.5 h-3.5" />

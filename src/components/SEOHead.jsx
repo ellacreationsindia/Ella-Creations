@@ -351,7 +351,7 @@ export default function SEOHead() {
             "@type": "MerchantReturnPolicy",
             "applicableCountry": "IN",
             "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-            "merchantReturnDays": 7,
+            "merchantReturnDays": 2,
             "returnMethod": "https://schema.org/ReturnByMail",
             "returnFees": "https://schema.org/FreeReturn"
           },
@@ -359,7 +359,7 @@ export default function SEOHead() {
             "@type": "OfferShippingDetails",
             "shippingRate": {
               "@type": "MonetaryAmount",
-              "value": "0",
+              "value": activeProduct.price >= 999 ? "0" : "99",
               "currency": "INR"
             },
             "shippingDestination": {
@@ -375,7 +375,7 @@ export default function SEOHead() {
               "transitTime": {
                 "@type": "QuantitativeValue",
                 "minValue": 2,
-                "maxValue": 4,
+                "maxValue": 5,
                 "unitCode": "DAY"
               }
             }
@@ -383,11 +383,11 @@ export default function SEOHead() {
         }
       };
 
-      if (activeProduct.rating) {
+      if (activeProduct.rating && activeProduct.reviewsCount > 0) {
         productSchema.aggregateRating = {
           "@type": "AggregateRating",
           "ratingValue": activeProduct.rating,
-          "reviewCount": activeProduct.reviewsCount || 1,
+          "reviewCount": activeProduct.reviewsCount,
           "bestRating": "5",
           "worstRating": "1"
         };

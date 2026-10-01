@@ -34,15 +34,22 @@ export default function ShopView() {
   const [shopSearch, setShopSearch] = useState('');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Lock background scroll when mobile filter sheet is open
+  // Lock background scroll and listen for Escape key when mobile filter sheet is open
   React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isMobileFilterOpen) {
+        setIsMobileFilterOpen(false);
+      }
+    };
     if (isMobileFilterOpen) {
       document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isMobileFilterOpen]);
 
@@ -814,14 +821,22 @@ export default function ShopView() {
 
         {/* Mobile Slide-Up Filter Drawer / Bottom Sheet */}
         {isMobileFilterOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div 
+            className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-black/60 backdrop-blur-sm animate-fadeIn"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsMobileFilterOpen(false);
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-filter-title"
+          >
             <div className="bg-white rounded-t-3xl max-h-[85vh] flex flex-col w-full shadow-2xl border-t border-brand-gold/30">
               
               {/* Drawer Header */}
               <div className="p-4 px-6 border-b border-stone-100 flex items-center justify-between bg-brand-cream/60 rounded-t-3xl">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4 text-brand-rose" />
-                  <h3 className="font-serif text-base font-bold text-stone-900">Filter & Refine Catalog</h3>
+                  <h3 id="mobile-filter-title" className="font-serif text-base font-bold text-stone-900">Filter & Refine Catalog</h3>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -832,7 +847,8 @@ export default function ShopView() {
                   </button>
                   <button
                     onClick={() => setIsMobileFilterOpen(false)}
-                    className="p-1 rounded-full text-stone-400 hover:text-stone-700"
+                    aria-label="Close filter drawer"
+                    className="p-1 rounded-full text-stone-400 hover:text-stone-700 cursor-pointer"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -942,7 +958,7 @@ export default function ShopView() {
             },
             {
               q: "What is your return or replacement policy?",
-              a: "We offer a 7-day doorstep replacement or return guarantee for any damaged, defective, or incorrect items received. Simply contact our support team via WhatsApp or email within 7 days of delivery."
+              a: "We offer a 100% Damage Protection Guarantee: in the rare event an item arrives damaged in transit, possesses a missing gemstone, or is defective, report it within 48 hours of delivery with an unboxing video to receive an immediate priority replacement or refund."
             },
             {
               q: "How fast is shipping to metro and non-metro cities?",
