@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useStore, formatPrice, getProductSlug } from '../context/StoreContext';
 import { INITIAL_BLOGS } from '../data/initialData';
+import { trackPageView } from '../utils/analytics';
 
 export default function SEOHead() {
   const { currentView, selectedProductId, selectedCategory, selectedBlogId, products, blogs } = useStore();
@@ -452,6 +453,14 @@ export default function SEOHead() {
     script.type = 'application/ld+json';
     script.text = JSON.stringify(schemas);
     document.head.appendChild(script);
+
+    // GA4 page_view — fires on initial mount and every view change.
+    // Deferred one tick so document.title has settled.
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        trackPageView(window.location.pathname + window.location.search, title);
+      }, 0);
+    }
 
   }, [currentView, selectedProductId, selectedCategory, selectedBlogId, products, blogs]);
 

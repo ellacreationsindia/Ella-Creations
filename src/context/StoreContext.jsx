@@ -304,8 +304,7 @@ export const StoreProvider = ({ children }) => {
         window.history.pushState({ view, itemId, category }, '', targetPath);
       }
 
-      // GA4 SPA page_view (fires after title update settles)
-      setTimeout(() => trackPageView(targetPath, document.title), 50);
+      // page_view is fired from SEOHead so initial load + every view change count
 
       // GA4 begin_checkout event when user enters checkout with items in cart
       if (view === 'checkout' && cart && cart.length > 0) {

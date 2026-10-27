@@ -3,9 +3,12 @@ const GA_ID = 'G-TGG30E71ZG';
 
 function gtag(...args) {
   if (typeof window === 'undefined') return;
-  if (!window.dataLayer) window.dataLayer = [];
-  window.dataLayer.push(args);
-  if (typeof window.gtag === 'function') window.gtag(...args);
+  if (typeof window.gtag === 'function') {
+    window.gtag(...args);
+  } else {
+    // gtag.js hasn't loaded yet (ad blocker or slow network); queue via dataLayer
+    (window.dataLayer = window.dataLayer || []).push(args);
+  }
 }
 
 export function trackPageView(path, title) {
