@@ -9,7 +9,7 @@
   <!-- 1. Core Brand Landing Pages -->
   <url>
     <loc>https://ella-creations.com/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/"/>
@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shop</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shop"/>
@@ -32,7 +32,7 @@
   <!-- 2. Dedicated Category Landing Pages -->
   <url>
     <loc>https://ella-creations.com/necklaces</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/necklaces"/>
@@ -44,7 +44,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/earrings</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/earrings"/>
@@ -56,7 +56,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/rings</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/rings"/>
@@ -68,7 +68,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/bridal-sets</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/bridal-sets"/>
@@ -80,7 +80,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/bracelets-bangles</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/bracelets-bangles"/>
@@ -93,159 +93,1285 @@
 
   <!-- 3. Individual Handcrafted Products (With Encrypted Canonical Slugs) -->
   <url>
-    <loc>https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/ear-piercing-stud-packet--e_4b8d6de8c3725741f7621600bd3b39680f68</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/royal-kundan-pearl--e_4b8d6de8c47bac2a"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/ear-piercing-stud-packet--e_4b8d6de8c3725741f7621600bd3b39680f68"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/ear-piercing-stud-packet--e_4b8d6de8c3725741f7621600bd3b39680f68"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Royal Kundan &amp; Pearl Choker Set | Ella Creations</image:title>
-      <image:caption>An opulent gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and fe</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318399793_hlj45.jpg</image:loc>
+      <image:title>Ear piercing stud packet of 24pcs | Ella Creations</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Royal Kundan &amp; Pearl Choker Set | Ella Creations</image:title>
-      <image:caption>An opulent gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and fe</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318399910_hmr4t.jpg</image:loc>
+      <image:title>Ear piercing stud packet of 24pcs | Ella Creations</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Royal Kundan &amp; Pearl Choker Set | Ella Creations</image:title>
-      <image:caption>An opulent gold-plated Kundan choker set embellished with faux emerald drops and lustrous pearl clusters. Perfectly designed for grand weddings and fe</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318399982_ausgq.jpg</image:loc>
+      <image:title>Ear piercing stud packet of 24pcs | Ella Creations</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/artificial-jewellery-pendant-set--e_4b8d6de8c3725640f0631202b8363d680964</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/starlight-solitaire-cubic-zirconia--e_4b8d6de8c478ad29"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/artificial-jewellery-pendant-set--e_4b8d6de8c3725640f0631202b8363d680964"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/artificial-jewellery-pendant-set--e_4b8d6de8c3725640f0631202b8363d680964"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Starlight Solitaire Cubic Zirconia Drop Earrings | Ella Creations</image:title>
-      <image:caption>Dazzling solitaire drop earrings with diamond-cut AAA+ cubic zirconia crystals set in rose gold plating. Lightweight and hypoallergenic for effortless</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269025448_covl2.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant Set for Women | Multicolor Stone Studded Leaf Design Pendant with Matching Earrings | Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Multicolor Stone Studded Artificial Jewellery Pendant Set with Matching Earrings
+
+Add a touch of sparkle and color to your look with this elegant arti</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Starlight Solitaire Cubic Zirconia Drop Earrings | Ella Creations</image:title>
-      <image:caption>Dazzling solitaire drop earrings with diamond-cut AAA+ cubic zirconia crystals set in rose gold plating. Lightweight and hypoallergenic for effortless</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269025449_m58un.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant Set for Women | Multicolor Stone Studded Leaf Design Pendant with Matching Earrings | Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Multicolor Stone Studded Artificial Jewellery Pendant Set with Matching Earrings
+
+Add a touch of sparkle and color to your look with this elegant arti</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269025450_0yp75.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant Set for Women | Multicolor Stone Studded Leaf Design Pendant with Matching Earrings | Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Multicolor Stone Studded Artificial Jewellery Pendant Set with Matching Earrings
+
+Add a touch of sparkle and color to your look with this elegant arti</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/ruby-red-american-diamond--e_4b8d6de8c3725640f0621a08b439386d1964</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/celestial-rose-gold-flower--e_4b8d6de8c479ae28"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/ruby-red-american-diamond--e_4b8d6de8c3725640f0621a08b439386d1964"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/ruby-red-american-diamond--e_4b8d6de8c3725640f0621a08b439386d1964"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Celestial Rose Gold Flower Ring | Ella Creations</image:title>
-      <image:caption>An adjustable statement ring adorned with shimmering floral petals crafted with brilliant micro-pave CZ stones in dual tone rose gold.</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268889386_x84z5.jpg</image:loc>
+      <image:title>Ruby Red American Diamond Pendant &amp; Earring Set for Women | Elegant Artificial Jewellery Set for Wedding &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless elegance to your jewellery collection with this stunning Ruby Red American Diamond Pendant &amp; Earring Set. Designed with a soph</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Celestial Rose Gold Flower Ring | Ella Creations</image:title>
-      <image:caption>An adjustable statement ring adorned with shimmering floral petals crafted with brilliant micro-pave CZ stones in dual tone rose gold.</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268889388_dytdo.jpg</image:loc>
+      <image:title>Ruby Red American Diamond Pendant &amp; Earring Set for Women | Elegant Artificial Jewellery Set for Wedding &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless elegance to your jewellery collection with this stunning Ruby Red American Diamond Pendant &amp; Earring Set. Designed with a soph</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268889388_kxymk.jpg</image:loc>
+      <image:title>Ruby Red American Diamond Pendant &amp; Earring Set for Women | Elegant Artificial Jewellery Set for Wedding &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless elegance to your jewellery collection with this stunning Ruby Red American Diamond Pendant &amp; Earring Set. Designed with a soph</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/gold-plated-ruby-stone--e_4b8d6de8c3725640ff6a1406bf363d690966</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/imperial-meenakari-gold-plated--e_4b8d6de8c47eaf2f"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-ruby-stone--e_4b8d6de8c3725640ff6a1406bf363d690966"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-ruby-stone--e_4b8d6de8c3725640ff6a1406bf363d690966"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Imperial Meenakari Gold Plated Bangles Set | Ella Creations</image:title>
-      <image:caption>Exquisite hand-painted Meenakari enamel bangles with gold electroplating. Elaborately detailed with traditional royal motifs for festive attire.</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290662117_8sxy6.jpg</image:loc>
+      <image:title>Gold Plated Ruby Stone Studded Cuff Bracelet for Women | Designer Artificial Jewellery Kada with Intricate Gold Filigree &amp; CZ Stones | Ella Creations</image:title>
+      <image:caption>Make Every Look Feel Regal
+
+Add a statement of traditional elegance to your jewellery collection with this Gold Plated Ruby Stone Studded Cuff Bracele</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Imperial Meenakari Gold Plated Bangles Set | Ella Creations</image:title>
-      <image:caption>Exquisite hand-painted Meenakari enamel bangles with gold electroplating. Elaborately detailed with traditional royal motifs for festive attire.</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290662118_fw63v.jpg</image:loc>
+      <image:title>Gold Plated Ruby Stone Studded Cuff Bracelet for Women | Designer Artificial Jewellery Kada with Intricate Gold Filigree &amp; CZ Stones | Ella Creations</image:title>
+      <image:caption>Make Every Look Feel Regal
+
+Add a statement of traditional elegance to your jewellery collection with this Gold Plated Ruby Stone Studded Cuff Bracele</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290662116_3u2vv.jpg</image:loc>
+      <image:title>Gold Plated Ruby Stone Studded Cuff Bracelet for Women | Designer Artificial Jewellery Kada with Intricate Gold Filigree &amp; CZ Stones | Ella Creations</image:title>
+      <image:caption>Make Every Look Feel Regal
+
+Add a statement of traditional elegance to your jewellery collection with this Gold Plated Ruby Stone Studded Cuff Bracele</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/gold-tone-statement-cuff--e_4b8d6de8c3725640ff6a1403be3f3a6e0e6b</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/maharani-emerald-drop-kundan--e_4b8d6de8c47fb02e"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-tone-statement-cuff--e_4b8d6de8c3725640ff6a1403be3f3a6e0e6b"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-tone-statement-cuff--e_4b8d6de8c3725640ff6a1403be3f3a6e0e6b"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Maharani Emerald Drop Kundan Choker Set | Ella Creations</image:title>
-      <image:caption>A breathtaking bridal Kundan choker set featuring vibrant glass emerald beads and intricate foil-backed Kundan work. Includes matching chandelier earr</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290631915_t5beb.jpg</image:loc>
+      <image:title>Gold Tone Statement Cuff Bracelet for Women – Intricate Crystal Studded Designer Artificial Jewellery | Elegant Party, Wedding &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>Make Every Look More Regal
+
+Add a touch of timeless glamour to your jewellery collection with this Gold Tone Statement Cuff Bracelet for Women, design</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Maharani Emerald Drop Kundan Choker Set | Ella Creations</image:title>
-      <image:caption>A breathtaking bridal Kundan choker set featuring vibrant glass emerald beads and intricate foil-backed Kundan work. Includes matching chandelier earr</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290631913_05knt.jpg</image:loc>
+      <image:title>Gold Tone Statement Cuff Bracelet for Women – Intricate Crystal Studded Designer Artificial Jewellery | Elegant Party, Wedding &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>Make Every Look More Regal
+
+Add a touch of timeless glamour to your jewellery collection with this Gold Tone Statement Cuff Bracelet for Women, design</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290631914_6fgll.jpg</image:loc>
+      <image:title>Gold Tone Statement Cuff Bracelet for Women – Intricate Crystal Studded Designer Artificial Jewellery | Elegant Party, Wedding &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>Make Every Look More Regal
+
+Add a touch of timeless glamour to your jewellery collection with this Gold Tone Statement Cuff Bracelet for Women, design</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/artificial-crystal-bracelet-for--e_4b8d6de8c3725640ff6a1709bf3d3b6e0b60</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-rhythm-cz-statement--e_4b8d6de8c47cb12d"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/artificial-crystal-bracelet-for--e_4b8d6de8c3725640ff6a1709bf3d3b6e0b60"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/artificial-crystal-bracelet-for--e_4b8d6de8c3725640ff6a1709bf3d3b6e0b60"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Silver Rhythm CZ Statement Cocktail Ring | Ella Creations</image:title>
-      <image:caption>A dramatic cocktail ring crafted with concentric bands of precision-cut cubic zirconia crystals. Designed with a flexible sizing band to fit any finge</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290591709_ed6hs.jpg</image:loc>
+      <image:title>Artificial Crystal Bracelet for Women | Silver-Tone Rhinestone Statement Bracelet with Clear Stones | Elegant Fashion Jewellery for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add Instant Glamour to Your Look
+
+Make every outfit stand out with this elegant artificial crystal bracelet for women, designed with an intricate silv</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Silver Rhythm CZ Statement Cocktail Ring | Ella Creations</image:title>
-      <image:caption>A dramatic cocktail ring crafted with concentric bands of precision-cut cubic zirconia crystals. Designed with a flexible sizing band to fit any finge</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290591707_aqrdp.jpg</image:loc>
+      <image:title>Artificial Crystal Bracelet for Women | Silver-Tone Rhinestone Statement Bracelet with Clear Stones | Elegant Fashion Jewellery for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add Instant Glamour to Your Look
+
+Make every outfit stand out with this elegant artificial crystal bracelet for women, designed with an intricate silv</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290591709_1xtiu.jpg</image:loc>
+      <image:title>Artificial Crystal Bracelet for Women | Silver-Tone Rhinestone Statement Bracelet with Clear Stones | Elegant Fashion Jewellery for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add Instant Glamour to Your Look
+
+Make every outfit stand out with this elegant artificial crystal bracelet for women, designed with an intricate silv</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/gold-plated-crystal-bracelet--e_4b8d6de8c3725640ff6a1706b83b3c670760</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/royal-peacock-feather-jhumka--e_4b8d6de8c47db22c"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-crystal-bracelet--e_4b8d6de8c3725640ff6a1706b83b3c670760"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-crystal-bracelet--e_4b8d6de8c3725640ff6a1706b83b3c670760"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Royal Peacock Feather Jhumka Earrings | Ella Creations</image:title>
-      <image:caption>Ornate traditional jhumkas featuring a peacock motif stud attached to a multi-tiered pearl-fringed bell dome. Light on ears with ear support chains in</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290564945_m3zc4.jpg</image:loc>
+      <image:title>Gold Plated Crystal Bracelet for Women – Double Row Rhinestone Artificial Jewellery Bracelet | Party Wear &amp; Festive Fashion Accessory | Ella Creations</image:title>
+      <image:caption>✨ Gold Plated Double Row Crystal Bracelet for Women
+
+Add a touch of sparkle to your everyday and occasion looks with this elegant gold plated crystal </image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Royal Peacock Feather Jhumka Earrings | Ella Creations</image:title>
-      <image:caption>Ornate traditional jhumkas featuring a peacock motif stud attached to a multi-tiered pearl-fringed bell dome. Light on ears with ear support chains in</image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290564946_sziy5.jpg</image:loc>
+      <image:title>Gold Plated Crystal Bracelet for Women – Double Row Rhinestone Artificial Jewellery Bracelet | Party Wear &amp; Festive Fashion Accessory | Ella Creations</image:title>
+      <image:caption>✨ Gold Plated Double Row Crystal Bracelet for Women
+
+Add a touch of sparkle to your everyday and occasion looks with this elegant gold plated crystal </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290564947_j1l0b.jpg</image:loc>
+      <image:title>Gold Plated Crystal Bracelet for Women – Double Row Rhinestone Artificial Jewellery Bracelet | Party Wear &amp; Festive Fashion Accessory | Ella Creations</image:title>
+      <image:caption>✨ Gold Plated Double Row Crystal Bracelet for Women
+
+Add a touch of sparkle to your everyday and occasion looks with this elegant gold plated crystal </image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323</loc>
-    <lastmod>2026-10-01</lastmod>
+    <loc>https://ella-creations.com/product/gold-plated-artificial-bracelet-for--e_4b8d6de8c3725640ff6a1109b43a3c6d096e</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/regal-pearl-polki--e_4b8d6de8c472b323"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-artificial-bracelet-for--e_4b8d6de8c3725640ff6a1109b43a3c6d096e"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-artificial-bracelet-for--e_4b8d6de8c3725640ff6a1109b43a3c6d096e"/>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Regal Pearl &amp; Polki Layered Rani Haar Set | Ella Creations</image:title>
-      <image:caption>A magnificent 5-layer long Rani Haar necklace accented with hand-cut Polki stone pendants and lustrous cream pearls. The ultimate statement piece for </image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290399057_cq1ob.jpg</image:loc>
+      <image:title>Gold-Plated Artificial Bracelet for Women &amp; Girls | Square Crystal Stone Designer Fashion Jewellery | Elegant Party &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>✨ Elegant Gold-Plated Crystal Stone Bracelet for Women
+
+Add a refined touch of sparkle to your jewellery collection with this elegant gold-plated arti</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&amp;fit=crop&amp;q=80&amp;w=1000</image:loc>
-      <image:title>Regal Pearl &amp; Polki Layered Rani Haar Set | Ella Creations</image:title>
-      <image:caption>A magnificent 5-layer long Rani Haar necklace accented with hand-cut Polki stone pendants and lustrous cream pearls. The ultimate statement piece for </image:caption>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290519975_bi2mu.jpg</image:loc>
+      <image:title>Gold-Plated Artificial Bracelet for Women &amp; Girls | Square Crystal Stone Designer Fashion Jewellery | Elegant Party &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>✨ Elegant Gold-Plated Crystal Stone Bracelet for Women
+
+Add a refined touch of sparkle to your jewellery collection with this elegant gold-plated arti</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290519974_1y41w.jpg</image:loc>
+      <image:title>Gold-Plated Artificial Bracelet for Women &amp; Girls | Square Crystal Stone Designer Fashion Jewellery | Elegant Party &amp; Festive Wear Bracelet | Ella Creations</image:title>
+      <image:caption>✨ Elegant Gold-Plated Crystal Stone Bracelet for Women
+
+Add a refined touch of sparkle to your jewellery collection with this elegant gold-plated arti</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/ear-piercing-gun-plastic--e_4b8d6de8c3725741f7621409b83c35661a63</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/ear-piercing-gun-plastic--e_4b8d6de8c3725741f7621409b83c35661a63"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/ear-piercing-gun-plastic--e_4b8d6de8c3725741f7621409b83c35661a63"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318694470_osgt4.jpg</image:loc>
+      <image:title>Ear piercing gun plastic | Ella Creations</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318694551_i4w6b.jpg</image:loc>
+      <image:title>Ear piercing gun plastic | Ella Creations</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318694594_4ouh8.jpg</image:loc>
+      <image:title>Ear piercing gun plastic | Ella Creations</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/traditional-black-beaded-meenakari--e_4b8d6de8c3725640ff6a1b07b539396c1f6c</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/traditional-black-beaded-meenakari--e_4b8d6de8c3725640ff6a1b07b539396c1f6c"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/traditional-black-beaded-meenakari--e_4b8d6de8c3725640ff6a1b07b539396c1f6c"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290978086_mmohv.jpg</image:loc>
+      <image:title>Traditional Black Beaded Meenakari Haar Necklace with Multicolor Radha Krishna Pendant | Handcrafted Look Statement Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Traditional Black Beaded Meenakari Haar with Radha Krishna Pendant
+
+Add a touch of traditional Indian elegance to your jewellery collection with this </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290978087_zb9bb.jpg</image:loc>
+      <image:title>Traditional Black Beaded Meenakari Haar Necklace with Multicolor Radha Krishna Pendant | Handcrafted Look Statement Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Traditional Black Beaded Meenakari Haar with Radha Krishna Pendant
+
+Add a touch of traditional Indian elegance to your jewellery collection with this </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290978087_762mb.jpg</image:loc>
+      <image:title>Traditional Black Beaded Meenakari Haar Necklace with Multicolor Radha Krishna Pendant | Handcrafted Look Statement Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Traditional Black Beaded Meenakari Haar with Radha Krishna Pendant
+
+Add a touch of traditional Indian elegance to your jewellery collection with this </image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/premium-gold-tone-crystal-haar--e_4b8d6de8c3725640ff6a1a05be373a681c6d</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/premium-gold-tone-crystal-haar--e_4b8d6de8c3725640ff6a1a05be373a681c6d"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/premium-gold-tone-crystal-haar--e_4b8d6de8c3725640ff6a1a05be373a681c6d"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290853220_z2jd2.jpg</image:loc>
+      <image:title>Premium Gold-Tone Crystal Haar Necklace Set with Matching Drop Tops | Designer Artificial Jewellery Set for Women | Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Elegant Crystal Haar Necklace Set with Matching Tops
+
+Add a touch of timeless sparkle to your ethnic and festive looks with this premium artificial je</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290853221_7itge.jpg</image:loc>
+      <image:title>Premium Gold-Tone Crystal Haar Necklace Set with Matching Drop Tops | Designer Artificial Jewellery Set for Women | Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Elegant Crystal Haar Necklace Set with Matching Tops
+
+Add a touch of timeless sparkle to your ethnic and festive looks with this premium artificial je</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290853221_4mhfs.jpg</image:loc>
+      <image:title>Premium Gold-Tone Crystal Haar Necklace Set with Matching Drop Tops | Designer Artificial Jewellery Set for Women | Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Elegant Crystal Haar Necklace Set with Matching Tops
+
+Add a touch of timeless sparkle to your ethnic and festive looks with this premium artificial je</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/multicolor-floral-artificial-bridal--e_4b8d6de8c3725640ff6a1a09b43a3e6c0166</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/multicolor-floral-artificial-bridal--e_4b8d6de8c3725640ff6a1a09b43a3e6c0166"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/multicolor-floral-artificial-bridal--e_4b8d6de8c3725640ff6a1a09b43a3e6c0166"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290898865_lw2li.jpg</image:loc>
+      <image:title>Multicolor Floral Artificial Bridal Jewellery Set with Necklace, Earrings &amp; Maang Tikka | Traditional Indian Wedding Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Multicolor Floral Artificial Bridal Jewellery Set
+
+Make your special occasions even more memorable with this elegant multicolor artificial bridal jewe</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290898866_exzws.jpg</image:loc>
+      <image:title>Multicolor Floral Artificial Bridal Jewellery Set with Necklace, Earrings &amp; Maang Tikka | Traditional Indian Wedding Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Multicolor Floral Artificial Bridal Jewellery Set
+
+Make your special occasions even more memorable with this elegant multicolor artificial bridal jewe</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290898866_3vns1.jpg</image:loc>
+      <image:title>Multicolor Floral Artificial Bridal Jewellery Set with Necklace, Earrings &amp; Maang Tikka | Traditional Indian Wedding Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Multicolor Floral Artificial Bridal Jewellery Set
+
+Make your special occasions even more memorable with this elegant multicolor artificial bridal jewe</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/silver-american-diamond-artificial--e_4b8d6de8c3725640ff6b1200bd3f3a6f3a6d</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-american-diamond-artificial--e_4b8d6de8c3725640ff6b1200bd3f3a6f3a6d"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-american-diamond-artificial--e_4b8d6de8c3725640ff6b1200bd3f3a6f3a6d"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290999789_wbodg.jpg</image:loc>
+      <image:title>Silver American Diamond Artificial Jewellery Set for Women – Elegant Necklace, Drop Earrings &amp; Ring Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Silver American Diamond Necklace, Earrings &amp; Ring Set
+
+Add an elegant sparkle to your look with this beautifully coordinated silver-toned artificial</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290999791_ndq6p.jpg</image:loc>
+      <image:title>Silver American Diamond Artificial Jewellery Set for Women – Elegant Necklace, Drop Earrings &amp; Ring Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Silver American Diamond Necklace, Earrings &amp; Ring Set
+
+Add an elegant sparkle to your look with this beautifully coordinated silver-toned artificial</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290999791_ytady.jpg</image:loc>
+      <image:title>Silver American Diamond Artificial Jewellery Set for Women – Elegant Necklace, Drop Earrings &amp; Ring Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Silver American Diamond Necklace, Earrings &amp; Ring Set
+
+Add an elegant sparkle to your look with this beautifully coordinated silver-toned artificial</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-pearl-jhumka--e_4b8d6de8c3725640ff6b1205bf383d69316c</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-pearl-jhumka--e_4b8d6de8c3725640ff6b1205bf383d69316c"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-pearl-jhumka--e_4b8d6de8c3725640ff6b1205bf383d69316c"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291051684_w8f4c.jpg</image:loc>
+      <image:title>Gold Plated Pearl Jhumka Earrings for Women | Traditional Indian Jhumki Earrings with White Pearl Drops | Ethnic Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pearl Jhumkas for Every Celebration
+
+Add a graceful traditional touch to your jewellery collection with these Gold Plated Pearl Jhum</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291051685_lafh4.jpg</image:loc>
+      <image:title>Gold Plated Pearl Jhumka Earrings for Women | Traditional Indian Jhumki Earrings with White Pearl Drops | Ethnic Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pearl Jhumkas for Every Celebration
+
+Add a graceful traditional touch to your jewellery collection with these Gold Plated Pearl Jhum</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291051685_0oonp.jpg</image:loc>
+      <image:title>Gold Plated Pearl Jhumka Earrings for Women | Traditional Indian Jhumki Earrings with White Pearl Drops | Ethnic Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pearl Jhumkas for Every Celebration
+
+Add a graceful traditional touch to your jewellery collection with these Gold Plated Pearl Jhum</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/red-stone-stud-earrings--e_4b8d6de8c3725640ff6b1208be373b6f086f</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/red-stone-stud-earrings--e_4b8d6de8c3725640ff6b1208be373b6f086f"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/red-stone-stud-earrings--e_4b8d6de8c3725640ff6b1208be373b6f086f"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291083275_4nkis.jpg</image:loc>
+      <image:title>Red Stone Stud Earrings for Women – Gold-Tone Floral Round Earrings with White Crystal &amp; Red Stone Detailing | Stylish Artificial Jewellery for Festive, Party &amp; Ethnic Wear | Ella Creations</image:title>
+      <image:caption>Add a rich pop of colour and sparkle to your jewellery collection with these Red Stone Floral Stud Earrings for Women. Designed with a beautiful circu</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291083273_1tgb5.jpg</image:loc>
+      <image:title>Red Stone Stud Earrings for Women – Gold-Tone Floral Round Earrings with White Crystal &amp; Red Stone Detailing | Stylish Artificial Jewellery for Festive, Party &amp; Ethnic Wear | Ella Creations</image:title>
+      <image:caption>Add a rich pop of colour and sparkle to your jewellery collection with these Red Stone Floral Stud Earrings for Women. Designed with a beautiful circu</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291083274_9e98u.jpg</image:loc>
+      <image:title>Red Stone Stud Earrings for Women – Gold-Tone Floral Round Earrings with White Crystal &amp; Red Stone Detailing | Stylish Artificial Jewellery for Festive, Party &amp; Ethnic Wear | Ella Creations</image:title>
+      <image:caption>Add a rich pop of colour and sparkle to your jewellery collection with these Red Stone Floral Stud Earrings for Women. Designed with a beautiful circu</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-toned-floral-stone-studded--e_4b8d6de8c3725640ff6a1500b53a3a690560</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-toned-floral-stone-studded--e_4b8d6de8c3725640ff6a1500b53a3a690560"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-toned-floral-stone-studded--e_4b8d6de8c3725640ff6a1500b53a3a690560"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290707822_41zzq.jpg</image:loc>
+      <image:title>Gold-Toned Floral Stone Studded Cuff Bracelet for Women | Premium Artificial Jewellery Statement Kada for Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of glamour to your jewellery collection with this stunning Gold-Toned Floral Stone Studded Cuff Bracelet. Designed with an intricate state</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290707823_5q838.jpg</image:loc>
+      <image:title>Gold-Toned Floral Stone Studded Cuff Bracelet for Women | Premium Artificial Jewellery Statement Kada for Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of glamour to your jewellery collection with this stunning Gold-Toned Floral Stone Studded Cuff Bracelet. Designed with an intricate state</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290707821_8m0ew.jpg</image:loc>
+      <image:title>Gold-Toned Floral Stone Studded Cuff Bracelet for Women | Premium Artificial Jewellery Statement Kada for Wedding, Festive &amp; Party Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of glamour to your jewellery collection with this stunning Gold-Toned Floral Stone Studded Cuff Bracelet. Designed with an intricate state</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/ear-piercing-gun-creations--e_4b8d6de8c3725741f7621508bf3a396c0764</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/ear-piercing-gun-creations--e_4b8d6de8c3725741f7621508bf3a396c0764"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/ear-piercing-gun-creations--e_4b8d6de8c3725741f7621508bf3a396c0764"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318781982_idp6g.jpg</image:loc>
+      <image:title>Ear piercing gun creations spl. | Ella Creations</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318782027_wzwzf.jpg</image:loc>
+      <image:title>Ear piercing gun creations spl. | Ella Creations</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/orange-crystal-beaded-necklace--e_4b8d6de8c3725641f6691200bf3939693766</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/orange-crystal-beaded-necklace--e_4b8d6de8c3725641f6691200bf3939693766"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/orange-crystal-beaded-necklace--e_4b8d6de8c3725641f6691200bf3939693766"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786303001935_ijc9m.jpg</image:loc>
+      <image:title>Orange Crystal Beaded Necklace for Women | Faceted Bead Artificial Jewellery | Long Statement Necklace for Festive, Party &amp; Traditional Wear | Ella Creations</image:title>
+      <image:caption>Orange Crystal Beaded Necklace – Elegant Faceted Artificial Jewellery
+
+Add a warm touch of elegance to your jewellery collection with this orange crys</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786303001936_jd36i.jpg</image:loc>
+      <image:title>Orange Crystal Beaded Necklace for Women | Faceted Bead Artificial Jewellery | Long Statement Necklace for Festive, Party &amp; Traditional Wear | Ella Creations</image:title>
+      <image:caption>Orange Crystal Beaded Necklace – Elegant Faceted Artificial Jewellery
+
+Add a warm touch of elegance to your jewellery collection with this orange crys</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786303001937_ikcws.jpg</image:loc>
+      <image:title>Orange Crystal Beaded Necklace for Women | Faceted Bead Artificial Jewellery | Long Statement Necklace for Festive, Party &amp; Traditional Wear | Ella Creations</image:title>
+      <image:caption>Orange Crystal Beaded Necklace – Elegant Faceted Artificial Jewellery
+
+Add a warm touch of elegance to your jewellery collection with this orange crys</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/black-beaded-necklace-for--e_4b8d6de8c3725641f6681b06b537386c0368</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/black-beaded-necklace-for--e_4b8d6de8c3725641f6681b06b537386c0368"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/black-beaded-necklace-for--e_4b8d6de8c3725641f6681b06b537386c0368"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302968292_ksrgt.jpg</image:loc>
+      <image:title>Black Beaded Necklace for Women with Gold-Tone Accents | Elegant Artificial Jewellery for Daily Wear, Festive &amp; Ethnic Outfits | Ella Creations</image:title>
+      <image:caption>Black &amp; Gold Beaded Necklace – Elegant, Minimal &amp; Versatile
+
+Add a touch of understated elegance to your jewellery collection with this black beaded n</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302968294_c2u77.jpg</image:loc>
+      <image:title>Black Beaded Necklace for Women with Gold-Tone Accents | Elegant Artificial Jewellery for Daily Wear, Festive &amp; Ethnic Outfits | Ella Creations</image:title>
+      <image:caption>Black &amp; Gold Beaded Necklace – Elegant, Minimal &amp; Versatile
+
+Add a touch of understated elegance to your jewellery collection with this black beaded n</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302968295_yxrcv.jpg</image:loc>
+      <image:title>Black Beaded Necklace for Women with Gold-Tone Accents | Elegant Artificial Jewellery for Daily Wear, Festive &amp; Ethnic Outfits | Ella Creations</image:title>
+      <image:caption>Black &amp; Gold Beaded Necklace – Elegant, Minimal &amp; Versatile
+
+Add a touch of understated elegance to your jewellery collection with this black beaded n</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/artificial-pearl-crystal--e_4b8d6de8c3725641f6681b04bd363e6c0e65</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/artificial-pearl-crystal--e_4b8d6de8c3725641f6681b04bd363e6c0e65"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/artificial-pearl-crystal--e_4b8d6de8c3725641f6681b04bd363e6c0e65"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302940232_bcbqh.jpg</image:loc>
+      <image:title>Artificial Pearl &amp; Crystal Beaded Necklace with 3 Teardrop Pendants | Gold-Tone Statement Necklace for Women | Elegant Party, Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Elegant Artificial Pearl &amp; Crystal Beaded Necklace
+
+Add an effortlessly elegant touch to your look with this artificial pearl and crystal beaded nec</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302940233_ey3n7.jpg</image:loc>
+      <image:title>Artificial Pearl &amp; Crystal Beaded Necklace with 3 Teardrop Pendants | Gold-Tone Statement Necklace for Women | Elegant Party, Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Elegant Artificial Pearl &amp; Crystal Beaded Necklace
+
+Add an effortlessly elegant touch to your look with this artificial pearl and crystal beaded nec</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786302940231_ijuxy.jpg</image:loc>
+      <image:title>Artificial Pearl &amp; Crystal Beaded Necklace with 3 Teardrop Pendants | Gold-Tone Statement Necklace for Women | Elegant Party, Festive &amp; Wedding Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Elegant Artificial Pearl &amp; Crystal Beaded Necklace
+
+Add an effortlessly elegant touch to your look with this artificial pearl and crystal beaded nec</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/silver-tone-floral-crystal-jewellery--e_4b8d6de8c3725641f66b1604b4363d6a0c67</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-tone-floral-crystal-jewellery--e_4b8d6de8c3725641f66b1604b4363d6a0c67"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-tone-floral-crystal-jewellery--e_4b8d6de8c3725641f66b1604b4363d6a0c67"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301448688_m6jof.jpg</image:loc>
+      <image:title>Silver-Tone Floral Crystal Jewellery Set for Women | Ring, Stud Earrings &amp; Pendant Set | Elegant Artificial Jewellery for Party, Wedding &amp; Gifting | Ella Creations</image:title>
+      <image:caption>✨ Elegant Floral Crystal Jewellery Set for Women
+
+Add a graceful sparkle to your jewellery collection with this floral crystal jewellery set, thoughtf</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301448691_98ck5.jpg</image:loc>
+      <image:title>Silver-Tone Floral Crystal Jewellery Set for Women | Ring, Stud Earrings &amp; Pendant Set | Elegant Artificial Jewellery for Party, Wedding &amp; Gifting | Ella Creations</image:title>
+      <image:caption>✨ Elegant Floral Crystal Jewellery Set for Women
+
+Add a graceful sparkle to your jewellery collection with this floral crystal jewellery set, thoughtf</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301448690_10pc7.jpg</image:loc>
+      <image:title>Silver-Tone Floral Crystal Jewellery Set for Women | Ring, Stud Earrings &amp; Pendant Set | Elegant Artificial Jewellery for Party, Wedding &amp; Gifting | Ella Creations</image:title>
+      <image:caption>✨ Elegant Floral Crystal Jewellery Set for Women
+
+Add a graceful sparkle to your jewellery collection with this floral crystal jewellery set, thoughtf</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-kundan-style-long--e_4b8d6de8c3725640ff6b1305b43c396d0d62</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-kundan-style-long--e_4b8d6de8c3725640ff6b1305b43c396d0d62"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-kundan-style-long--e_4b8d6de8c3725640ff6b1305b43c396d0d62"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291158548_tcv08.jpg</image:loc>
+      <image:title>Gold-Plated Kundan Style Long Chandbali Earrings for Women | Traditional Bridal Statement Earrings | Wedding &amp; Festive Ethnic Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Gold-Plated Kundan Style Long Chandbali Earrings
+
+Make a statement with these elegant long chandbali earrings, designed with an intricate traditiona</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291158553_r1wbm.jpg</image:loc>
+      <image:title>Gold-Plated Kundan Style Long Chandbali Earrings for Women | Traditional Bridal Statement Earrings | Wedding &amp; Festive Ethnic Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Gold-Plated Kundan Style Long Chandbali Earrings
+
+Make a statement with these elegant long chandbali earrings, designed with an intricate traditiona</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291158554_z68rm.jpg</image:loc>
+      <image:title>Gold-Plated Kundan Style Long Chandbali Earrings for Women | Traditional Bridal Statement Earrings | Wedding &amp; Festive Ethnic Jewellery | Ella Creations</image:title>
+      <image:caption>✨ Gold-Plated Kundan Style Long Chandbali Earrings
+
+Make a statement with these elegant long chandbali earrings, designed with an intricate traditiona</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/elegant-infinity-drop-earrings--e_4b8d6de8c3725640ff6b1302bf3f3c6c3869</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/elegant-infinity-drop-earrings--e_4b8d6de8c3725640ff6b1302bf3f3c6c3869"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/elegant-infinity-drop-earrings--e_4b8d6de8c3725640ff6b1302bf3f3c6c3869"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291121490_6d9lx.jpg</image:loc>
+      <image:title>Elegant Infinity Drop Earrings for Women | Silver-Tone American Diamond Crystal Earrings | Long Dangle &amp; Statement Earrings for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless sparkle and elegant movement to your jewellery collection with these stunning Infinity Drop Earrings for Women. Designed with </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291121490_3d712.jpg</image:loc>
+      <image:title>Elegant Infinity Drop Earrings for Women | Silver-Tone American Diamond Crystal Earrings | Long Dangle &amp; Statement Earrings for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless sparkle and elegant movement to your jewellery collection with these stunning Infinity Drop Earrings for Women. Designed with </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786291121489_dtk6x.jpg</image:loc>
+      <image:title>Elegant Infinity Drop Earrings for Women | Silver-Tone American Diamond Crystal Earrings | Long Dangle &amp; Statement Earrings for Party, Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Add a touch of timeless sparkle and elegant movement to your jewellery collection with these stunning Infinity Drop Earrings for Women. Designed with </image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/artificial-jewellery-pendant--e_4b8d6de8c3725640f0621507b83c3f670160</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/artificial-jewellery-pendant--e_4b8d6de8c3725640f0621507b83c3f670160"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/artificial-jewellery-pendant--e_4b8d6de8c3725640f0621507b83c3f670160"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268773909_f5mdd.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant &amp; Earrings Set for Women | Floral CZ Stone Studded Statement Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Elegant Floral Pendant &amp; Earrings Set for Women
+
+Add a touch of sparkle and sophistication to your look with this beautiful artificial jewellery penda</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268773911_5mf04.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant &amp; Earrings Set for Women | Floral CZ Stone Studded Statement Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Elegant Floral Pendant &amp; Earrings Set for Women
+
+Add a touch of sparkle and sophistication to your look with this beautiful artificial jewellery penda</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268773911_fojny.jpg</image:loc>
+      <image:title>Artificial Jewellery Pendant &amp; Earrings Set for Women | Floral CZ Stone Studded Statement Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Elegant Floral Pendant &amp; Earrings Set for Women
+
+Add a touch of sparkle and sophistication to your look with this beautiful artificial jewellery penda</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-toned-pink-stone--e_4b8d6de8c3725640f0621a06be3e3d6e0c61</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-toned-pink-stone--e_4b8d6de8c3725640f0621a06be3e3d6e0c61"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-toned-pink-stone--e_4b8d6de8c3725640f0621a06be3e3d6e0c61"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268862616_84dg3.jpg</image:loc>
+      <image:title>Gold-Toned Pink Stone &amp; Pearl Pendant Necklace with Matching Earrings | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Pink Stone &amp; Pearl Pendant Jewellery Set
+
+Add a refined touch of sparkle to your jewellery collection with this beautiful artificial jewellery</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268862620_p0goo.jpg</image:loc>
+      <image:title>Gold-Toned Pink Stone &amp; Pearl Pendant Necklace with Matching Earrings | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Pink Stone &amp; Pearl Pendant Jewellery Set
+
+Add a refined touch of sparkle to your jewellery collection with this beautiful artificial jewellery</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268862620_de1vn.jpg</image:loc>
+      <image:title>Gold-Toned Pink Stone &amp; Pearl Pendant Necklace with Matching Earrings | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Pink Stone &amp; Pearl Pendant Jewellery Set
+
+Add a refined touch of sparkle to your jewellery collection with this beautiful artificial jewellery</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/floral-pendant-earrings--e_4b8d6de8c3725640f0621a02b5393c6e0568</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/floral-pendant-earrings--e_4b8d6de8c3725640f0621a02b5393c6e0568"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/floral-pendant-earrings--e_4b8d6de8c3725640f0621a02b5393c6e0568"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268827366_ox1yg.jpg</image:loc>
+      <image:title>Floral Pendant &amp; Earrings Set for Women | Sparkling Stone Studded Artificial Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Floral Stone-Studded Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your look with this beautifully crafted floral pendant and matchin</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268827367_1840u.jpg</image:loc>
+      <image:title>Floral Pendant &amp; Earrings Set for Women | Sparkling Stone Studded Artificial Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Floral Stone-Studded Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your look with this beautifully crafted floral pendant and matchin</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268827368_x9qb6.jpg</image:loc>
+      <image:title>Floral Pendant &amp; Earrings Set for Women | Sparkling Stone Studded Artificial Jewellery Set | Elegant Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Floral Stone-Studded Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your look with this beautifully crafted floral pendant and matchin</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/silver-crystal-necklace--e_4b8d6de8c3725640ff6a1507b4363f6f0269</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-crystal-necklace--e_4b8d6de8c3725640ff6a1507b4363f6f0269"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-crystal-necklace--e_4b8d6de8c3725640ff6a1507b4363f6f0269"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290779044_2wwc9.jpg</image:loc>
+      <image:title>Silver Crystal Necklace &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party, Festive &amp; Wedding Wear | Ella Creations</image:title>
+      <image:caption>Elegant Silver Crystal Necklace &amp; Earrings Set
+
+Add a touch of timeless sparkle to your jewellery collection with this elegant silver-tone crystal nec</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290779045_bxymd.jpg</image:loc>
+      <image:title>Silver Crystal Necklace &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party, Festive &amp; Wedding Wear | Ella Creations</image:title>
+      <image:caption>Elegant Silver Crystal Necklace &amp; Earrings Set
+
+Add a touch of timeless sparkle to your jewellery collection with this elegant silver-tone crystal nec</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290779045_5d626.jpg</image:loc>
+      <image:title>Silver Crystal Necklace &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party, Festive &amp; Wedding Wear | Ella Creations</image:title>
+      <image:caption>Elegant Silver Crystal Necklace &amp; Earrings Set
+
+Add a touch of timeless sparkle to your jewellery collection with this elegant silver-tone crystal nec</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/flat-clear-plastic-ear--e_4b8d6de8c3725746f46c1300bb3b3a6a0b60</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/flat-clear-plastic-ear--e_4b8d6de8c3725746f46c1300bb3b3a6a0b60"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/flat-clear-plastic-ear--e_4b8d6de8c3725746f46c1300bb3b3a6a0b60"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787426104961_xsbov.jpg</image:loc>
+      <image:title>Flat Clear Plastic Ear Back Stoppers push buttons Findings Stud Earring Plugs Stoppers For Earrings | Ella Creations</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787426105018_io25r.jpg</image:loc>
+      <image:title>Flat Clear Plastic Ear Back Stoppers push buttons Findings Stud Earring Plugs Stoppers For Earrings | Ella Creations</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787426105058_m1677.jpg</image:loc>
+      <image:title>Flat Clear Plastic Ear Back Stoppers push buttons Findings Stud Earring Plugs Stoppers For Earrings | Ella Creations</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/premium-artificial-jewellery-pendant--e_4b8d6de8c3725640f0621b04bc3a38690366</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/premium-artificial-jewellery-pendant--e_4b8d6de8c3725640f0621b04bc3a38690366"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/premium-artificial-jewellery-pendant--e_4b8d6de8c3725640f0621b04bc3a38690366"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268941074_qfabt.jpg</image:loc>
+      <image:title>Premium Artificial Jewellery Pendant &amp; Earrings Set for Women | Elegant Gold-Tone Stone-Studded Statement Jewellery Set | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pendant &amp; Earrings Set
+
+Add a touch of effortless glamour to your jewellery collection with this elegant artificial jewellery pendan</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268941078_tokl3.jpg</image:loc>
+      <image:title>Premium Artificial Jewellery Pendant &amp; Earrings Set for Women | Elegant Gold-Tone Stone-Studded Statement Jewellery Set | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pendant &amp; Earrings Set
+
+Add a touch of effortless glamour to your jewellery collection with this elegant artificial jewellery pendan</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268941078_zp7md.jpg</image:loc>
+      <image:title>Premium Artificial Jewellery Pendant &amp; Earrings Set for Women | Elegant Gold-Tone Stone-Studded Statement Jewellery Set | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Pendant &amp; Earrings Set
+
+Add a touch of effortless glamour to your jewellery collection with this elegant artificial jewellery pendan</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/blue-beaded-haar-necklace--e_4b8d6de8c3725641f66f1302be3e3d66396e</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/blue-beaded-haar-necklace--e_4b8d6de8c3725641f66f1302be3e3d66396e"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/blue-beaded-haar-necklace--e_4b8d6de8c3725641f66f1302be3e3d66396e"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786305122272_p7e5r.jpg</image:loc>
+      <image:title>Blue Beaded Haar Necklace Set with Matching Earrings | Gold-Tone Multicolour Stone Statement Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Blue Beaded Haar Necklace &amp; Earrings Set
+
+Add a vibrant traditional touch to your ethnic wardrobe with this blue beaded haar and matching earrings set</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786305122274_9ddij.jpg</image:loc>
+      <image:title>Blue Beaded Haar Necklace Set with Matching Earrings | Gold-Tone Multicolour Stone Statement Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Blue Beaded Haar Necklace &amp; Earrings Set
+
+Add a vibrant traditional touch to your ethnic wardrobe with this blue beaded haar and matching earrings set</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786305122274_jvdym.jpg</image:loc>
+      <image:title>Blue Beaded Haar Necklace Set with Matching Earrings | Gold-Tone Multicolour Stone Statement Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Blue Beaded Haar Necklace &amp; Earrings Set
+
+Add a vibrant traditional touch to your ethnic wardrobe with this blue beaded haar and matching earrings set</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/ear-studs-for-ear--e_4b8d6de8c3725741f46a1600b536356a0968</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/ear-studs-for-ear--e_4b8d6de8c3725741f46a1600b536356a0968"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/ear-studs-for-ear--e_4b8d6de8c3725741f46a1600b536356a0968"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787427090358_ftxmw.jpg</image:loc>
+      <image:title>Ear Studs for Ear Piercing Gun, Stainless Steel Studs Hypoallergenic Ear Piercing Gun kit Cartilage Earring Stud Hypoallergenic Surgical Steel Baby Earrings (24 Pieces) | Ella Creations</image:title>
+      <image:caption>Clean and Hygienic: Each pair of earrings and earplugs is individually wrapped, clean and hygienic and easy to use.
+For use with: In conjunction with </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787427090407_kkm3q.jpg</image:loc>
+      <image:title>Ear Studs for Ear Piercing Gun, Stainless Steel Studs Hypoallergenic Ear Piercing Gun kit Cartilage Earring Stud Hypoallergenic Surgical Steel Baby Earrings (24 Pieces) | Ella Creations</image:title>
+      <image:caption>Clean and Hygienic: Each pair of earrings and earplugs is individually wrapped, clean and hygienic and easy to use.
+For use with: In conjunction with </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787427090423_mxhhi.jpg</image:loc>
+      <image:title>Ear Studs for Ear Piercing Gun, Stainless Steel Studs Hypoallergenic Ear Piercing Gun kit Cartilage Earring Stud Hypoallergenic Surgical Steel Baby Earrings (24 Pieces) | Ella Creations</image:title>
+      <image:caption>Clean and Hygienic: Each pair of earrings and earplugs is individually wrapped, clean and hygienic and easy to use.
+For use with: In conjunction with </image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-stone-studded--e_4b8d6de8c3725641f66b1702be363c6d376c</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-stone-studded--e_4b8d6de8c3725641f66b1702be363c6d376c"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-stone-studded--e_4b8d6de8c3725641f66b1702be363c6d376c"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301523266_hr19h.jpg</image:loc>
+      <image:title>Gold Plated Stone Studded Statement Ring for Women | Wide Band Artificial Jewellery Ring | Elegant Party Wear Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Gold Plated Stone Studded Statement Ring for Women
+
+Add an instant touch of glamour to your jewellery collection with this gold plated stone-studded s</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301523268_th7g1.jpg</image:loc>
+      <image:title>Gold Plated Stone Studded Statement Ring for Women | Wide Band Artificial Jewellery Ring | Elegant Party Wear Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Gold Plated Stone Studded Statement Ring for Women
+
+Add an instant touch of glamour to your jewellery collection with this gold plated stone-studded s</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301523268_et3kz.jpg</image:loc>
+      <image:title>Gold Plated Stone Studded Statement Ring for Women | Wide Band Artificial Jewellery Ring | Elegant Party Wear Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Gold Plated Stone Studded Statement Ring for Women
+
+Add an instant touch of glamour to your jewellery collection with this gold plated stone-studded s</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-floral-statement--e_4b8d6de8c3725641f66b1608be3738690966</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-floral-statement--e_4b8d6de8c3725641f66b1608be3738690966"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-floral-statement--e_4b8d6de8c3725641f66b1608be3738690966"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786301483616_caek4.jpg</image:loc>
+      <image:title>Gold Plated Floral Statement Ring for Women &amp; Girls | Silver &amp; Gold Tone Stone Studded Artificial Jewellery Finger Ring | Elegant Party Wear Fashion Ring | Ella Creations</image:title>
+      <image:caption>✨ Gold Plated Floral Statement Ring
+
+Add an elegant sparkle to your jewellery collection with this gold plated floral statement ring, designed with a </image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-look-artificial-jewellery--e_4b8d6de8c3725640ff6a1b04b93d3d6b0d64</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-look-artificial-jewellery--e_4b8d6de8c3725640ff6a1b04b93d3d6b0d64"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-look-artificial-jewellery--e_4b8d6de8c3725640ff6a1b04b93d3d6b0d64"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290943714_43qls.jpg</image:loc>
+      <image:title>Gold-Plated Look Artificial Jewellery Set with Haar, Tops &amp; Maangtika | Crystal Stone Bridal Necklace Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Haar, Tops &amp; Maangtika Set
+
+Add a touch of sparkle to your ethnic and festive looks with this beautifully coordinated artificial jew</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290943714_kf654.jpg</image:loc>
+      <image:title>Gold-Plated Look Artificial Jewellery Set with Haar, Tops &amp; Maangtika | Crystal Stone Bridal Necklace Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Haar, Tops &amp; Maangtika Set
+
+Add a touch of sparkle to your ethnic and festive looks with this beautifully coordinated artificial jew</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290943715_3n3i5.jpg</image:loc>
+      <image:title>Gold-Plated Look Artificial Jewellery Set with Haar, Tops &amp; Maangtika | Crystal Stone Bridal Necklace Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Gold-Tone Haar, Tops &amp; Maangtika Set
+
+Add a touch of sparkle to your ethnic and festive looks with this beautifully coordinated artificial jew</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/red-stone-pearl-pendant--e_4b8d6de8c3725640ff6a1a00bf383a6f0c61</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/red-stone-pearl-pendant--e_4b8d6de8c3725640ff6a1a00bf383a6f0c61"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/red-stone-pearl-pendant--e_4b8d6de8c3725640ff6a1a00bf383a6f0c61"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290802038_7s9qu.jpg</image:loc>
+      <image:title>Red Stone Pearl Pendant Necklace Set with Matching Earrings | Gold-Tone Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Red Stone Pearl Pendant Necklace Set with Matching Earrings
+
+Add a touch of traditional elegance to your jewellery collection with this beautifully de</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290802039_onol2.jpg</image:loc>
+      <image:title>Red Stone Pearl Pendant Necklace Set with Matching Earrings | Gold-Tone Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Red Stone Pearl Pendant Necklace Set with Matching Earrings
+
+Add a touch of traditional elegance to your jewellery collection with this beautifully de</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290802040_9g3se.jpg</image:loc>
+      <image:title>Red Stone Pearl Pendant Necklace Set with Matching Earrings | Gold-Tone Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Red Stone Pearl Pendant Necklace Set with Matching Earrings
+
+Add a touch of traditional elegance to your jewellery collection with this beautifully de</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/traditional-gold-tone-pearl-haar--e_4b8d6de8c3725640ff6a1a02ba383d670469</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/traditional-gold-tone-pearl-haar--e_4b8d6de8c3725640ff6a1a02ba383d670469"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/traditional-gold-tone-pearl-haar--e_4b8d6de8c3725640ff6a1a02ba383d670469"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290827034_kje8a.jpg</image:loc>
+      <image:title>Traditional Gold-Tone Pearl Haar Necklace Set with Matching Jhumka Tops | Artificial Jewellery Set for Women | Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Traditional Gold-Tone Pearl Haar &amp; Jhumka Jewellery Set
+
+Add a regal traditional touch to your ethnic wardrobe with this beautifully detailed artifici</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290827035_0biol.jpg</image:loc>
+      <image:title>Traditional Gold-Tone Pearl Haar Necklace Set with Matching Jhumka Tops | Artificial Jewellery Set for Women | Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Traditional Gold-Tone Pearl Haar &amp; Jhumka Jewellery Set
+
+Add a regal traditional touch to your ethnic wardrobe with this beautifully detailed artifici</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290827036_yg4a6.jpg</image:loc>
+      <image:title>Traditional Gold-Tone Pearl Haar Necklace Set with Matching Jhumka Tops | Artificial Jewellery Set for Women | Wedding &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>Traditional Gold-Tone Pearl Haar &amp; Jhumka Jewellery Set
+
+Add a regal traditional touch to your ethnic wardrobe with this beautifully detailed artifici</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/majestic-dancing-peacock-cz--e_4b8d6de8c3725645f7681a05bc3b3d6a0c69</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/majestic-dancing-peacock-cz--e_4b8d6de8c3725645f7681a05bc3b3d6a0c69"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/majestic-dancing-peacock-cz--e_4b8d6de8c3725645f7681a05bc3b3d6a0c69"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712851485_tozjs.jpg</image:loc>
+      <image:title>Majestic Dancing Peacock CZ &amp; Meenakari Pendant Set with Matching Earrings | Designer Gold Plated Jewellery | Ella Creations</image:title>
+      <image:caption>Designer dancing peacock motif pendant set with ruby red, emerald green, and deep sapphire blue enamel detail, accented by sparkling clear crystals.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712851505_6dkpa.jpg</image:loc>
+      <image:title>Majestic Dancing Peacock CZ &amp; Meenakari Pendant Set with Matching Earrings | Designer Gold Plated Jewellery | Ella Creations</image:title>
+      <image:caption>Designer dancing peacock motif pendant set with ruby red, emerald green, and deep sapphire blue enamel detail, accented by sparkling clear crystals.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712851528_zbtfj.jpg</image:loc>
+      <image:title>Majestic Dancing Peacock CZ &amp; Meenakari Pendant Set with Matching Earrings | Designer Gold Plated Jewellery | Ella Creations</image:title>
+      <image:caption>Designer dancing peacock motif pendant set with ruby red, emerald green, and deep sapphire blue enamel detail, accented by sparkling clear crystals.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/4-pcs-no-pain--e_4b8d6de8c3725741f7621a03bf363f6b066d</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/4-pcs-no-pain--e_4b8d6de8c3725741f7621a03bf363f6b066d"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/4-pcs-no-pain--e_4b8d6de8c3725741f7621a03bf363f6b066d"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318831848_trr1c.jpg</image:loc>
+      <image:title>4 Pcs No Pain Self Ear Piercing Disposable Stud Gun Kit (Silver) Pack of 4 | Ella Creations</image:title>
+      <image:caption>HIGH QUALITY MATERIAL★ Crafted with superior metal, eco-friendly and skin--friendly, avoids cross-infection and inflammation Suitable for home or prof</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318831920_7trji.jpg</image:loc>
+      <image:title>4 Pcs No Pain Self Ear Piercing Disposable Stud Gun Kit (Silver) Pack of 4 | Ella Creations</image:title>
+      <image:caption>HIGH QUALITY MATERIAL★ Crafted with superior metal, eco-friendly and skin--friendly, avoids cross-infection and inflammation Suitable for home or prof</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1787318831990_dyan7.jpg</image:loc>
+      <image:title>4 Pcs No Pain Self Ear Piercing Disposable Stud Gun Kit (Silver) Pack of 4 | Ella Creations</image:title>
+      <image:caption>HIGH QUALITY MATERIAL★ Crafted with superior metal, eco-friendly and skin--friendly, avoids cross-infection and inflammation Suitable for home or prof</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0621401bd3d3c6b316c</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0621401bd3d3c6b316c"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0621401bd3d3c6b316c"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268608834_wbh0m.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268608836_t364r.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268608835_hmf3q.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/multicolor-meenakari-cz--e_4b8d6de8c3725645f7681a00be3f3a6c0e6b</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/multicolor-meenakari-cz--e_4b8d6de8c3725645f7681a00be3f3a6c0e6b"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/multicolor-meenakari-cz--e_4b8d6de8c3725645f7681a00be3f3a6c0e6b"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712803153_q0zjc.jpg</image:loc>
+      <image:title>Multicolor Meenakari &amp; CZ Stone Peacock Pendant &amp; Earrings Set | Gold Plated Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Vibrant multicolor Meenakari peacock statement pendant set adorned with sparkling clear CZ crystals. Designed for traditional Indian attire and festiv</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712803173_cdr33.jpg</image:loc>
+      <image:title>Multicolor Meenakari &amp; CZ Stone Peacock Pendant &amp; Earrings Set | Gold Plated Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Vibrant multicolor Meenakari peacock statement pendant set adorned with sparkling clear CZ crystals. Designed for traditional Indian attire and festiv</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712803194_s1kbb.jpg</image:loc>
+      <image:title>Multicolor Meenakari &amp; CZ Stone Peacock Pendant &amp; Earrings Set | Gold Plated Artificial Jewellery for Women | Ella Creations</image:title>
+      <image:caption>Vibrant multicolor Meenakari peacock statement pendant set adorned with sparkling clear CZ crystals. Designed for traditional Indian attire and festiv</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/yellow-sapphire-cz-flower--e_4b8d6de8c3725645f7691201bd383c693764</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/yellow-sapphire-cz-flower--e_4b8d6de8c3725645f7691201bd383c693764"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/yellow-sapphire-cz-flower--e_4b8d6de8c3725645f7691201bd383c693764"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786713010560_xd1c5.jpg</image:loc>
+      <image:title>Yellow Sapphire CZ Flower Wide Statement Ring for Women | Gold-Plated Luxury Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Glamorous wide band statement ring featuring a central canary yellow crystal flower motif nestled inside a pave bed of dazzling white cubic zirconia s</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786713010600_osa1k.jpg</image:loc>
+      <image:title>Yellow Sapphire CZ Flower Wide Statement Ring for Women | Gold-Plated Luxury Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Glamorous wide band statement ring featuring a central canary yellow crystal flower motif nestled inside a pave bed of dazzling white cubic zirconia s</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786713010581_h3aep.jpg</image:loc>
+      <image:title>Yellow Sapphire CZ Flower Wide Statement Ring for Women | Gold-Plated Luxury Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Glamorous wide band statement ring featuring a central canary yellow crystal flower motif nestled inside a pave bed of dazzling white cubic zirconia s</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725645f7681503ba3c3a6f0a63</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725645f7681503ba3c3a6f0a63"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725645f7681503ba3c3a6f0a63"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712737270_jbwzp.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Exquisite gold-tone peacock design pendant and earrings set featuring brilliant AAA cubic zirconia stones and hand-painted enamel detailing. Perfect f</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712737245_jh3ch.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Exquisite gold-tone peacock design pendant and earrings set featuring brilliant AAA cubic zirconia stones and hand-painted enamel detailing. Perfect f</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712737318_qp6ns.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Exquisite gold-tone peacock design pendant and earrings set featuring brilliant AAA cubic zirconia stones and hand-painted enamel detailing. Perfect f</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/silver-tone-stone-studded-pendant--e_4b8d6de8c3725640f0621b09be383b661467</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/silver-tone-stone-studded-pendant--e_4b8d6de8c3725640f0621b09be383b661467"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/silver-tone-stone-studded-pendant--e_4b8d6de8c3725640f0621b09be383b661467"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268993286_5yyvd.jpg</image:loc>
+      <image:title>Silver-Tone Stone Studded Pendant &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Stone Studded Pendant &amp; Earring Set
+
+Add a touch of sparkle to your look with this elegant artificial jewellery set, featuring a beautifully</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268993290_hfdmo.jpg</image:loc>
+      <image:title>Silver-Tone Stone Studded Pendant &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Stone Studded Pendant &amp; Earring Set
+
+Add a touch of sparkle to your look with this elegant artificial jewellery set, featuring a beautifully</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268993289_q159q.jpg</image:loc>
+      <image:title>Silver-Tone Stone Studded Pendant &amp; Earrings Set for Women | Elegant Artificial Jewellery Set for Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Stone Studded Pendant &amp; Earring Set
+
+Add a touch of sparkle to your look with this elegant artificial jewellery set, featuring a beautifully</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/red-stone-ad-pendant--e_4b8d6de8c3725640f0621b07bf3c39680160</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/red-stone-ad-pendant--e_4b8d6de8c3725640f0621b07bf3c39680160"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/red-stone-ad-pendant--e_4b8d6de8c3725640f0621b07bf3c39680160"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268971291_qzotx.jpg</image:loc>
+      <image:title>Red Stone AD Pendant Set with Matching Earrings for Women | Elegant Artificial Jewellery Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Red Stone AD Pendant &amp; Earring Set
+
+Add a sophisticated touch to your look with this beautiful red stone pendant and matching earrings set, </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268971293_lhaox.jpg</image:loc>
+      <image:title>Red Stone AD Pendant Set with Matching Earrings for Women | Elegant Artificial Jewellery Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Red Stone AD Pendant &amp; Earring Set
+
+Add a sophisticated touch to your look with this beautiful red stone pendant and matching earrings set, </image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268971292_qilyp.jpg</image:loc>
+      <image:title>Red Stone AD Pendant Set with Matching Earrings for Women | Elegant Artificial Jewellery Set for Wedding, Party &amp; Festive Wear | Ella Creations</image:title>
+      <image:caption>✨ Elegant Red Stone AD Pendant &amp; Earring Set
+
+Add a sophisticated touch to your look with this beautiful red stone pendant and matching earrings set, </image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-green-pink--e_4b8d6de8c3725640f0621b01bf363e6c046f</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-green-pink--e_4b8d6de8c3725640f0621b01bf363e6c046f"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-green-pink--e_4b8d6de8c3725640f0621b01bf363e6c046f"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268912172_ecsgl.jpg</image:loc>
+      <image:title>Gold-Plated Green &amp; Pink Stone Studded Pendant &amp; Earrings Set | Elegant Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Green &amp; Pink Stone Pendant &amp; Earrings Set
+
+Add a touch of sparkle and colour to your ethnic wardrobe with this elegant artificial jewellery se</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268912174_rg0js.jpg</image:loc>
+      <image:title>Gold-Plated Green &amp; Pink Stone Studded Pendant &amp; Earrings Set | Elegant Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Green &amp; Pink Stone Pendant &amp; Earrings Set
+
+Add a touch of sparkle and colour to your ethnic wardrobe with this elegant artificial jewellery se</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786268912175_khvs8.jpg</image:loc>
+      <image:title>Gold-Plated Green &amp; Pink Stone Studded Pendant &amp; Earrings Set | Elegant Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Green &amp; Pink Stone Pendant &amp; Earrings Set
+
+Add a touch of sparkle and colour to your ethnic wardrobe with this elegant artificial jewellery se</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0631205b93d356f0b66</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0631205b93d356f0b66"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-tone-peacock-design-stone-studded--e_4b8d6de8c3725640f0631205b93d356f0b66"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269053972_8q0vb.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269053973_c0bxh.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786269053973_4eiax.jpg</image:loc>
+      <image:title>Gold-Tone Peacock Design Stone-Studded Pendant &amp; Earrings Set | Artificial Jewellery Set for Women | Ella Creations</image:title>
+      <image:caption>Elegant Peacock-Inspired Pendant &amp; Earrings Set
+
+Add a touch of elegance and sparkle to your jewellery collection with this peacock-inspired artificia</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/peacock-design-stone-studded-artificial--e_4b8d6de8c3725640ff6a1104bd393a6c0d6e</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/peacock-design-stone-studded-artificial--e_4b8d6de8c3725640ff6a1104bd393a6c0d6e"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/peacock-design-stone-studded-artificial--e_4b8d6de8c3725640ff6a1104bd393a6c0d6e"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290340105_kvxcd.jpg</image:loc>
+      <image:title>Peacock Design Stone-Studded Artificial Bracelet for Women | Ella Creations</image:title>
+      <image:caption>Peacock Design Stone-Studded Artificial Bracelet for Women
+
+Add a touch of royal elegance and traditional charm to your jewellery collection with this</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290340107_ythfi.jpg</image:loc>
+      <image:title>Peacock Design Stone-Studded Artificial Bracelet for Women | Ella Creations</image:title>
+      <image:caption>Peacock Design Stone-Studded Artificial Bracelet for Women
+
+Add a touch of royal elegance and traditional charm to your jewellery collection with this</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786290340107_ypcd9.jpg</image:loc>
+      <image:title>Peacock Design Stone-Studded Artificial Bracelet for Women | Ella Creations</image:title>
+      <image:caption>Peacock Design Stone-Studded Artificial Bracelet for Women
+
+Add a touch of royal elegance and traditional charm to your jewellery collection with this</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ella-creations.com/product/gold-plated-floral-cutout-solitaire--e_4b8d6de8c3725645f7681b02b4363a6e0069</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/product/gold-plated-floral-cutout-solitaire--e_4b8d6de8c3725645f7681b02b4363a6e0069"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ella-creations.com/product/gold-plated-floral-cutout-solitaire--e_4b8d6de8c3725645f7681b02b4363a6e0069"/>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712929871_sg94a.jpg</image:loc>
+      <image:title>Gold-Plated Floral Cutout Solitaire Ring for Women | Intricate CZ Micro-Pave Designer Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Breathtaking gold-plated wide band cocktail ring showcasing an oval-cut solitaire stone surrounded by intricate filigree cutout work and micro-pave cr</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712929911_m56cn.jpg</image:loc>
+      <image:title>Gold-Plated Floral Cutout Solitaire Ring for Women | Intricate CZ Micro-Pave Designer Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Breathtaking gold-plated wide band cocktail ring showcasing an oval-cut solitaire stone surrounded by intricate filigree cutout work and micro-pave cr</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mjcdvzmlutbkfgsaafmm.supabase.co/storage/v1/object/public/products/images/image_1786712929886_4brj3.jpg</image:loc>
+      <image:title>Gold-Plated Floral Cutout Solitaire Ring for Women | Intricate CZ Micro-Pave Designer Cocktail Ring | Ella Creations</image:title>
+      <image:caption>Breathtaking gold-plated wide band cocktail ring showcasing an oval-cut solitaire stone surrounded by intricate filigree cutout work and micro-pave cr</image:caption>
     </image:image>
   </url>
 
   <!-- 4. Ella Journal & Styling Articles -->
   <url>
     <loc>https://ella-creations.com/blog</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog"/>
@@ -253,7 +1379,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/ultimate-guide-choosing-bridal-kundan-jewelry"/>
@@ -265,7 +1391,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/how-to-style-cubic-zirconia-jewelry-day-to-night"/>
@@ -277,7 +1403,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/blog/essential-tips-care-store-artificial-jewelry"/>
@@ -291,7 +1417,7 @@
   <!-- 5. Brand Information & Legal Policies -->
   <url>
     <loc>https://ella-creations.com/brand-guidelines</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/brand-guidelines"/>
@@ -299,7 +1425,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/sitemap</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/sitemap"/>
@@ -307,7 +1433,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/shipping-policy</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/shipping-policy"/>
@@ -315,7 +1441,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/refund-policy</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/refund-policy"/>
@@ -323,7 +1449,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/terms</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/terms"/>
@@ -331,7 +1457,7 @@
   </url>
   <url>
     <loc>https://ella-creations.com/privacy</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://ella-creations.com/privacy"/>

@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { INITIAL_PRODUCTS, INITIAL_BLOGS } from '../src/data/initialData.js';
+import { fetchCatalog } from './fetch-catalog.js';
 import { encryptId } from '../src/utils/idSecurity.js';
+
+const { products: INITIAL_PRODUCTS, blogs: INITIAL_BLOGS } = await fetchCatalog();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

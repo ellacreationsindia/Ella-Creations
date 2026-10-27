@@ -4,6 +4,7 @@ import { supabase, uploadProductPhotoToSupabase, uploadProductVideoToSupabase, s
 import { INITIAL_PRODUCTS, INITIAL_REVIEWS, INITIAL_ORDERS, ACTIVE_COUPONS, INITIAL_BLOGS, INITIAL_PROMOTIONS } from '../data/initialData';
 import { calculateProductPricing, verifyCartPricing, getActivePromotions, getActivePopupCampaign } from '../utils/pricing';
 import { encryptId, decryptId } from '../utils/idSecurity';
+import { trackPageView, trackAddToCart, trackRemoveFromCart, trackBeginCheckout, trackPurchase, trackViewItem, trackSearch, trackLogin, trackSignUp } from '../utils/analytics';
 
 const StoreContext = createContext();
 
@@ -235,6 +236,8 @@ export const StoreProvider = ({ children }) => {
       } catch (e) {}
       return updated;
     });
+    const prod = (products || []).find(p => p && p.id === productId);
+    if (prod) trackViewItem(prod);
   };
 
   const showToast = (message, type = 'success') => {
@@ -299,6 +302,15 @@ export const StoreProvider = ({ children }) => {
       const currentPathWithSearch = window.location.pathname + window.location.search;
       if (currentPathWithSearch !== targetPath || window.location.hash) {
         window.history.pushState({ view, itemId, category }, '', targetPath);
+      }
+
+      // GA4 SPA page_view (fires after title update settles)
+      setTimeout(() => trackPageView(targetPath, document.title), 50);
+
+      // GA4 begin_checkout event when user enters checkout with items in cart
+      if (view === 'checkout' && cart && cart.length > 0) {
+        const cartTotal = cart.reduce((sum, c) => sum + (Number(c.price) || 0) * (Number(c.qty) || 1), 0);
+        trackBeginCheckout(cart, cartTotal);
       }
     }
 
@@ -948,10 +960,15 @@ export const StoreProvider = ({ children }) => {
     const addonsNote = validAddons.length > 0 ? ` + ${validAddons.length} upgrade(s)` : '';
     showToast(`Added "${product.title}" (${variantName}${addonsNote}) to your cart!`);
     setIsCartOpen(true);
+    trackAddToCart({ ...product, price: itemPrice }, quantity, variantName);
   };
 
   const removeFromCart = (index) => {
-    setCart((prev) => prev.filter((_, i) => i !== index));
+    setCart((prev) => {
+      const removed = prev[index];
+      if (removed) trackRemoveFromCart(removed);
+      return prev.filter((_, i) => i !== index);
+    });
     showToast('Item removed from cart', 'info');
   };
 
@@ -1124,6 +1141,7 @@ export const StoreProvider = ({ children }) => {
     }
 
     setOrders((prev) => [newOrder, ...prev]);
+    trackPurchase({ ...newOrder, coupon_code: activeCoupon?.code });
     clearCart();
 
     confetti({

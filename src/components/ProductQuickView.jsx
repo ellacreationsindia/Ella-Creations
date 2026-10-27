@@ -138,7 +138,7 @@ export default function ProductQuickView() {
           <div>
             <div className="flex items-center justify-between text-xs text-brand-gold font-semibold uppercase tracking-wider mb-1">
               <span>{quickViewProduct.category}</span>
-              {quickViewProduct.stoneType ? <span>{quickViewProduct.stoneType}</span> : null}
+              {(quickViewProduct.stoneType && !/^(n\/?a|na|none|null|undefined|\-+)$/i.test(quickViewProduct.stoneType.trim())) ? <span>{quickViewProduct.stoneType}</span> : null}
             </div>
 
             <h2 id="quickview-title" className="font-serif text-2xl font-bold text-stone-900">{quickViewProduct.title}</h2>

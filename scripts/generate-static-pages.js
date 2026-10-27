@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { INITIAL_PRODUCTS, INITIAL_BLOGS } from '../src/data/initialData.js';
+import { fetchCatalog } from './fetch-catalog.js';
 import { encryptId } from '../src/utils/idSecurity.js';
+
+const { products: INITIAL_PRODUCTS, blogs: INITIAL_BLOGS } = await fetchCatalog();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -190,7 +192,7 @@ function renderHomePage(products, blogs) {
         </a>
         <div class="space-y-1.5 flex-1 flex flex-col justify-between">
           <div>
-            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">${escapeHtml(p.category)} • ${escapeHtml(p.stoneType || 'Fine Jewelry')}</span>
+            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">${escapeHtml(p.category)}${(p.stoneType && !/^(n\/?a|na|none|null|undefined|\-+)$/i.test(String(p.stoneType).trim())) ? ' • ' + escapeHtml(p.stoneType) : ''}</span>
             <h2 class="font-serif text-sm sm:text-base font-bold text-stone-900 line-clamp-2 mt-1">
               <a href="/product/${slug}" class="hover:text-rose-700 transition-colors">${escapeHtml(p.title)}</a>
             </h2>
@@ -337,7 +339,7 @@ function renderShopPage(products, activeCategory = 'All') {
         </a>
         <div class="space-y-1.5 flex-1 flex flex-col justify-between">
           <div>
-            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">${escapeHtml(p.category)} • ${escapeHtml(p.stoneType || 'Fine Jewelry')}</span>
+            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">${escapeHtml(p.category)}${(p.stoneType && !/^(n\/?a|na|none|null|undefined|\-+)$/i.test(String(p.stoneType).trim())) ? ' • ' + escapeHtml(p.stoneType) : ''}</span>
             <h2 class="font-serif text-sm sm:text-base font-bold text-stone-900 line-clamp-2 mt-1">
               <a href="/product/${slug}" class="hover:text-rose-700 transition-colors">${escapeHtml(p.title)}</a>
             </h2>
@@ -667,7 +669,7 @@ export function generateAllStaticPages() {
   // 0. Home Page (dist/index.html)
   const homeBody = renderHomePage(INITIAL_PRODUCTS, INITIAL_BLOGS);
   const homeHtml = generateStaticHtml(baseHtml, {
-    title: 'Ella Creations | Handcrafted Luxury Artificial Jewelry & Bridal Sets India',
+    title: 'Ella Creations | Handcrafted Luxury Artificial & Bridal Jewelry India',
     description: 'Discover handcrafted Kundan chokers, AAA+ Cubic Zirconia drop earrings, bridal trousseau sets, and cocktail rings. Free insured express shipping across India.',
     canonicalUrl: domain,
     bodyContent: homeBody

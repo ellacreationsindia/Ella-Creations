@@ -33,6 +33,13 @@ export default function ProductCard({ product }) {
 
   const productPath = `/product/${getProductSlug(product)}`;
 
+  const cleanStone = (() => {
+    const s = (product.stoneType || '').trim();
+    if (!s) return '';
+    if (/^(n\/?a|na|none|null|undefined|\-+)$/i.test(s)) return '';
+    return s;
+  })();
+
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-brand-gold/20 shadow-sm hover:shadow-soft-rose transition-all duration-300 flex flex-col relative h-full">
       
@@ -123,7 +130,7 @@ export default function ProductCard({ product }) {
         {/* Photo Count Indicator (Desktop) */}
         {product.images && product.images.length > 1 && (
           <div className="absolute top-3 right-14 lg:right-16 z-10 bg-stone-900/70 backdrop-blur-md text-brand-gold text-[10px] lg:text-xs font-bold px-2 py-0.5 lg:px-2.5 lg:py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-            {product.images.length} Views
+            {product.images.length} Photos
           </div>
         )}
 
@@ -132,6 +139,7 @@ export default function ProductCard({ product }) {
           src={product.images?.[0] || '/logo.png'}
           alt={`${product.title} - Handcrafted ${product.category} by Ella Creations`}
           loading="lazy"
+          onError={(e) => { if (e.currentTarget.src !== window.location.origin + '/logo.png') { e.currentTarget.src = '/logo.png'; e.currentTarget.classList.add('p-6', 'opacity-70'); } }}
           className={`w-full h-full object-contain object-center transition-all duration-500 ease-in-out ${
             product.images && product.images.length > 1 ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
           } ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
@@ -143,6 +151,7 @@ export default function ProductCard({ product }) {
             src={product.images[1]}
             alt={`${product.title} - ${product.category} detailed view | Ella Creations`}
             loading="lazy"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
             className={`absolute inset-0 w-full h-full object-contain object-center p-3 sm:p-4 lg:p-6 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-in-out hidden sm:block ${
               isOutOfStock ? 'opacity-60 grayscale' : ''
             }`}
@@ -187,7 +196,7 @@ export default function ProductCard({ product }) {
           {/* Category & Stone */}
           <div className="flex items-center justify-between text-[10px] sm:text-[11px] lg:text-xs text-stone-500 font-medium mb-1 gap-1 truncate">
             <span className="uppercase tracking-wider text-brand-gold font-semibold truncate">{product.category}</span>
-            {product.stoneType ? <span className="truncate opacity-75">{product.stoneType}</span> : null}
+            {cleanStone ? <span className="truncate opacity-75">{cleanStone}</span> : null}
           </div>
 
           {/* Title */}

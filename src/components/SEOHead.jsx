@@ -12,7 +12,7 @@ export default function SEOHead() {
                        INITIAL_BLOGS.find(b => b && (b.id === selectedBlogId || b.slug === selectedBlogId)) || 
                        (selectedBlogId ? (blogs?.[0] || INITIAL_BLOGS[0]) : null);
 
-    let title = 'Ella Creations | Handcrafted Artificial & Bridal Jewelry India';
+    let title = 'Ella Creations | Handcrafted Luxury Artificial & Bridal Jewelry India';
     let description = 'Shop handcrafted luxury artificial jewelry online in India. Explore premium Kundan choker sets, AAA+ Cubic Zirconia drop earrings, solitaire rings, bridal necklaces, and festive bangles at Ella Creations.';
     let keywords = 'artificial jewelry, buy artificial jewelry online India, kundan choker set, bridal jewelry India, rose gold earrings, cubic zirconia rings, CZ solitaire jewelry, meenakari bangles, imitation jewelry, wedding jewelry sets India, Ella Creations';
     let canonicalUrl = `${domain}/`;
@@ -22,7 +22,7 @@ export default function SEOHead() {
 
     // 1. Determine View-Specific Metadata
     if (currentView === 'home') {
-      title = 'Ella Creations | Handcrafted Artificial & Bridal Jewelry India';
+      title = 'Ella Creations | Handcrafted Luxury Artificial & Bridal Jewelry India';
       description = 'Shop handcrafted luxury artificial jewelry online in India. Explore premium Kundan choker sets, AAA+ Cubic Zirconia drop earrings, solitaire rings, bridal necklaces, and festive bangles at Ella Creations.';
       canonicalUrl = `${domain}/`;
     } else if (currentView === 'shop') {
@@ -42,7 +42,8 @@ export default function SEOHead() {
       description = cleanSnippet 
         ? `${activeProduct.title}: ${cleanSnippet}... Buy online at ${priceText}. Handcrafted ${activeProduct.category} with insured pan-India delivery.`
         : `Buy ${activeProduct.title} handcrafted in India with protective gold plating at ${priceText}. Exclusive artificial fine jewelry from Ella Creations.`;
-      keywords = `${activeProduct.title}, ${activeProduct.category}, ${activeProduct.stoneType || 'artificial jewelry'}, buy ${activeProduct.title} online, kundan jewelry India, Ella Creations`;
+      const kwStone = (activeProduct.stoneType && !/^(n\/?a|na|none|null|undefined|\-+)$/i.test(String(activeProduct.stoneType).trim())) ? activeProduct.stoneType : 'artificial jewelry';
+      keywords = `${activeProduct.title}, ${activeProduct.category}, ${kwStone}, buy ${activeProduct.title} online, kundan jewelry India, Ella Creations`;
       const prodSlug = getProductSlug(activeProduct);
       canonicalUrl = `${domain}/product/${prodSlug}`;
       if (activeProduct.images && activeProduct.images.length > 0) {
@@ -328,7 +329,7 @@ export default function SEOHead() {
         "description": activeProduct.description || `${activeProduct.title} handcrafted in India by Ella Creations.`,
         "sku": activeProduct.sku || `EC-${activeProduct.id}`,
         "category": activeProduct.category || "Jewelry",
-        "material": activeProduct.stoneType || "Brass & Cubic Zirconia",
+        "material": (activeProduct.stoneType && !/^(n\/?a|na|none|null|undefined|\-+)$/i.test(String(activeProduct.stoneType).trim())) ? activeProduct.stoneType : "Brass & Cubic Zirconia",
         "brand": {
           "@type": "Brand",
           "name": "Ella Creations"
