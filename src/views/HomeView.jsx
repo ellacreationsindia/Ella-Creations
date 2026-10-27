@@ -128,7 +128,10 @@ export default function HomeView() {
           {/* Right Image: Aligned to the right side, seamless mask */}
           <div className="w-[50%] sm:w-[50%] absolute right-0 bottom-0 top-0 flex items-end justify-end pointer-events-none z-10">
             <img
-              src="/hero-models.png"
+              src="/hero-models.webp"
+              width="1846"
+              height="852"
+              decoding="async"
               alt="Ella Creations Handcrafted Luxury Jewelry"
               className="h-[96%] w-auto max-w-none object-contain object-right-bottom scale-110 sm:scale-105 origin-bottom-right select-none drop-shadow-sm"
               style={{
@@ -226,7 +229,10 @@ export default function HomeView() {
             <div className="col-span-7 xl:col-span-7 relative h-full flex items-end justify-end self-stretch overflow-visible">
               <div className="w-full h-full min-h-[580px] xl:min-h-[660px] 2xl:min-h-[720px] flex items-end justify-end relative">
                 <img
-                  src="/hero-models.png"
+                  src="/hero-models.webp"
+                  width="1846"
+                  height="852"
+                  decoding="async"
                   alt="Five Models Showcasing Ella Creations Handcrafted Luxury Jewelry"
                   className="w-full h-full max-h-[680px] xl:max-h-[760px] 2xl:max-h-[820px] object-contain object-bottom-right lg:object-right-bottom scale-110 xl:scale-115 2xl:scale-120 origin-bottom-right select-none drop-shadow-md"
                   style={{
