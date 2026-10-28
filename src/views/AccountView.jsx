@@ -24,6 +24,7 @@ import {
   Check
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from '../components/OptImg';
 
 export default function AccountView() {
   const { 
@@ -424,7 +425,7 @@ export default function AccountView() {
                         {order.items?.map((item, idx) => (
                           <div key={idx} className="flex gap-4 items-center bg-stone-50/70 p-3 rounded-2xl border border-stone-200/80">
                             <div className="w-16 h-16 rounded-xl bg-white p-1 border border-stone-200 flex-shrink-0 flex items-center justify-center">
-                              <img src={item.image} alt={`${item.title} - Purchased Jewelry Piece`} className="w-full h-full object-contain" />
+                              <OptImg width={160} src={item.image} alt={`${item.title} - Purchased Jewelry Piece`} className="w-full h-full object-contain" />
                             </div>
 
                             <div className="flex-1 min-w-0">
@@ -687,7 +688,7 @@ export default function AccountView() {
               {wishlistProducts.map((product) => (
                 <div key={product.id} className="bg-white rounded-2xl border border-stone-200/80 p-3 sm:p-4 space-y-2.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                   <div className="aspect-square rounded-xl bg-gradient-to-b from-stone-50 to-brand-cream/30 overflow-hidden relative p-2 flex items-center justify-center">
-                    <img 
+                    <OptImg width={400} 
                       src={product.images[0]} 
                       alt={`${product.title} - Wishlist Jewelry Item`} 
                       className="w-full h-full object-contain cursor-pointer"

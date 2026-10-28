@@ -19,7 +19,7 @@ function dataURLtoBlob(dataurl) {
   try {
     const arr = dataurl.split(',');
     const mimeMatch = arr[0].match(/:(.*?);/);
-    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const mime = mimeMatch ? mimeMatch[1] : 'image/webp';
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
@@ -173,7 +173,7 @@ export async function compressImageDataUrl(fileOrDataUrl, maxWidth = 1200, quali
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressed = canvas.toDataURL('image/jpeg', quality);
+      const compressed = canvas.toDataURL('image/webp', quality);
       if (fileOrDataUrl instanceof File && srcUrl.startsWith('blob:')) {
         URL.revokeObjectURL(srcUrl);
       }
@@ -201,13 +201,14 @@ export async function uploadProductPhotoToSupabase(fileOrDataUrl) {
     const compressedDataUrl = await compressImageDataUrl(fileOrDataUrl, 1200, 0.82);
 
     let fileToUpload;
-    let fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
+    let fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.webp`;
 
     if (compressedDataUrl && compressedDataUrl.startsWith('data:')) {
       const blob = dataURLtoBlob(compressedDataUrl);
       if (blob) {
-        fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
-        fileToUpload = new File([blob], fileName, { type: 'image/jpeg' });
+        const ext = blob.type === 'image/webp' ? 'webp' : (blob.type === 'image/png' ? 'png' : 'jpg');
+        fileName = `image_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+        fileToUpload = new File([blob], fileName, { type: blob.type || 'image/webp' });
       } else {
         return compressedDataUrl;
       }

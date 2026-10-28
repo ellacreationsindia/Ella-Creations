@@ -81,8 +81,8 @@ function AppContent() {
 
       {/* Floating Global Toast Notification */}
       {toast && (
-        <div className="fixed bottom-4 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 z-[99999] flex justify-center sm:justify-end pointer-events-none">
-          <div className={`pointer-events-auto flex items-center gap-2.5 sm:gap-3 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold border backdrop-blur-md transition-all animate-bounce ${
+        <div className="fixed top-[calc(var(--hdr-h,84px)+8px)] sm:top-auto sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 z-[99999] flex justify-center sm:justify-end pointer-events-none">
+          <div className={`pointer-events-auto flex items-center gap-2.5 sm:gap-3 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold border backdrop-blur-md transition-all animate-fadeIn ${
             toast.type === 'error' 
               ? 'bg-rose-950/95 text-rose-100 border-rose-500/80 shadow-rose-950/50' 
               : toast.type === 'success'

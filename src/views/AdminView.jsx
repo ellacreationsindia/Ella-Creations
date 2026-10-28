@@ -875,7 +875,7 @@ export default function AdminView() {
           >
             {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <img src="/logo.png" alt="Ella Creations Admin Logo" className="h-9 sm:h-10 w-auto filter drop-shadow-xs" />
+          <img src="/logo.webp" alt="Ella Creations Admin Logo" className="h-9 sm:h-10 w-auto filter drop-shadow-xs" />
           <span className="font-serif text-lg sm:text-xl font-bold text-stone-900 tracking-wider">Ella Admin</span>
           <span className="bg-brand-gold/15 text-stone-900 border border-brand-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
             <Crown className="w-3.5 h-3.5 text-brand-gold" /> Real Database Telemetry

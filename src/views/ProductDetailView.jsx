@@ -31,6 +31,7 @@ import {
   Eye
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from '../components/OptImg';
 import ProductCard from '../components/ProductCard';
 import { ProductDetailSkeleton } from '../components/SkeletonLoader';
 
@@ -358,7 +359,7 @@ export default function ProductDetailView() {
                 className="w-full h-full object-contain"
               />
             ) : (
-              <img
+              <OptImg width={900} fetchPriority="high" sizes="(max-width: 1024px) 100vw, 620px"
                 src={currentMedia.url || product.images[0]}
                 alt={`${product.title} - Handcrafted ${product.category} in India | Ella Creations`}
                 title={`${product.title} - Handcrafted Artificial Jewelry`}
@@ -423,7 +424,7 @@ export default function ProductDetailView() {
                     <span className="text-[8px] sm:text-[9px] font-bold mt-1">VIDEO</span>
                   </div>
                 ) : (
-                  <img 
+                  <OptImg width={160} 
                     src={item.url} 
                     alt={`${product.title} - Handcrafted view ${idx + 1}`} 
                     className="w-full h-full object-contain" 
@@ -460,10 +461,10 @@ export default function ProductDetailView() {
         <div className="lg:col-span-6 space-y-6">
           
           <div>
-            <div className="flex items-center justify-between text-xs text-brand-gold font-semibold uppercase tracking-widest mb-1">
-              <span>{product.category} • SKU: {product.sku}</span>
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 text-xs text-brand-gold font-semibold uppercase tracking-widest mb-1.5">
+              <span className="min-w-0 break-words">{product.category} • SKU: {product.sku}</span>
               {!isOutOfStock ? (
-                <span className="text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full font-bold">In Stock ({product.stock} available)</span>
+                <span className="text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap">In Stock<span className="hidden sm:inline"> ({product.stock} available)</span></span>
               ) : (
                 <span className="text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full font-bold">OUT OF STOCK</span>
               )}
@@ -1216,7 +1217,7 @@ export default function ProductDetailView() {
               </button>
             )}
 
-            <img
+            <OptImg width={1600}
               src={currentMedia.url || product.images[0]}
               alt={`${product.title} - High-Resolution Zoomed View`}
               style={{ transform: `scale(${zoomScale})` }}

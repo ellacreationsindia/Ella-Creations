@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
+import OptImg from '../components/OptImg';
 
 export default function HomeView() {
   const { products, blogs, navigateTo, applyCoupon, showToast, reviews, activePromotions } = useStore();
@@ -32,6 +33,13 @@ export default function HomeView() {
   const [copiedCoupon, setCopiedCoupon] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'featured' | 'new' | 'kundan' | 'cz'
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onChange = (e) => setIsDesktop(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // Filter products for Homepage Showcase
   let showcaseProducts = [...products];
@@ -80,7 +88,7 @@ export default function HomeView() {
           <div className="absolute right-[8%] top-1/4 w-80 sm:w-[540px] lg:w-[650px] h-80 sm:h-[540px] lg:h-[650px] rounded-full bg-[#F5DFD5]/45 blur-3xl" />
           
           {/* Top Left Organic Dappled Shadow */}
-          <div className="absolute -top-12 -left-12 w-72 sm:w-96 lg:w-[480px] h-72 sm:h-96 lg:h-[480px] opacity-[0.07] blur-[2px] pointer-events-none">
+          <div className="absolute -top-12 -left-12 w-72 sm:w-96 lg:w-[480px] h-72 sm:h-96 lg:h-[480px] opacity-[0.07] blur-[2px] pointer-events-none hidden sm:block">
             <svg viewBox="0 0 200 200" className="w-full h-full text-[#6E5D4F] fill-current">
               <path d="M40,-65C52,-58,62,-47,68,-34C74,-21,76,-6,73,8C70,22,62,35,52,46C42,57,30,66,16,70C2,74,-14,73,-28,67C-42,61,-54,50,-62,37C-70,24,-74,9,-72,-6C-70,-21,-62,-36,-51,-45C-40,-54,-26,-57,-12,-63C2,-69,28,-72,40,-65Z" transform="translate(100 100)" />
             </svg>
@@ -93,50 +101,56 @@ export default function HomeView() {
           </div>
         </div>
 
-        {/* 1. MOBILE-OPTIMIZED COMPACT HERO (Visible on mobile & small tablets < lg) */}
-        {/* Specially tuned to ~200px height so both Hero & Category section fit above fold without scrolling */}
-        <div className="lg:hidden relative z-10 px-3.5 sm:px-6 py-3.5 sm:py-5 min-h-[195px] sm:min-h-[230px] flex items-center justify-between overflow-hidden">
-          {/* Left Text & CTA */}
-          <div className="w-[56%] sm:w-[52%] z-20 space-y-1.5 sm:space-y-2 pr-1">
-            <p className="text-[8px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#9E7D58]">
-              ARTIFICIAL JEWELRY INDIA
+        {/* 1. MOBILE & TABLET HERO (< lg): stacked editorial layout, text on top, models bleeding off the bottom */}
+        {!isDesktop && (
+        <div className="lg:hidden relative z-10 flex flex-col items-center text-center pt-7 sm:pt-10">
+          <div className="px-5 sm:px-8 max-w-md sm:max-w-xl mx-auto space-y-3 sm:space-y-4">
+            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-[#9E7D58]">
+              Artificial Jewelry India
             </p>
-            <p className="font-serif text-[22px] sm:text-[28px] font-bold tracking-tight text-[#1A1A1A] leading-[1.08]">
+            <h1 className="font-serif text-[38px] sm:text-5xl font-bold tracking-tight text-[#1A1A1A] leading-[1.05]">
               Jewelry for <br />
-              <span className="text-[#B87080] font-serif font-normal">Every You</span>
+              <span className="text-[#B87080] font-normal">Every You</span>
+            </h1>
+            <p className="text-[#5C5552] text-[13px] sm:text-base leading-relaxed">
+              Timeless designs. Modern moments. Handcrafted pieces for the confident, elegant you.
             </p>
-            <p className="text-[#5C5552] text-[10px] sm:text-xs leading-tight line-clamp-1">
-              Handcrafted Kundan & CZ crystal heirlooms.
-            </p>
-            <div className="pt-0.5">
+            <div className="flex items-center justify-center gap-2.5 pt-1">
               <a
                 href="/shop"
-                className="inline-flex items-center gap-1.5 bg-[#B87080] hover:bg-[#A55E6E] text-white text-[10px] sm:text-xs font-semibold uppercase tracking-wider py-1.5 px-3.5 sm:py-2 sm:px-4 rounded-full shadow-xs active:scale-95 transition-all"
+                className="flex-1 sm:flex-none max-w-[190px] inline-flex items-center justify-center gap-2 bg-[#B87080] active:bg-[#A55E6E] text-white text-[12px] font-semibold uppercase tracking-wider h-11 px-5 sm:px-7 rounded-full shadow-sm active:scale-95 transition-all"
               >
                 <span>Shop Now</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={hasActiveSale ? '/shop?category=Sale' : '/bridal-sets'}
+                className="flex-1 sm:flex-none max-w-[170px] inline-flex items-center justify-center h-11 px-4 sm:px-6 rounded-full border border-[#B87080]/60 bg-white/60 text-[#4A4543] text-[12px] font-semibold uppercase tracking-wider active:scale-95 transition-all"
+              >
+                {hasActiveSale ? 'Sale' : 'Bridal'}
               </a>
             </div>
-            {/* Compact trust pill */}
-            <div className="flex items-center gap-2 pt-0.5 text-[8.5px] sm:text-[9.5px] text-[#6E5D4F]">
-              <span className="flex items-center gap-0.5"><Gem className="w-2.5 h-2.5 text-[#B87080]" /> Pure Brass</span>
-              <span>•</span>
-              <span className="flex items-center gap-0.5"><Gift className="w-2.5 h-2.5 text-[#B87080]" /> Gift Box</span>
+            <div className="flex items-center justify-center gap-3 pt-1 text-[11px] text-[#6E5D4F]">
+              <span className="flex items-center gap-1"><Gem className="w-3 h-3 text-[#B87080]" /> Premium Quality</span>
+              <span className="text-[#B87080]/50">•</span>
+              <span className="flex items-center gap-1"><Gift className="w-3 h-3 text-[#B87080]" /> Gift Packaging</span>
             </div>
           </div>
 
-          {/* Right Image: Aligned to the right side, seamless mask */}
-          <div className="w-[50%] sm:w-[50%] absolute right-0 bottom-0 top-0 flex items-end justify-end pointer-events-none z-10">
+          <div className="relative w-full max-w-[460px] sm:max-w-[560px] mt-2 -mb-px">
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[85%] aspect-square rounded-full bg-[#F5DFD5]/70 blur-2xl pointer-events-none" />
             <img
-              src="/hero-models.webp"
-              width="1846"
-              height="852"
+              src="/hero-models-mobile.webp"
+              width="760"
+              height="635"
               decoding="async"
-              alt="Ella Creations Handcrafted Luxury Jewelry"
-              className="h-[96%] w-auto max-w-none object-contain object-right-bottom scale-110 sm:scale-105 origin-bottom-right select-none drop-shadow-sm"
+              alt="Models wearing Ella Creations handcrafted luxury jewelry"
+              className="relative block w-full h-auto select-none"
               style={{
-                maskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 100%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 100%)',
+                maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 100%), linear-gradient(to right, transparent 0%, black 9%, black 91%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 100%), linear-gradient(to right, transparent 0%, black 9%, black 91%, transparent 100%)',
+                maskComposite: 'intersect',
+                WebkitMaskComposite: 'source-in',
               }}
               loading="eager"
               fetchPriority="high"
@@ -144,8 +158,11 @@ export default function HomeView() {
           </div>
         </div>
 
+        )}
+
         {/* 2. DESKTOP HERO LAYOUT (Visible on lg screens and up) */}
         {/* Image aligned all the way to right side, enlarged to cover the full hero area */}
+        {isDesktop && (
         <div className="hidden lg:block relative z-10 pl-8 xl:pl-14 2xl:pl-20 pr-0 max-w-[1720px] mx-auto">
           <div className="grid grid-cols-12 items-center min-h-[580px] xl:min-h-[660px] 2xl:min-h-[720px]">
             
@@ -241,7 +258,6 @@ export default function HomeView() {
                   }}
                   loading="eager"
                   fetchPriority="high"
-                  decoding="async"
                 />
 
                 {/* Vertical carousel dots on right */}
@@ -261,6 +277,7 @@ export default function HomeView() {
 
           </div>
         </div>
+        )}
 
       </section>
 
@@ -326,7 +343,7 @@ export default function HomeView() {
               className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform active:scale-95 text-center flex-shrink-0 w-[60px] sm:w-[72px] md:w-full"
             >
               <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-brand-gold/30 group-hover:border-brand-rose bg-white p-0.5 sm:p-1 shadow-xs group-hover:shadow-soft-rose transition-all flex items-center justify-center">
-                <img
+                <OptImg width={160}
                   src={cat.image}
                   alt={`Handcrafted ${cat.label} Collection - Ella Creations`}
                   className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
@@ -491,7 +508,7 @@ export default function HomeView() {
               >
                 <div className="space-y-3">
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
-                    <img
+                    <OptImg width={640}
                       src={blog.coverImage}
                       alt={`${blog.title} - Jewelry Styling & Care Editorial | Ella Journal`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

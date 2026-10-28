@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { fetchCatalog } from './fetch-catalog.js';
 import { encryptId } from '../src/utils/idSecurity.js';
+import { optimizeImageUrl } from '../src/utils/image.js';
 
 const { products: INITIAL_PRODUCTS, blogs: INITIAL_BLOGS } = await fetchCatalog();
 
@@ -112,7 +113,7 @@ function renderCommonHeader(activePath = '') {
         </div>
         <div class="flex flex-col items-center justify-center text-center px-2 flex-shrink-0">
           <a href="/" class="flex flex-col items-center group">
-            <img src="/logo.png" alt="Ella Creations Logo" class="h-9 sm:h-12 w-auto object-contain" />
+            <img src="/logo.webp" alt="Ella Creations Logo" class="h-9 sm:h-12 w-auto object-contain" />
             <span class="font-serif text-lg sm:text-2xl font-bold tracking-wider text-stone-900 mt-0.5">Ella Creations</span>
             <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-amber-600 font-bold leading-none">Artificial Jewelry India</span>
           </a>
@@ -184,7 +185,7 @@ function renderHomePage(products, blogs) {
   const featured = products.slice(0, 8);
   const featuredHtml = featured.map(p => {
     const slug = getProductSlug(p);
-    const mainImg = p.images?.[0] || '/logo.png';
+    const mainImg = optimizeImageUrl(p.images?.[0] || '/logo.webp', 480);
     return `
       <article class="group bg-white rounded-2xl overflow-hidden border border-amber-200/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between p-3 sm:p-4">
         <a href="/product/${slug}" class="block relative aspect-square overflow-hidden rounded-xl bg-stone-50 mb-3 flex items-center justify-center">
@@ -211,7 +212,7 @@ function renderHomePage(products, blogs) {
     return `
       <article class="bg-white rounded-2xl border border-amber-200/40 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col">
         <a href="/blog/${b.slug}" class="block aspect-video overflow-hidden bg-stone-100">
-          <img src="${b.coverImage}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+          <img src="${optimizeImageUrl(b.coverImage, 640)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
         </a>
         <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
           <div>
@@ -331,7 +332,7 @@ function renderShopPage(products, activeCategory = 'All') {
 
   const productsHtml = filtered.map(p => {
     const slug = getProductSlug(p);
-    const mainImg = p.images?.[0] || '/logo.png';
+    const mainImg = optimizeImageUrl(p.images?.[0] || '/logo.webp', 480);
     return `
       <article class="group bg-white rounded-2xl overflow-hidden border border-amber-200/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between p-3 sm:p-4">
         <a href="/product/${slug}" class="block relative aspect-square overflow-hidden rounded-xl bg-stone-50 mb-3 flex items-center justify-center">
@@ -406,7 +407,7 @@ function renderShopPage(products, activeCategory = 'All') {
 // 2. Render Single Product Detail Page HTML
 function renderProductDetailPage(prod, allProducts = []) {
   const slug = getProductSlug(prod);
-  const mainImg = prod.images?.[0] || '/logo.png';
+  const mainImg = optimizeImageUrl(prod.images?.[0] || '/logo.webp', 900);
   const related = allProducts.filter(p => p.id !== prod.id && p.category === prod.category).slice(0, 4);
 
   const relatedHtml = related.map(rel => {
@@ -414,7 +415,7 @@ function renderProductDetailPage(prod, allProducts = []) {
     return `
       <div class="bg-white rounded-2xl p-3 border border-amber-200/40 text-xs">
         <a href="/product/${relSlug}" class="block aspect-square bg-stone-50 rounded-xl overflow-hidden mb-2">
-          <img src="${rel.images?.[0] || '/logo.png'}" alt="${escapeHtml(rel.title)}" class="w-full h-full object-contain p-2" loading="lazy" />
+          <img src="${optimizeImageUrl(rel.images?.[0] || '/logo.webp', 400)}" alt="${escapeHtml(rel.title)}" class="w-full h-full object-contain p-2" loading="lazy" />
         </a>
         <h4 class="font-serif font-bold text-stone-900 line-clamp-1"><a href="/product/${relSlug}">${escapeHtml(rel.title)}</a></h4>
         <div class="font-bold text-stone-900 mt-1">₹${rel.price.toLocaleString('en-IN')}</div>
@@ -447,7 +448,7 @@ function renderProductDetailPage(prod, allProducts = []) {
             <div class="flex gap-2">
               ${(prod.images || []).map((img, i) => `
                 <div class="w-16 h-16 rounded-xl overflow-hidden border border-amber-200 bg-white p-1">
-                  <img src="${img}" alt="${escapeHtml(prod.title)} view ${i + 1}" class="w-full h-full object-contain" />
+                  <img src="${optimizeImageUrl(img, 160)}" alt="${escapeHtml(prod.title)} view ${i + 1}" class="w-full h-full object-contain" />
                 </div>
               `).join('')}
             </div>
@@ -513,7 +514,7 @@ function renderBlogIndexPage(blogs) {
     <article class="bg-white rounded-3xl overflow-hidden border border-amber-200/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
       <div>
         <a href="/blog/${b.slug}" class="block aspect-[16/10] overflow-hidden bg-stone-100">
-          <img src="${b.coverImage}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+          <img src="${optimizeImageUrl(b.coverImage, 640)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
         </a>
         <div class="p-5 space-y-2">
           <div class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">${escapeHtml(b.category)} • ${escapeHtml(b.readTime || '4 min read')}</div>
@@ -583,7 +584,7 @@ function renderBlogDetailPage(blog, allBlogs = []) {
           </div>
 
           <div class="aspect-[16/9] rounded-2xl overflow-hidden bg-stone-100">
-            <img src="${blog.coverImage}" alt="${escapeHtml(blog.title)}" class="w-full h-full object-cover" />
+            <img src="${optimizeImageUrl(blog.coverImage, 1000)}" alt="${escapeHtml(blog.title)}" class="w-full h-full object-cover" />
           </div>
 
           <div class="text-sm sm:text-base text-stone-700 leading-relaxed space-y-4">

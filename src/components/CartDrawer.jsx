@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from './OptImg';
 
 export default function CartDrawer() {
   const { 
@@ -151,7 +152,7 @@ export default function CartDrawer() {
                   key={`${item.id}-${item.finish}-${idx}`}
                   className="flex gap-4 p-3 bg-brand-card rounded-xl border border-stone-200/60 relative group"
                 >
-                  <img
+                  <OptImg width={200}
                     src={item.image}
                     alt={`${item.title} - Selected Shopping Bag Item`}
                     className="w-20 h-20 object-contain p-1 bg-white rounded-lg border border-brand-gold/20 flex-shrink-0"

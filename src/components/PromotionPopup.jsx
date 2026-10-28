@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, Sparkles, ArrowRight, Tag, Clock } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import OptImg from './OptImg';
 import { formatISTDateTime } from '../utils/pricing';
 
 // Search Engine Crawler / Bot Guard:
@@ -191,7 +192,7 @@ export default function PromotionPopup({
           {/* Banner Graphic Column */}
           <div className={`${isMobileMode ? 'h-36' : 'md:col-span-5 h-56 md:h-auto'} relative bg-gradient-to-br from-stone-900 via-rose-950 to-stone-900 p-6 flex flex-col items-center justify-center text-center overflow-hidden`}>
             {bannerImage ? (
-              <img 
+              <OptImg width={900} 
                 src={bannerImage} 
                 alt={`${campaignName || 'Promotional Offer'} - Ella Creations Exclusive Discount`} 
                 className="absolute inset-0 w-full h-full object-cover opacity-60"
@@ -282,7 +283,7 @@ export default function PromotionPopup({
           {/* Visual Column / Banner */}
           <div className="md:col-span-5 relative bg-gradient-to-br from-stone-950 via-rose-950 to-stone-900 p-6 sm:p-8 flex flex-col items-center justify-center text-center overflow-hidden min-h-[160px] md:min-h-[320px]">
             {bannerImage ? (
-              <img 
+              <OptImg width={900} 
                 src={bannerImage} 
                 alt={`${campaignName || 'Festive Promotion'} - Ella Creations Special Jewelry Campaign`} 
                 className="absolute inset-0 w-full h-full object-cover opacity-50 filter brightness-90"
@@ -292,7 +293,7 @@ export default function PromotionPopup({
             )}
 
             {/* Subtle Brand Watermark */}
-            <img src="/logo.png" alt="Ella Creations Crest Monogram" className="w-24 h-24 opacity-10 absolute pointer-events-none" />
+            <img src="/logo.webp" alt="Ella Creations Crest Monogram" className="w-24 h-24 opacity-10 absolute pointer-events-none" />
 
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-[0.25em] text-brand-gold bg-stone-900/90 px-3 py-1 rounded-full border border-brand-gold/40 shadow-sm">

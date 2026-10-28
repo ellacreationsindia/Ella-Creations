@@ -25,6 +25,7 @@ import {
   Check
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from '../components/OptImg';
 import { calculateShiprocketRates, lookupIndianPincode, loadRazorpayScript } from '../lib/supabase';
 
 export default function CheckoutView() {
@@ -877,7 +878,7 @@ export default function CheckoutView() {
               {cart.map((item, idx) => (
                 <div key={idx} className="flex gap-3 items-center border-b border-stone-100 pb-3">
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-b from-stone-50 to-brand-cream/40 p-1 border border-stone-200 flex-shrink-0 flex items-center justify-center">
-                    <img 
+                    <OptImg width={160} 
                       src={item.image} 
                       alt={`${item.title} - Ordered Jewelry Piece`} 
                       className="w-full h-full object-contain" 

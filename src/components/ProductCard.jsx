@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star, Heart, Eye, ShoppingBag, Sparkles, Ban, Share2, Check } from 'lucide-react';
 import { useStore, formatPrice, getProductSlug } from '../context/StoreContext';
+import OptImg from './OptImg';
 
 export default function ProductCard({ product }) {
   const { 
@@ -135,11 +136,13 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Primary Image (Uncropped) */}
-        <img
-          src={product.images?.[0] || '/logo.png'}
+        <OptImg
+          width={480}
+          sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 280px"
+          src={product.images?.[0] || '/logo.webp'}
           alt={`${product.title} - Handcrafted ${product.category} by Ella Creations`}
           loading="lazy"
-          onError={(e) => { if (e.currentTarget.src !== window.location.origin + '/logo.png') { e.currentTarget.src = '/logo.png'; e.currentTarget.classList.add('p-6', 'opacity-70'); } }}
+          onError={(e) => { if (!e.currentTarget.src.endsWith('/logo.webp')) { e.currentTarget.removeAttribute('srcset'); e.currentTarget.src = '/logo.webp'; e.currentTarget.classList.add('p-6', 'opacity-70'); } }}
           className={`w-full h-full object-contain object-center transition-all duration-500 ease-in-out ${
             product.images && product.images.length > 1 ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
           } ${isOutOfStock ? 'opacity-60 grayscale' : ''}`}
@@ -147,7 +150,9 @@ export default function ProductCard({ product }) {
 
         {/* Secondary Hover Image (Uncropped, Desktop) */}
         {product.images && product.images.length > 1 && (
-          <img
+          <OptImg
+            width={480}
+            sizes="(max-width: 1024px) 30vw, 280px"
             src={product.images[1]}
             alt={`${product.title} - ${product.category} detailed view | Ella Creations`}
             loading="lazy"
@@ -201,7 +206,7 @@ export default function ProductCard({ product }) {
 
           {/* Title */}
           <h3 
-            className="font-serif text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-stone-900 line-clamp-1 lg:line-clamp-2 leading-snug"
+            className="font-serif text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-stone-900 line-clamp-2 leading-snug"
             title={product.title}
           >
             <a 

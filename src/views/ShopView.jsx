@@ -618,7 +618,7 @@ export default function ShopView() {
             </div>
           )}
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-brand-gold/30 shadow-xs space-y-2">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3.5 sm:p-6 border border-brand-gold/30 shadow-xs space-y-1.5 sm:space-y-2">
             {/* Breadcrumb Trail */}
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[11px] sm:text-xs text-stone-500">
               <a href="/" className="hover:text-brand-rose transition-colors">Home</a>
@@ -643,7 +643,7 @@ export default function ShopView() {
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-stone-600 max-w-3xl leading-relaxed">
+            <p className="hidden sm:block text-xs sm:text-sm text-stone-600 max-w-3xl leading-relaxed">
               {selectedCategory === 'Necklace' && 'Explore handcrafted Kundan chokers, layered bridal rani haars, and delicate CZ crystal pendants crafted with skin-safe brass and long-lasting gold polish.'}
               {selectedCategory === 'Earring' && 'Discover designer jhumkas, chandelier drops, and everyday crystal studs engineered with hypoallergenic 925 sterling silver posts.'}
               {selectedCategory === 'Rings' && 'Adorn your fingers with adjustable cocktail statement rings, solitaire Cubic Zirconia bands, and micro-pave brass masterworks.'}
@@ -655,15 +655,39 @@ export default function ShopView() {
         </>
       )}
 
+      {/* Mobile quick category pills (scroll away with the page) */}
+      <div className="lg:hidden -mx-3 px-3 sm:mx-0 sm:px-0">
+        {/* Quick Horizontal Scrollable Category Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 px-0">
+          {categories.map((cat) => {
+            const isSel = selectedCategory === cat;
+            const isSale = cat === 'Sale';
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`text-xs px-3.5 py-2 rounded-full whitespace-nowrap font-medium transition-all shrink-0 cursor-pointer ${
+                  isSel
+                    ? (isSale ? 'bg-gradient-to-r from-rose-700 to-brand-rose text-white shadow-xs font-bold' : 'bg-stone-900 text-white font-bold')
+                    : (isSale ? 'bg-rose-50 text-brand-rose border border-rose-200 font-bold' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200')
+                }`}
+              >
+                {isSale ? '🔥 Sale' : cat}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Mobile Sticky Filter Sub-Bar & Quick Swipe Category Pills */}
-      <div className="lg:hidden sticky top-14 sm:top-16 z-30 bg-white/95 backdrop-blur-md -mx-4 px-3 sm:px-4 py-2.5 border-y border-brand-gold/30 shadow-md space-y-2">
+      <div className="lg:hidden sticky top-[var(--hdr-h,84px)] z-30 bg-white/95 backdrop-blur-md -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 border-y border-brand-gold/30 shadow-sm">
         <div className="flex items-center justify-between gap-2">
           <button
             onClick={() => setIsMobileFilterOpen(true)}
-            className="flex items-center gap-1.5 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-3 py-2 rounded-xl border border-brand-gold/40 flex-1 justify-center transition-all cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 text-xs font-bold text-stone-900 bg-brand-cream hover:bg-brand-sand px-3 h-10 rounded-xl border border-brand-gold/40 flex-1 justify-center whitespace-nowrap transition-all cursor-pointer shadow-xs"
           >
             <SlidersHorizontal className="w-4 h-4 text-brand-rose shrink-0" />
-            <span>All Filters</span>
+            <span>Filters</span>
             {activeFilterCount > 0 && (
               <span className="w-5 h-5 rounded-full bg-brand-rose text-white text-[10px] flex items-center justify-center font-bold shrink-0">
                 {activeFilterCount}
@@ -671,11 +695,11 @@ export default function ShopView() {
             )}
           </button>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-1 min-w-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs px-2.5 py-2 rounded-xl border border-stone-200 bg-stone-50 font-medium outline-none text-stone-800 cursor-pointer"
+              className="w-full text-xs px-2.5 h-10 rounded-xl border border-stone-200 bg-stone-50 font-medium outline-none text-stone-800 cursor-pointer"
               aria-label="Sort products"
             >
               <option value="featured">Featured</option>
@@ -691,26 +715,6 @@ export default function ShopView() {
           </span>
         </div>
 
-        {/* Quick Horizontal Scrollable Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
-          {categories.map((cat) => {
-            const isSel = selectedCategory === cat;
-            const isSale = cat === 'Sale';
-            return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-[11px] px-3 py-1 rounded-full whitespace-nowrap font-medium transition-all shrink-0 cursor-pointer ${
-                  isSel
-                    ? (isSale ? 'bg-gradient-to-r from-rose-700 to-brand-rose text-white shadow-xs font-bold' : 'bg-stone-900 text-white font-bold')
-                    : (isSale ? 'bg-rose-50 text-brand-rose border border-rose-200 font-bold' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200')
-                }`}
-              >
-                {isSale ? '🔥 Sale' : cat}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* Active Filter Chips / Badges Row (1-Tap Clear) */}
@@ -878,7 +882,7 @@ export default function ShopView() {
         <div className="flex-1 space-y-6 w-full">
           
           {/* Top Bar Sort & View Layout Controls */}
-          <div className="bg-white p-4 rounded-2xl border border-brand-gold/20 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="hidden lg:flex bg-white p-4 rounded-2xl border border-brand-gold/20 shadow-sm flex-row justify-between items-center gap-4">
             <span className="text-xs font-medium text-stone-600">
               Showing <strong>{filtered.length}</strong> of <strong>{products.length}</strong> items
             </span>

@@ -101,7 +101,7 @@ export default function AuthModal({ isOpen, onClose }) {
         </button>
 
         <div className="text-center space-y-2 mb-6">
-          <img src="/logo.png" alt="Ella Creations Logo" className="h-14 w-auto mx-auto filter drop-shadow" />
+          <img src="/logo.webp" alt="Ella Creations Logo" className="h-14 w-auto mx-auto filter drop-shadow" />
           <h2 id="auth-modal-title" className="font-serif text-2xl font-bold text-stone-900">
             {mode === 'signup' ? 'Create Your Account' : 'Sign In to Ella Creations'}
           </h2>

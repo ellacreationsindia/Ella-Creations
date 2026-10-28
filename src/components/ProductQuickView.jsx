@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Star, ShoppingBag, Heart, ShieldCheck, Truck, Sparkles } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from './OptImg';
 
 export default function ProductQuickView() {
   const { 
@@ -103,7 +104,7 @@ export default function ProductQuickView() {
         {/* Gallery Section */}
         <div className="md:w-1/2 bg-brand-cream p-6 flex flex-col justify-between">
           <div className="aspect-square rounded-2xl overflow-hidden bg-[#FAF7F4] shadow-inner mb-4 relative p-4 flex items-center justify-center border border-stone-100">
-            <img
+            <OptImg width={800}
               src={selectedImage}
               alt={`${quickViewProduct.title} - Handcrafted Artificial Jewelry | Ella Creations`}
               className="w-full h-full object-contain"
@@ -122,7 +123,7 @@ export default function ProductQuickView() {
                   }`}
                   aria-label={`Thumbnail view ${idx + 1}`}
                 >
-                  <img 
+                  <OptImg width={160} 
                     src={img} 
                     alt={`${quickViewProduct.title} preview angle ${idx + 1}`} 
                     className="w-full h-full object-contain" 

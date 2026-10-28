@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Calendar, Clock, User, ArrowLeft, ArrowRight, Tag, Share2, Sparkles, Search, MessageSquare, AlertCircle } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from '../components/OptImg';
 import { INITIAL_BLOGS } from '../data/initialData';
 
 export default function BlogView() {
@@ -152,7 +153,7 @@ export default function BlogView() {
           {/* Article Cover Media */}
           {activeBlog.coverImage && (
             <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-sm border border-stone-200">
-              <img
+              <OptImg width={1000}
                 src={activeBlog.coverImage}
                 alt={`${activeBlog.title} - Jewelry Styling & Care Guide | Ella Journal`}
                 className="w-full h-full object-cover"
@@ -289,7 +290,7 @@ export default function BlogView() {
           className="bg-white rounded-3xl overflow-hidden border border-brand-gold/30 shadow-md hover:shadow-xl transition-all cursor-pointer grid grid-cols-1 lg:grid-cols-12 group block text-left"
         >
           <div className="lg:col-span-7 aspect-[16/10] lg:aspect-auto overflow-hidden relative">
-            <img
+            <OptImg width={900}
               src={featuredBlog.coverImage}
               alt={`${featuredBlog.title} - Featured Jewelry Editorial Story | Ella Journal`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -365,7 +366,7 @@ export default function BlogView() {
               >
                 <div className="space-y-4">
                   <div className="aspect-[16/10] overflow-hidden relative bg-stone-100">
-                    <img
+                    <OptImg width={640}
                       src={blog.coverImage}
                       alt={`${blog.title} - Jewelry Style Guide & Insights | Ella Journal`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Brand Bio with Logo */}
           <div className="lg:col-span-4 space-y-2.5">
             <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="Ella Creations Logo" className="h-9 sm:h-11 w-auto object-contain filter drop-shadow" />
+              <img src="/logo.webp" alt="Ella Creations Logo" className="h-9 sm:h-11 w-auto object-contain filter drop-shadow" />
               <span className="font-serif text-lg sm:text-2xl font-bold text-white">Ella Creations</span>
             </div>
             <p className="text-xs leading-relaxed text-stone-400 line-clamp-2 sm:line-clamp-none">
@@ -46,7 +46,7 @@ export default function Footer() {
                 target="_blank" 
                 rel="noreferrer" 
                 aria-label="Instagram"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
               >
                 <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </a>
@@ -55,7 +55,7 @@ export default function Footer() {
                 target="_blank" 
                 rel="noreferrer" 
                 aria-label="Facebook"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
               >
                 <Facebook className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </a>
@@ -64,7 +64,7 @@ export default function Footer() {
                 target="_blank" 
                 rel="noreferrer" 
                 aria-label="Official Website"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 sm:w-8 sm:h-8 rounded-full bg-stone-800 hover:bg-brand-rose text-white flex items-center justify-center transition-colors"
               >
                 <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </a>
@@ -76,7 +76,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-              className="w-full flex items-center justify-between text-left lg:pointer-events-none"
+              className="w-full flex items-center justify-between text-left py-2.5 lg:py-0 lg:pointer-events-none"
             >
               <h5 className="font-serif text-xs sm:text-sm font-semibold tracking-wider text-brand-gold uppercase">Shop Categories</h5>
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCategoriesOpen ? 'rotate-180 text-brand-gold' : ''}`} />
@@ -155,7 +155,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => setIsCustomerCareOpen(!isCustomerCareOpen)}
-              className="w-full flex items-center justify-between text-left lg:pointer-events-none"
+              className="w-full flex items-center justify-between text-left py-2.5 lg:py-0 lg:pointer-events-none"
             >
               <h5 className="font-serif text-xs sm:text-sm font-semibold tracking-wider text-brand-gold uppercase">Customer Care</h5>
               <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform lg:hidden ${isCustomerCareOpen ? 'rotate-180 text-brand-gold' : ''}`} />
@@ -304,17 +304,17 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} Ella Creations India. All Rights Reserved. Crafted with <Heart className="w-3.5 h-3.5 text-brand-rose inline mx-0.5 fill-current" /> for jewelry lovers.</p>
           
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-stone-400 text-[11px] sm:text-xs">
-            <a href="/privacy" onClick={(e) => { e.preventDefault(); navigateTo('privacy'); }} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a>
+            <a href="/privacy" onClick={(e) => { e.preventDefault(); navigateTo('privacy'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Privacy Policy</a>
             <span>•</span>
-            <a href="/terms" onClick={(e) => { e.preventDefault(); navigateTo('terms'); }} className="hover:text-white transition-colors cursor-pointer">Terms of Service</a>
+            <a href="/terms" onClick={(e) => { e.preventDefault(); navigateTo('terms'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Terms of Service</a>
             <span>•</span>
-            <a href="/refund-policy" onClick={(e) => { e.preventDefault(); navigateTo('refund-policy'); }} className="hover:text-white transition-colors cursor-pointer">Refund & Cancellation</a>
+            <a href="/refund-policy" onClick={(e) => { e.preventDefault(); navigateTo('refund-policy'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Refund & Cancellation</a>
             <span>•</span>
-            <a href="/shipping-policy" onClick={(e) => { e.preventDefault(); navigateTo('shipping-policy'); }} className="hover:text-white transition-colors cursor-pointer">Shipping & Delivery</a>
+            <a href="/shipping-policy" onClick={(e) => { e.preventDefault(); navigateTo('shipping-policy'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Shipping & Delivery</a>
             <span>•</span>
-            <a href="/brand-guidelines" onClick={(e) => { e.preventDefault(); navigateTo('brand-guidelines'); }} className="hover:text-white transition-colors cursor-pointer">Jewelry Care</a>
+            <a href="/brand-guidelines" onClick={(e) => { e.preventDefault(); navigateTo('brand-guidelines'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Jewelry Care</a>
             <span>•</span>
-            <a href="/sitemap" onClick={(e) => { e.preventDefault(); navigateTo('sitemap'); }} className="hover:text-white transition-colors cursor-pointer">Sitemap</a>
+            <a href="/sitemap" onClick={(e) => { e.preventDefault(); navigateTo('sitemap'); }} className="hover:text-white transition-colors cursor-pointer py-2.5 sm:py-0 inline-block">Sitemap</a>
           </div>
         </div>
 

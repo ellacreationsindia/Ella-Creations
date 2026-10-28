@@ -17,7 +17,7 @@ export default function TermsView() {
       <div className="border-b border-brand-gold/30 pb-5 space-y-2.5">
         <a
           href="/"
-          className="text-xs text-stone-500 hover:text-brand-rose flex items-center gap-1 font-semibold transition-colors cursor-pointer mb-1"
+          className="text-xs text-stone-500 hover:text-brand-rose flex items-center gap-1 font-semibold transition-colors cursor-pointer mb-1 py-2 -my-2 w-fit"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Storefront
         </a>

@@ -100,7 +100,7 @@ export default function SitemapView() {
                           href={link.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs font-bold text-brand-rose hover:underline flex items-center gap-1"
+                          className="text-xs font-bold text-brand-rose hover:underline flex items-center gap-1 py-1.5"
                         >
                           <span itemProp="name">{link.label}</span> <ExternalLink className="w-3 h-3" />
                         </a>
@@ -116,7 +116,7 @@ export default function SitemapView() {
                               ? `/blog/${link.itemId}`
                               : `/${link.view}`
                           }
-                          className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left inline-block"
+                          className="text-xs font-bold text-stone-900 hover:text-brand-rose transition-colors text-left inline-block py-1.5"
                         >
                           <span itemProp="name">{link.label}</span>
                         </a>

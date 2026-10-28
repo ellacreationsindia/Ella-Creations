@@ -20,6 +20,7 @@ import {
   Globe
 } from 'lucide-react';
 import { useStore, formatPrice } from '../context/StoreContext';
+import OptImg from './OptImg';
 
 export default function Header() {
   const { 
@@ -64,6 +65,16 @@ export default function Header() {
   }, [isMobileMenuOpen]);
 
   // Hidden 4-Click Logo Listener State
+  const headerRef = useRef(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const sync = () => document.documentElement.style.setProperty('--hdr-h', el.offsetHeight + 'px');
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const logoClickCountRef = useRef(0);
   const logoClickTimerRef = useRef(null);
 
@@ -92,14 +103,14 @@ export default function Header() {
 
   const searchResults = searchQuery.trim() 
     ? products.filter(p => 
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.stoneType.toLowerCase().includes(searchQuery.toLowerCase())
+        (p.title || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (p.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.stoneType || '').toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-gold/20 shadow-sm transition-all">
+    <header ref={headerRef} className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-gold/20 shadow-sm transition-all">
       
       {/* Top Announcement Bar */}
       <div className="bg-gradient-to-r from-brand-charcoal via-stone-800 to-brand-charcoal text-white text-[10px] sm:text-xs py-2 px-2.5 sm:px-3 text-center tracking-wider font-medium flex items-center justify-center gap-1.5 sm:gap-2 leading-tight">
@@ -130,18 +141,18 @@ export default function Header() {
         ) : (
           <>
             <Sparkles className="w-3 h-3 text-brand-gold animate-spin hidden sm:inline flex-shrink-0" style={{ animationDuration: '6s' }} />
-            <span className="truncate max-w-[92vw] sm:max-w-none">INSURED EXPRESS COURIER DISPATCH ACROSS INDIA | ELLA CREATIONS FINE ARTIFICIAL JEWELRY</span>
+            <span className="truncate max-w-[92vw] sm:max-w-none"><span className="sm:hidden">INSURED EXPRESS DELIVERY ACROSS INDIA</span><span className="hidden sm:inline">INSURED EXPRESS COURIER DISPATCH ACROSS INDIA | ELLA CREATIONS FINE ARTIFICIAL JEWELRY</span></span>
             <Sparkles className="w-3 h-3 text-brand-gold animate-spin hidden sm:inline flex-shrink-0" style={{ animationDuration: '6s' }} />
           </>
         )}
       </div>
 
       {/* Main Branding & Utilities Row (Row 1) */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-1.5 sm:py-3.5">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           {/* LEFT COLUMN: Mobile Hamburger & Search / Desktop Live Search Trigger */}
-          <div className="flex items-center justify-start flex-1 gap-1">
+          <div className="flex items-center justify-start flex-1 gap-1 min-w-0">
             {/* Mobile Menu Button (Accessible 44px touch target) */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -149,15 +160,6 @@ export default function Header() {
               aria-label="Open Navigation Menu"
             >
               <Menu className="w-6 h-6" />
-            </button>
-
-            {/* Mobile Search Button (Direct 1-tap search access on mobile) */}
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="lg:hidden w-11 h-11 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 flex items-center justify-center transition-colors"
-              aria-label="Search Jewelry"
-            >
-              <Search className="w-5 h-5" />
             </button>
 
             {/* Desktop Refined Search Bar Trigger */}
@@ -175,33 +177,42 @@ export default function Header() {
           </div>
 
           {/* CENTER COLUMN: PERFECTLY STRUCTURED CENTERED BRAND LOGO */}
-          <div className="flex flex-col items-center justify-center text-center px-2 flex-shrink-0">
+          <div className="flex flex-col items-center justify-center text-center px-1 sm:px-2 flex-shrink-0">
             <a 
               href="/"
               onClick={(e) => {
                 e.preventDefault();
                 handleLogoClick();
               }} 
-              className="cursor-pointer flex flex-col items-center group"
+              className="cursor-pointer flex flex-row sm:flex-col items-center gap-1.5 sm:gap-0 group"
               title="Ella Creations Monogram (Click 4 times to open Admin Portal)"
             >
               <img 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Ella Creations Monogram Logo" 
-                className="h-9 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-xs"
+                width="40" height="40" className="h-8 w-8 sm:h-12 sm:w-auto object-contain transition-transform group-hover:scale-105 filter drop-shadow-xs"
               />
-              <span className="font-serif text-lg sm:text-2xl font-bold tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors leading-tight mt-0.5">
+              <span className="font-serif text-[17px] sm:text-2xl font-bold tracking-wide sm:tracking-wider text-brand-charcoal group-hover:text-brand-rose transition-colors leading-tight sm:mt-0.5 whitespace-nowrap">
                 Ella Creations
               </span>
-              <span className="text-[7.5px] sm:text-[9px] uppercase tracking-[0.22em] sm:tracking-[0.25em] text-brand-gold font-bold leading-none">
+              <span className="hidden sm:block text-[7.5px] sm:text-[9px] uppercase tracking-[0.22em] sm:tracking-[0.25em] text-brand-gold font-bold leading-none">
                 Artificial Jewelry India
               </span>
             </a>
           </div>
 
           {/* RIGHT COLUMN: User Action Icons (Wishlist, Cart Drawer, Search on Desktop, Profile) */}
-          <div className="flex items-center justify-end space-x-1 sm:space-x-2 flex-1">
+          <div className="flex items-center justify-end gap-0.5 sm:gap-2 flex-1 min-w-0">
             
+            {/* Mobile Search */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="lg:hidden w-10 h-10 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 flex items-center justify-center transition-colors"
+              aria-label="Search Jewelry"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+
             {/* Desktop-Only Live Search Trigger */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -215,7 +226,7 @@ export default function Header() {
             {/* Wishlist Trigger (Comfortable 44px touch area) */}
             <button
               onClick={() => navigateTo('account')}
-              className="w-11 h-11 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 transition-colors relative flex items-center justify-center"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 transition-colors relative flex items-center justify-center"
               title="Wishlist & Account"
               aria-label="View Wishlist"
             >
@@ -230,7 +241,7 @@ export default function Header() {
             {/* Cart Drawer Trigger (Comfortable 44px touch area) */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-11 h-11 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 transition-colors relative flex items-center justify-center"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl text-stone-700 hover:text-brand-rose hover:bg-brand-cream/60 transition-colors relative flex items-center justify-center"
               title="View Cart"
               aria-label="View Shopping Cart"
             >
@@ -468,7 +479,7 @@ export default function Header() {
             <div>
               <div className="p-4 border-b border-brand-gold/20 bg-brand-cream/70 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <img src="/logo.png" alt="Ella Creations Logo" className="h-8 w-auto object-contain" />
+                  <img src="/logo.webp" alt="Ella Creations Logo" className="h-8 w-auto object-contain" />
                   <div>
                     <span className="font-serif text-base font-bold text-stone-900 block leading-none">Ella Creations</span>
                     <span className="text-[8px] uppercase tracking-widest text-brand-gold font-bold">Artificial Jewelry</span>
@@ -755,7 +766,7 @@ export default function Header() {
                       }}
                       className="flex items-center gap-3 p-2.5 hover:bg-brand-cream/60 active:bg-brand-cream rounded-2xl cursor-pointer transition-colors border border-stone-100"
                     >
-                      <img
+                      <OptImg width={160}
                         src={product.images[0]}
                         alt={`${product.title} - Handcrafted Jewelry Match`}
                         className="w-14 h-14 object-contain p-1 rounded-xl border border-brand-gold/20 bg-white flex-shrink-0"

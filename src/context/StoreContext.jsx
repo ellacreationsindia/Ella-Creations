@@ -957,7 +957,8 @@ export const StoreProvider = ({ children }) => {
     });
 
     const addonsNote = validAddons.length > 0 ? ` + ${validAddons.length} upgrade(s)` : '';
-    showToast(`Added "${product.title}" (${variantName}${addonsNote}) to your cart!`);
+    const shortTitle = product.title.length > 36 ? product.title.slice(0, 36).trim() + "…" : product.title;
+    showToast(`Added "${shortTitle}"${addonsNote} to your cart!`);
     setIsCartOpen(true);
     trackAddToCart({ ...product, price: itemPrice }, quantity, variantName);
   };
